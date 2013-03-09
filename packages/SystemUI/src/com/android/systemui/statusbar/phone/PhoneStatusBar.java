@@ -107,11 +107,8 @@ import com.android.systemui.R;
 import com.android.systemui.statusbar.BaseStatusBar;
 import com.android.systemui.statusbar.CommandQueue;
 import com.android.systemui.statusbar.GestureRecorder;
-<<<<<<< HEAD
-=======
 import com.android.systemui.statusbar.NavigationBarView;
 import com.android.systemui.statusbar.MSimSignalClusterView;
->>>>>>> cbf74c8... Telephony(MSIM): Add StatusBar support for MultiSim.
 import com.android.systemui.statusbar.NotificationData;
 import com.android.systemui.statusbar.NotificationData.Entry;
 import com.android.systemui.statusbar.SignalClusterView;
@@ -197,11 +194,7 @@ public class PhoneStatusBar extends BaseStatusBar {
     Display mDisplay;
     Point mCurrentDisplaySize = new Point();
 
-<<<<<<< HEAD
-    private boolean mHasDockBattery;
-=======
     int mCurrUiInvertedMode;
->>>>>>> cbf74c8... Telephony(MSIM): Add StatusBar support for MultiSim.
 
     IDreamManager mDreamManager;
 
@@ -235,6 +228,7 @@ public class PhoneStatusBar extends BaseStatusBar {
     // settings
     QuickSettingsController mQS;
     boolean mHasSettingsPanel, mHasFlipSettings;
+    boolean mUiModeIsToggled; 
     SettingsPanelView mSettingsPanel;
     View mFlipSettingsView;
     QuickSettingsContainerView mSettingsContainer;
@@ -476,7 +470,7 @@ public class PhoneStatusBar extends BaseStatusBar {
 
         updateShowSearchHoldoff();
 
-	addActiveDisplayView();
+    addActiveDisplayView();
         
         try {
             boolean showNav = mWindowManagerService.hasNavigationBar();
@@ -518,6 +512,9 @@ public class PhoneStatusBar extends BaseStatusBar {
         mClearButton.setVisibility(View.GONE);
         mClearButton.setEnabled(false);
         mDateView = (DateView)mStatusBarWindow.findViewById(R.id.date);
+
+    mUiModeIsToggled = Settings.Secure.getInt(mContext.getContentResolver(),
+                              Settings.Secure.UI_MODE_IS_TOGGLED, 0) == 1; 
 
         mHasSettingsPanel = res.getBoolean(R.bool.config_hasSettingsPanel);
         mHasFlipSettings = res.getBoolean(R.bool.config_hasFlipSettingsPanel);
@@ -587,18 +584,7 @@ public class PhoneStatusBar extends BaseStatusBar {
         // Other icons
         mLocationController = new LocationController(mContext); // will post a notification
         mBatteryController = new BatteryController(mContext);
-<<<<<<< HEAD
-        mBatteryController.addIconView((ImageView)mStatusBarView.findViewById(R.id.battery));
-        mNetworkController = new NetworkController(mContext);
-        mBluetoothController = new BluetoothController(mContext);
-        mSignalCluster =
-                (SignalClusterView)mStatusBarView.findViewById(R.id.signal_cluster);
-
-        mNetworkController.addSignalCluster(mSignalCluster);
-        mSignalCluster.setNetworkController(mNetworkController);
-=======
         mSbBatteryController = (SbBatteryController)mStatusBarView.findViewById(R.id.battery_cluster);
->>>>>>> cbf74c8... Telephony(MSIM): Add StatusBar support for MultiSim.
 
         mHasDockBattery = mContext.getResources().getBoolean(
                 com.android.internal.R.bool.config_hasDockBattery);
@@ -608,24 +594,25 @@ public class PhoneStatusBar extends BaseStatusBar {
             mDockBatteryController.addIconView((ImageView)mStatusBarView.findViewById(R.id.dock_battery));
         }
 
-        mNetworkController = new NetworkController(mContext);
         mBluetoothController = new BluetoothController(mContext);
-
-        mSignalCluster = (SignalClusterView)mStatusBarView.findViewById(R.id.signal_cluster);
-        mNetworkController.addSignalCluster(mSignalCluster);
-        mSignalCluster.setNetworkController(mNetworkController);
-
-        mSignalCluster = (SignalClusterView)mStatusBarView.findViewById(R.id.signal_cluster_alt);
-        mSignalCluster.setNetworkController(mNetworkController);
 
         if (MSimTelephonyManager.getDefault().isMultiSimEnabled()) {
             mMSimNetworkController = new MSimNetworkController(mContext);
-            MSimSignalClusterView mSimSignalCluster = (MSimSignalClusterView)
-              mStatusBarView.findViewById(R.id.msim_signal_cluster);
-            for (int i=0; i < MSimTelephonyManager.getDefault().getPhoneCount(); i++) {
-                mMSimNetworkController.addSignalCluster(mSimSignalCluster, i);
+
+            if (!showingAltCluster) {
+                mSimSignalCluster = (MSimSignalClusterView)mStatusBarView.findViewById(R.id.msim_signal_cluster);
+                for (int i=0; i < MSimTelephonyManager.getDefault().getPhoneCount(); i++) {
+                    mMSimNetworkController.addSignalCluster(mSimSignalCluster, i);
+                }
+                mSimSignalCluster.setNetworkController(mMSimNetworkController);
+            } else {
+                mSimSignalCluster = (MSimSignalClusterView)mStatusBarView.findViewById(R.id.msim_signal_cluster_alt);
+                for (int i=0; i < MSimTelephonyManager.getDefault().getPhoneCount(); i++) {
+                    mMSimNetworkController.addSignalCluster(mSimSignalCluster, i);
+                }
+                mSimSignalCluster.setNetworkController(mMSimNetworkController);
             }
-            mSimSignalCluster.setNetworkController(mMSimNetworkController);
+
             mEmergencyCallLabel = (TextView)mStatusBarWindow.findViewById(
                                                           R.id.emergency_calls_only);
             if (mEmergencyCallLabel != null) {
@@ -636,69 +623,24 @@ public class PhoneStatusBar extends BaseStatusBar {
                     @Override
                     public void onLayoutChange(View v, int left, int top, int right, int bottom,
                             int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                        updateCarrierAndWifiLabelVisibility(false); 
+                        updateCarrierAndWifiLabelVisibility(false);
                     }});
             }
-<<<<<<< HEAD
-        }
 
-	mCarrierAndWifiView = mStatusBarWindow.findViewById(R.id.carrier_wifi);
-        mWifiView = mStatusBarWindow.findViewById(R.id.wifi_view); 
+            mNotificationShortcutsHideCarrier = Settings.System.getIntForUser(mContext.getContentResolver(),
+                        Settings.System.NOTIFICATION_SHORTCUTS_HIDE_CARRIER, 0, UserHandle.USER_CURRENT) != 0;
 
-        mCarrierLabel = (TextView)mStatusBarWindow.findViewById(R.id.carrier_label);
-        mShowCarrierInPanel = (mCarrierLabel != null);
-        if (DEBUG) Slog.v(TAG, "carrierlabel=" + mCarrierLabel + " show=" + mShowCarrierInPanel);
-        if (mShowCarrierInPanel) {
-            
-            // for mobile devices, we always show mobile connection info here (SPN/PLMN)
-            // for other devices, we show whatever network is connected
-            if (mNetworkController.hasMobileDataFeature()) {
-                mNetworkController.addMobileLabelView(mCarrierLabel);
-            } else {
-                mNetworkController.addCombinedLabelView(mCarrierLabel);
-            }
-        }
-
-        mWifiLabel = (TextView)mStatusBarWindow.findViewById(R.id.wifi_text);
-        mNetworkController.addWifiLabelView(mWifiLabel);
-
-	try {
-        mWifiLabel.addTextChangedListener(new TextWatcher() { 
-
-            public void afterTextChanged(Editable s) {
-            }
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (Settings.System.getInt(mContext.getContentResolver(),
-                       Settings.System.NOTIFICATION_SHOW_WIFI_SSID, 0) == 1 && count > 0) {
-                    mWifiView.setVisibility(View.VISIBLE); 
-                } else {
-                    mWifiView.setVisibility(View.GONE);
-                }
-            }
-
-        }); } catch (Exception ex) {
-	}
-
-        // set up the dynamic hide/show of the labels
-        mPile.setOnSizeChangedListener(new OnSizeChangedListener() {
-            @Override
-            public void onSizeChanged(View view, int w, int h, int oldw, int oldh) {
-                updateCarrierAndWifiLabelVisibility(false);
-            }
-        });  
-
-	// Set notification background
-        setNotificationWallpaperHelper();  
-=======
-
+            mCarrierAndWifiView = mStatusBarWindow.findViewById(R.id.carrier_wifi);
+            mWifiView = mStatusBarWindow.findViewById(R.id.wifi_view);
             mCarrierLabel = (TextView)mStatusBarWindow.findViewById(R.id.carrier_label);
             mShowCarrierInPanel = (mCarrierLabel != null);
-            if (DEBUG) Slog.v(TAG, "carrierlabel=" + mCarrierLabel + " show=" + mShowCarrierInPanel);
+            if (DEBUG) Slog.v(TAG, "carrierlabel=" + mCarrierLabel + " show=" +
+                                                                  mShowCarrierInPanel);
             if (mShowCarrierInPanel) {
-                mCarrierLabel.setVisibility(mCarrierLabelVisible ? View.VISIBLE : View.INVISIBLE);
-
+                lpCarrierLabel = (FrameLayout.LayoutParams) mCarrierAndWifiView.getLayoutParams();
+                mCarrierLabel.setVisibility((mCarrierAndWifiViewVisible && !mNotificationShortcutsHideCarrier) ? View.VISIBLE : View.GONE);
+                if (mNotificationShortcutsHideCarrier)
+                   mShowCarrierInPanel = false;
                 // for mobile devices, we always show mobile connection info here (SPN/PLMN)
                 // for other devices, we show whatever network is connected
                 if (mMSimNetworkController.hasMobileDataFeature()) {
@@ -706,7 +648,34 @@ public class PhoneStatusBar extends BaseStatusBar {
                 } else {
                     mMSimNetworkController.addCombinedLabelView(mCarrierLabel);
                 }
+            }
 
+            mWifiLabel = (TextView)mStatusBarWindow.findViewById(R.id.wifi_text);
+
+            if (mWifiLabel != null) {
+                mNetworkController.addWifiLabelView(mWifiLabel);
+
+                mWifiLabel.addTextChangedListener(new TextWatcher() {
+
+                    public void afterTextChanged(Editable s) {
+                    }
+                    public void beforeTextChanged(CharSequence s, int start, int count,
+                            int after) {
+                    }
+                    public void onTextChanged(CharSequence s, int start, int before,
+                            int count) {
+                         if (Settings.System.getInt(mContext.getContentResolver(),
+                                Settings.System.NOTIFICATION_SHOW_WIFI_SSID, 0) == 1 &&
+                                count > 0) {
+                            mWifiView.setVisibility(View.VISIBLE);
+                        }
+                        else
+                        {
+                            mWifiView.setVisibility(View.GONE);
+                        }
+                    }
+
+                });
                 // set up the dynamic hide/show of the label
                 mPile.setOnSizeChangedListener(new OnSizeChangedListener() {
                     @Override
@@ -715,9 +684,17 @@ public class PhoneStatusBar extends BaseStatusBar {
                     }
                 });
             }
-
-            mNetworkController.addSignalCluster(mSignalCluster);
-            mSignalCluster.setNetworkController(mNetworkController);
+        } else {
+            mNetworkController = new NetworkController(mContext);
+            if (!showingAltCluster) {
+                mSignalCluster = (SignalClusterView)mStatusBarView.findViewById(R.id.signal_cluster);
+                mNetworkController.addSignalCluster(mSignalCluster);
+                mSignalCluster.setNetworkController(mNetworkController);
+            } else {
+                mSignalCluster = (SignalClusterView)mStatusBarView.findViewById(R.id.signal_cluster_alt);
+                mNetworkController.addSignalCluster(mSignalCluster);
+                mSignalCluster.setNetworkController(mNetworkController);
+            }
 
             final boolean isAPhone = mNetworkController.hasVoiceCallingFeature();
             if (isAPhone) {
@@ -795,7 +772,6 @@ public class PhoneStatusBar extends BaseStatusBar {
                 });
             }
         }
->>>>>>> cbf74c8... Telephony(MSIM): Add StatusBar support for MultiSim.
 
         // Quick Settings (where available, some restrictions apply)
         if (mHasSettingsPanel) {
@@ -1311,7 +1287,7 @@ protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutP
             mPile.removeView(remove);
         }
 
-	//set alpha for notification pile before it is added
+    //set alpha for notification pile before it is added
         setNotificationAlphaHelper(); 
 
         for (int i=0; i<toShow.size(); i++) {
@@ -1384,14 +1360,6 @@ protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutP
         }
 
         final boolean emergencyCallsShownElsewhere = mEmergencyCallLabel != null;
-<<<<<<< HEAD
-        final boolean makeVisible =
-            !(emergencyCallsShownElsewhere && mNetworkController.isEmergencyOnly())
-            && mPile.getHeight() < (mNotificationPanel.getHeight() - mCarrierAndWifiViewHeight - mNotificationHeaderHeight)
-            && mScrollView.getVisibility() == View.VISIBLE;
-        
-	try {
-=======
         final boolean makeVisible;
         if (MSimTelephonyManager.getDefault().isMultiSimEnabled()) {
             makeVisible =
@@ -1405,7 +1373,6 @@ protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutP
                  - mNotificationHeaderHeight - calculateCarrierLabelBottomMargin()) && mScrollView.getVisibility() == View.VISIBLE;
         }
 
->>>>>>> cbf74c8... Telephony(MSIM): Add StatusBar support for MultiSim.
         if (force || mCarrierAndWifiViewVisible != makeVisible) {
             mCarrierAndWifiViewVisible = makeVisible;
             if (DEBUG) {
@@ -1431,17 +1398,17 @@ protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutP
                 })
                 .start();
         }
-	} catch (Exception ex) {
-	}
+    } catch (Exception ex) {
     }
-    
+    }
+
     boolean hasClearableNotifications() {
         if (mNotificationData != null) {
             return mNotificationData.size() > 0 && mNotificationData.hasClearableItems();
         }
         return false; 
      }
- 
+
      boolean hasVisibleNotifications() {
         if (mNotificationData != null) {
             return mNotificationData.size() > 0 && mNotificationData.hasVisibleItems();
@@ -2214,7 +2181,7 @@ protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutP
             }
             final View signal2 = mStatusBarView.findViewById(R.id.signal_cluster);
             final View battery = mStatusBarView.findViewById(R.id.battery);
-	    
+        
             final AnimatorSet lightsOutAnim = new AnimatorSet();
             lightsOutAnim.playTogether(
                     ObjectAnimator.ofFloat(notifications, View.ALPHA, 0),
@@ -2222,7 +2189,7 @@ protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutP
                     ObjectAnimator.ofFloat(signal, View.ALPHA, 0),
                     ObjectAnimator.ofFloat(battery, View.ALPHA, 0.5f),
                     ObjectAnimator.ofFloat(mClock, View.ALPHA, 0.5f)
-		);
+        );
             lightsOutAnim.setDuration(750);
 
             final AnimatorSet lightsOnAnim = new AnimatorSet();
@@ -2232,7 +2199,7 @@ protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutP
                     ObjectAnimator.ofFloat(signal, View.ALPHA, 1),
                     ObjectAnimator.ofFloat(battery, View.ALPHA, 1),
                     ObjectAnimator.ofFloat(mClock, View.ALPHA, 1)
-  		);
+          );
             lightsOnAnim.setDuration(250);
 
             mLightsOutAnimation = lightsOutAnim;
@@ -2643,11 +2610,11 @@ protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutP
 
     private View.OnClickListener mClockClickListener = new View.OnClickListener() {
         public void onClick(View v) {
-        	Intent intent = new Intent("android.intent.action.MAIN");
-        	intent.setComponent(ComponentName.unflattenFromString("com.android.deskclock/com.android.deskclock.DeskClock"));
-        	intent.addCategory("android.intent.category.LAUNCHER");
-        	startActivityDismissingKeyguard(
-        			intent, true);
+            Intent intent = new Intent("android.intent.action.MAIN");
+            intent.setComponent(ComponentName.unflattenFromString("com.android.deskclock/com.android.deskclock.DeskClock"));
+            intent.addCategory("android.intent.category.LAUNCHER");
+            startActivityDismissingKeyguard(
+                    intent, true);
         }
     };
 
@@ -2959,7 +2926,7 @@ protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutP
     /**
      *  ContentObserver to watch for Quick Settings tiles changes
      * @author dvtonder
-     * @author kufikugel	
+     * @author kufikugel    
      *
      */
     private class TilesChangedObserver extends ContentObserver {
@@ -2971,7 +2938,8 @@ protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutP
         public void onChange(boolean selfChange) {
             onChange(selfChange, null);
 
-	    setNotificationWallpaperHelper();
+
+        setNotificationWallpaperHelper();
             setNotificationAlphaHelper(); 
 
             if (mSettingsContainer != null) {
@@ -2982,7 +2950,7 @@ protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutP
         @Override
         public void onChange(boolean selfChange, Uri uri) {
 
-	    setNotificationWallpaperHelper();
+        setNotificationWallpaperHelper();
             setNotificationAlphaHelper();
 
             if (mSettingsContainer != null) {
@@ -3015,10 +2983,14 @@ protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutP
             cr.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.QS_DYNAMIC_WIFI),
                     false, this);
-	    cr.registerContentObserver(
+        cr.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.NOTIF_WALLPAPER_ALPHA),
                     false, this, UserHandle.USER_ALL);
-                    setNotificationWallpaperHelper(); 
+                    setNotificationWallpaperHelper();
+
+        cr.registerContentObserver(
+                    Settings.Secure.getUriFor(Settings.Secure.UI_MODE_IS_TOGGLED),
+                    false, this); 
 
             cr.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.NOTIF_ALPHA),
