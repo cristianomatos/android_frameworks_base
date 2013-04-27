@@ -3337,6 +3337,13 @@ public final class Settings {
          */
         public static final String DISABLE_FULLSCREEN_KEYBOARD = "disable_fullscreen_keyboard";
 
+	/**
+         * NFC polling mode configuration key
+         *
+         * @hide
+         */
+        public static final String NFC_POLLING_MODE = "nfc_polling_mode";
+
         /**
          * Whether to use a separate delay for "slide to unlock" and security
          * lock
