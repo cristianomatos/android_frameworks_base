@@ -20,16 +20,18 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.LayoutTransition;
 import android.app.StatusBarManager;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.PorterDuff.Mode; 
+import android.graphics.PorterDuff.Mode;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
@@ -51,11 +53,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import java.io.File; 
+import java.io.File;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
-import java.util.List; 
+import java.util.List;
 
 import com.android.internal.statusbar.IStatusBarService;
 import com.android.systemui.R;
@@ -65,7 +67,7 @@ import com.android.systemui.statusbar.policy.KeyButtonView;
 import com.android.systemui.statusbar.policy.ExtensibleKeyButtonView;
 import com.android.systemui.statusbar.policy.DeadZone;
 
-public class NavigationBarView extends LinearLayout {
+public class NavigationBarView extends LinearLayout implements BaseStatusBar.NavigationBarCallback {
     final static boolean DEBUG = false;
     final static String TAG = "PhoneStatusBar/NavigationBarView";
 
@@ -91,8 +93,11 @@ public class NavigationBarView extends LinearLayout {
 
     private Drawable mBackIcon, mBackLandIcon, mBackAltIcon, mBackAltLandIcon;
     
-    private DelegateViewHelper mDelegateHelper;
+    public DelegateViewHelper mDelegateHelper;
     private DeadZone mDeadZone;
+
+    private SettingsObserver mSettingsObserver;
+    private BroadcastObserver mBroadcastObserver;
 
     // workaround for LayoutTransitions leaving the nav buttons in a weird state (bug 5549288)
     final static boolean WORKAROUND_INVALID_LAYOUT = true;
@@ -120,8 +125,9 @@ public class NavigationBarView extends LinearLayout {
     private int mAlphaMode;
     private int mNavBarColor;
     private int mNavBarButtonColor;
-    private int mNavBarButtonColorMode; 
-    private boolean mIsHome = true; 
+    private int mNavBarButtonColorMode;
+    private boolean mIsHome = true;
+    private boolean mAppIsBinded = false;
 
     public String[] mClickActions = new String[7];
     public String[] mLongpressActions = new String[7];
@@ -217,10 +223,6 @@ public class NavigationBarView extends LinearLayout {
         return mCurrentView.findViewById(R.id.menu);
     }
 
-    public View getMenuButton() {
-        return mCurrentView.findViewById(R.id.menu);
-    }
-
     public View getBackButton() {
         return mCurrentView.findViewById(R.id.back);
     }
@@ -284,6 +286,7 @@ public class NavigationBarView extends LinearLayout {
             int mLongpressEnabled = Settings.System.getInt(mContext.getContentResolver(),
                     Settings.System.SYSTEMUI_NAVBAR_LONG_ENABLE, 0);
 
+            mAppIsBinded = false;
             for (int j = 0; j < mNumberOfButtons; j++) {
 
                 if (mLongpressEnabled == 0) {
@@ -319,7 +322,7 @@ public class NavigationBarView extends LinearLayout {
         }
         setMenuVisibility(false, true);
 
- 	Drawable bg = mContext.getResources().getDrawable(R.drawable.nav_bar_bg);
+        Drawable bg = mContext.getResources().getDrawable(R.drawable.nav_bar_bg);
         if(bg instanceof ColorDrawable) {
             BackgroundAlphaColorDrawable bacd = new BackgroundAlphaColorDrawable(
                     mNavBarColor != -2 ? mNavBarColor : ((ColorDrawable) bg).getColor());
@@ -372,10 +375,10 @@ public class NavigationBarView extends LinearLayout {
                 v.setContentDescription(r.getString(R.string.accessibility_menu));
                 v.setGlowBackground(landscape ? R.drawable.ic_sysbar_highlight_land
                         : R.drawable.ic_sysbar_highlight);
-		if (mNavBarButtonColor == 0x00000000)
+                if (mNavBarButtonColor == 0x00000000)
                     v.setColorFilter(null);
                 else
-                    v.setColorFilter(mNavBarButtonColor, Mode.SRC_ATOP); 
+                    v.setColorFilter(mNavBarButtonColor, Mode.SRC_ATOP);
                 return v;
 
             case KEY_MENU_LEFT:
@@ -390,10 +393,10 @@ public class NavigationBarView extends LinearLayout {
                 v.setContentDescription(r.getString(R.string.accessibility_menu));
                 v.setGlowBackground(landscape ? R.drawable.ic_sysbar_highlight_land
                         : R.drawable.ic_sysbar_highlight);
-		if (mNavBarButtonColor == 0x00000000)
+                if (mNavBarButtonColor == 0x00000000)
                     v.setColorFilter(null);
                 else
-                    v.setColorFilter(mNavBarButtonColor, Mode.SRC_ATOP); 
+                    v.setColorFilter(mNavBarButtonColor, Mode.SRC_ATOP);
                 return v;
 
         }
@@ -418,16 +421,17 @@ public class NavigationBarView extends LinearLayout {
                 File f = new File(Uri.parse(iconUri).getPath());
                 if (f.exists()) {
                     v.setImageDrawable(new BitmapDrawable(getResources(), f.getAbsolutePath()));
-		    if (mNavBarButtonColor == 0x00000000 || mNavBarButtonColorMode == 1)
+                    if (mNavBarButtonColor == 0x00000000 || mNavBarButtonColorMode == 1)
                         v.setColorFilter(null);
                     else
-                        v.setColorFilter(mNavBarButtonColor, Mode.MULTIPLY); 
+                        v.setColorFilter(mNavBarButtonColor, Mode.MULTIPLY);
                     drawableSet = true;
                 }
             }
             if (!drawableSet && clickAction != null && !clickAction.startsWith("**")) {
                 // here it's not a system action (**action**), so it must be an
                 // app intent
+                mAppIsBinded = true;
                 try {
                     Drawable d = mContext.getPackageManager().getActivityIcon(
                             Intent.parseUri(clickAction, 0));
@@ -439,10 +443,10 @@ public class NavigationBarView extends LinearLayout {
                         v.setPaddingRelative(appIconPadding[0], appIconPadding[1],
                                 appIconPadding[2], appIconPadding[3]);
                     v.setImageDrawable(d);
-		    if (mNavBarButtonColor == 0x00000000  || mNavBarButtonColorMode != 0)
+                    if (mNavBarButtonColor == 0x00000000  || mNavBarButtonColorMode != 0)
                         v.setColorFilter(null);
                     else
-                        v.setColorFilter(mNavBarButtonColor, Mode.MULTIPLY); 
+                        v.setColorFilter(mNavBarButtonColor, Mode.MULTIPLY);
                     drawableSet = true;
                 } catch (NameNotFoundException e) {
                     e.printStackTrace();
@@ -455,11 +459,11 @@ public class NavigationBarView extends LinearLayout {
         }
 
         if (!drawableSet) {
-            v.setImageDrawable(getNavbarIconImage(landscape, clickAction));
-	    if (mNavBarButtonColor == 0x00000000)
+            v.setImageDrawable(getNavbarIconImage(clickAction));
+            if (mNavBarButtonColor == 0x00000000)
                 v.setColorFilter(null);
             else
-                v.setColorFilter(mNavBarButtonColor, Mode.SRC_ATOP); 
+                v.setColorFilter(mNavBarButtonColor, Mode.SRC_ATOP);
         }
 
         v.setGlowBackground(landscape ? R.drawable.ic_sysbar_highlight_land
@@ -522,6 +526,7 @@ public class NavigationBarView extends LinearLayout {
         }
     };
 
+    @Override
     public void setNavigationIconHints(int hints) {
         setNavigationIconHints(hints, false);
     }
@@ -555,9 +560,10 @@ public class NavigationBarView extends LinearLayout {
         }
 
         setDisabledFlags(mDisabledFlags, true);
-	updateKeyguardAlpha(); 
+        updateKeyguardAlpha();
     }
 
+    @Override
     public void setDisabledFlags(int disabledFlags) {
         setDisabledFlags(disabledFlags, false);
     }
@@ -574,7 +580,7 @@ public class NavigationBarView extends LinearLayout {
         } else {
             setBackgroundAlpha(mAlpha);
         }
-    } 
+    }
 
     public void setDisabledFlags(int disabledFlags, boolean force) {
         if (!force && mDisabledFlags == disabledFlags) return;
@@ -586,7 +592,7 @@ public class NavigationBarView extends LinearLayout {
         final boolean disableBack = ((disabledFlags & View.STATUS_BAR_DISABLE_BACK) != 0)
                 && ((mNavigationIconHints & StatusBarManager.NAVIGATION_HINT_BACK_ALT) == 0);
         final boolean disableSearch = ((disabledFlags & View.STATUS_BAR_DISABLE_SEARCH) != 0);
-	final boolean keygaurdProbablyEnabled = isKeyguardEnabled(); 
+        final boolean keygaurdProbablyEnabled = isKeyguardEnabled();
 
         if (SLIPPERY_WHEN_DISABLED) {
             setSlippery(disableHome && disableRecent && disableBack && disableSearch);
@@ -618,7 +624,7 @@ public class NavigationBarView extends LinearLayout {
         }
 
         getSearchLight().setVisibility(keygaurdProbablyEnabled ? View.VISIBLE : View.GONE);
-        updateKeyguardAlpha(); 
+        updateKeyguardAlpha();
     }
 
     public void setSlippery(boolean newSlippery) {
@@ -637,6 +643,7 @@ public class NavigationBarView extends LinearLayout {
         }
     }
 
+    @Override
     public void setMenuVisibility(final boolean show) {
         setMenuVisibility(show, false);
     }
@@ -794,14 +801,37 @@ public class NavigationBarView extends LinearLayout {
              group.setMotionEventSplittingEnabled(false);
          }
          mCurrentView = mRotatedViews[Surface.ROTATION_0];
+         updateSettings();
+    }
 
- 	 // this takes care of activity broadcasts for alpha mode
-         BroadcastObserver broadcastObserver = new BroadcastObserver(new Handler());
-         broadcastObserver.observe(); 
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
 
-         // this takes care of making the buttons
-         SettingsObserver settingsObserver = new SettingsObserver(new Handler());
-         settingsObserver.observe();
+        // this takes care of activity broadcasts for alpha mode
+        mBroadcastObserver = new BroadcastObserver(new Handler());
+        mBroadcastObserver.observe();
+
+        // this takes care of making the buttons
+        mSettingsObserver = new SettingsObserver(new Handler());
+        mSettingsObserver.observe();
+
+        // add intent actions to listen on it
+        // apps available to check if apps on external sdcard
+        // are available and reconstruct the button icons
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_EXTERNAL_APPLICATIONS_AVAILABLE);
+        filter.addAction(Intent.ACTION_EXTERNAL_APPLICATIONS_UNAVAILABLE);
+        mContext.registerReceiver(mBroadcastReceiver, filter);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+
+        mContext.unregisterReceiver(mBroadcastReceiver);
+        mContext.getContentResolver().unregisterContentObserver(mSettingsObserver);
+        mContext.getContentResolver().unregisterContentObserver(mBroadcastObserver);
     }
 
     public void reorient() {
@@ -811,7 +841,7 @@ public class NavigationBarView extends LinearLayout {
         }
 
         if (mTablet_UI != 0 || Settings.System.getInt(mContext.getContentResolver(),
-                        Settings.System.NAVIGATION_BAR_CAN_MOVE, 1) != 1) { 
+                        Settings.System.NAVIGATION_BAR_CAN_MOVE, 1) != 1) {
             mCurrentView = mRotatedViews[Surface.ROTATION_0];
         } else {
             mCurrentView = mRotatedViews[rot];
@@ -892,6 +922,19 @@ public class NavigationBarView extends LinearLayout {
         bg.setAlpha(a);
     }
 
+    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            if (Intent.ACTION_EXTERNAL_APPLICATIONS_UNAVAILABLE.equals(action)
+                        || Intent.ACTION_EXTERNAL_APPLICATIONS_AVAILABLE.equals(action)) {
+                if (mAppIsBinded) {
+                    updateSettings();
+                }
+            }
+        }
+    };
+
     class BroadcastObserver extends ContentObserver {
         BroadcastObserver(Handler handler) {
             super(handler);
@@ -911,7 +954,7 @@ public class NavigationBarView extends LinearLayout {
                    Settings.System.IS_HOME, 1) == 1;
             updateKeyguardAlpha();
         }
-    } 
+    }
 
     class SettingsObserver extends ContentObserver {
         SettingsObserver(Handler handler) {
@@ -936,21 +979,21 @@ public class NavigationBarView extends LinearLayout {
                     Settings.System.getUriFor(Settings.System.NAVIGATION_BAR_TINT), false,
                     this);
 
-	    resolver.registerContentObserver(
+            resolver.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.NAVIGATION_BAR_BUTTON_TINT), false,
                     this);
 
             resolver.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.NAVIGATION_BAR_BUTTON_TINT_MODE), false,
-                    this); 
+                    this);
 
-	    resolver.registerContentObserver(
+            resolver.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.NAVIGATION_BAR_ALPHA), false,
                     this);
 
             resolver.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.STATUS_NAV_BAR_ALPHA_MODE), false,
-                    this); 
+                    this);
 
             for (int j = 0; j < 7; j++) { // watch all 5 settings for changes.
                 resolver.registerContentObserver(
@@ -992,20 +1035,20 @@ public class NavigationBarView extends LinearLayout {
         mTablet_UI = Settings.System.getInt(resolver,
                 Settings.System.TABLET_UI, 0);
 
-	mNavBarButtonColor = Settings.System.getInt(mContext.getContentResolver(),
+        mNavBarButtonColor = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.NAVIGATION_BAR_BUTTON_TINT, 0x00000000);
 
         mNavBarButtonColorMode = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.NAVIGATION_BAR_BUTTON_TINT_MODE, 0); 
+                Settings.System.NAVIGATION_BAR_BUTTON_TINT_MODE, 0);
 
-	mNavBarColor = Settings.System.getInt(resolver,
+        mNavBarColor = Settings.System.getInt(resolver,
                 Settings.System.NAVIGATION_BAR_TINT, -2);
 
         mAlpha = 1 - Settings.System.getFloat(resolver,
                 Settings.System.NAVIGATION_BAR_ALPHA, 0.0f);
 
         mAlphaMode = Settings.System.getInt(resolver,
-                Settings.System.STATUS_NAV_BAR_ALPHA_MODE, 1); 
+                Settings.System.STATUS_NAV_BAR_ALPHA_MODE, 1);
 
         mNumberOfButtons = Settings.System.getInt(resolver,
                 Settings.System.NAVIGATION_BAR_BUTTONS_QTY, 0);
@@ -1045,7 +1088,7 @@ public class NavigationBarView extends LinearLayout {
 
     }
 
-    private Drawable getNavbarIconImage(boolean landscape, String uri) {
+    private Drawable getNavbarIconImage(String uri) {
 
         if (uri == null)
             return getResources().getDrawable(R.drawable.ic_sysbar_null);
@@ -1077,7 +1120,7 @@ public class NavigationBarView extends LinearLayout {
                 return getResources().getDrawable(R.drawable.ic_sysbar_lastapp);
             } else if (uri.equals(ACTION_KILL)) {
 
-                return getResources().getDrawable(R.drawable.ic_sysbar_killtask);
+                return getResources().getDrawable(R.drawable.ic_sysbar_widget);
             } else if (uri.equals(ACTION_POWER)) {
 
                 return getResources().getDrawable(R.drawable.ic_sysbar_power);
@@ -1118,4 +1161,5 @@ public class NavigationBarView extends LinearLayout {
                 return "VISIBLE";
         }
     }
+
 }
