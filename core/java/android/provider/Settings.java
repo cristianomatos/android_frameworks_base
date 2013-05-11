@@ -3331,6 +3331,12 @@ public final class Settings {
          */
         public static final String EXPANDED_DESKTOP_STYLE = "expanded_desktop_style";
 
+	/**
+         * Override and forcefully disable the fullscreen keyboard
+         * @hide
+         */
+        public static final String DISABLE_FULLSCREEN_KEYBOARD = "disable_fullscreen_keyboard";
+
         /**
          * Whether to use a separate delay for "slide to unlock" and security
          * lock
