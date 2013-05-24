@@ -370,6 +370,8 @@ public class PhoneStatusBar extends BaseStatusBar {
         mDreamManager = IDreamManager.Stub.asInterface(
                 ServiceManager.checkService(DreamService.DREAM_SERVICE));
 
+	mCurrUiInvertedMode = mContext.getResources().getConfiguration().uiInvertedMode; 
+
         CustomTheme currentTheme = mContext.getResources().getConfiguration().customTheme;
         if (currentTheme != null) {
             mCurrentTheme = (CustomTheme)currentTheme.clone();
@@ -513,10 +515,9 @@ public class PhoneStatusBar extends BaseStatusBar {
         mClearButton.setEnabled(false);
         mDateView = (DateView)mStatusBarWindow.findViewById(R.id.date);
 
-    mUiModeIsToggled = Settings.Secure.getInt(mContext.getContentResolver(),
-                              Settings.Secure.UI_MODE_IS_TOGGLED, 0) == 1; 
-
-        mHasSettingsPanel = res.getBoolean(R.bool.config_hasSettingsPanel);
+        mUiModeIsToggled = Settings.Secure.getInt(mContext.getContentResolver(),
+                              Settings.Secure.UI_MODE_IS_TOGGLED, 0) == 1;
+	mHasSettingsPanel = res.getBoolean(R.bool.config_hasSettingsPanel);
         mHasFlipSettings = res.getBoolean(R.bool.config_hasFlipSettingsPanel);
 
         mDateTimeView = mNotificationPanelHeader.findViewById(R.id.datetime);
@@ -2766,11 +2767,20 @@ protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutP
         final Context context = mContext;
         final Resources res = context.getResources();
 
+	// detect inverted ui mode change
+        int uiInvertedMode =
+            mContext.getResources().getConfiguration().uiInvertedMode; 
+
         // detect theme change.
         CustomTheme newTheme = res.getConfiguration().customTheme;
-        if (newTheme != null &&
-                (mCurrentTheme == null || !mCurrentTheme.equals(newTheme))) {
-            mCurrentTheme = (CustomTheme)newTheme.clone();
+        if ((newTheme != null &&
+                (mCurrentTheme == null || !mCurrentTheme.equals(newTheme)))
+            || uiInvertedMode != mCurrUiInvertedMode) {
+            if (uiInvertedMode != mCurrUiInvertedMode) {
+                mCurrUiInvertedMode = uiInvertedMode;
+            } else {
+                mCurrentTheme = (CustomTheme) newTheme.clone();
+            } 
             recreateStatusBar();
         } else {
 
@@ -2926,7 +2936,7 @@ protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutP
     /**
      *  ContentObserver to watch for Quick Settings tiles changes
      * @author dvtonder
-     * @author kufikugel    
+     * @author kufikugel
      *
      */
     private class TilesChangedObserver extends ContentObserver {
@@ -2938,13 +2948,12 @@ protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutP
         public void onChange(boolean selfChange) {
             onChange(selfChange, null);
 
-
         setNotificationWallpaperHelper();
-            setNotificationAlphaHelper(); 
+            setNotificationAlphaHelper();
 
             if (mSettingsContainer != null) {
                 mQS.setupQuickSettings();
-            }  
+            }
         }
 
         @Override
@@ -2987,14 +2996,9 @@ protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutP
                     Settings.System.getUriFor(Settings.System.NOTIF_WALLPAPER_ALPHA),
                     false, this, UserHandle.USER_ALL);
                     setNotificationWallpaperHelper();
-
-        cr.registerContentObserver(
-                    Settings.Secure.getUriFor(Settings.Secure.UI_MODE_IS_TOGGLED),
-                    false, this); 
-
-            cr.registerContentObserver(
+	    cr.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.NOTIF_ALPHA),
-                    false, this, UserHandle.USER_ALL);  
+                    false, this, UserHandle.USER_ALL);
         }
     }
 
@@ -3010,11 +3014,11 @@ protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutP
             if (notifiBack != null && !notifiBack.isEmpty()) {
                 background.setColorFilter(Integer.parseInt(notifiBack), Mode.SRC_ATOP);
             }
-         background.setAlpha((int) ((1-wallpaperAlpha) * 255)); 
+         background.setAlpha((int) ((1-wallpaperAlpha) * 255));
         }
     }
 
-    private void setNotificationAlphaHelper() { 
+    private void setNotificationAlphaHelper() {
         float notifAlpha = Settings.System.getFloat(mContext.getContentResolver(), Settings.System.NOTIF_ALPHA, 0.0f);
         if (mPile != null) {
             int N = mNotificationData.size();
@@ -3025,7 +3029,6 @@ protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutP
               View large = ent.getLargeView();
               if (large != null && large.getBackground()!=null) large.getBackground().setAlpha((int) ((1-notifAlpha) * 255));
             }
-        } 
-    }   
-
+        }
+    }
 }
