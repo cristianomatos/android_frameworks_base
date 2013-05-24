@@ -124,13 +124,13 @@ public:
             String8 leaf(group->getLeaf());
             mLeafName = String8(leaf);
             mParams = file->getGroupEntry().toParams();
-            NOISY(printf("Dir %s: mcc=%d mnc=%d lang=%c%c cnt=%c%c orient=%d ui=%d density=%d touch=%d key=%d inp=%d nav=%d\n",
+            NOISY(printf("Dir %s: mcc=%d mnc=%d lang=%c%c cnt=%c%c orient=%d uiInverted=%d ui=%d density=%d touch=%d key=%d inp=%d nav=%d\n",
                    group->getPath().string(), mParams.mcc, mParams.mnc,
                    mParams.language[0] ? mParams.language[0] : '-',
                    mParams.language[1] ? mParams.language[1] : '-',
                    mParams.country[0] ? mParams.country[0] : '-',
                    mParams.country[1] ? mParams.country[1] : '-',
-                   mParams.orientation, mParams.uiMode,
+                   mParams.orientation, mParams.uiInvertedMode, mParams.uiMode,
                    mParams.density, mParams.touchscreen, mParams.keyboard,
                    mParams.inputFlags, mParams.navigation));
             mPath = "res";
@@ -1568,37 +1568,11 @@ static const char whitespace[] =
     return whitespace + sizeof(whitespace) - 1 - indent*4;
 }
 
-static String8 flattenSymbol(const String8& symbol) {
-    String8 result(symbol);
-    ssize_t first;
-    if ((first = symbol.find(":", 0)) >= 0
-            || (first = symbol.find(".", 0)) >= 0) {
-        size_t size = symbol.size();
-        char* buf = result.lockBuffer(size);
-        for (size_t i = first; i < size; i++) {
-            if (buf[i] == ':' || buf[i] == '.') {
-                buf[i] = '_';
-            }
-        }
-        result.unlockBuffer(size);
-    }
-    return result;
-}
-
-static String8 getSymbolPackage(const String8& symbol, const sp<AaptAssets>& assets, bool pub) {
-    ssize_t colon = symbol.find(":", 0);
-    if (colon >= 0) {
-        return String8(symbol.string(), colon);
-    }
-    return pub ? assets->getPackage() : assets->getSymbolsPrivatePackage();
-}
-
-static String8 getSymbolName(const String8& symbol) {
-    ssize_t colon = symbol.find(":", 0);
-    if (colon >= 0) {
-        return String8(symbol.string() + colon + 1);
-    }
-    return symbol;
+static status_t fixupSymbol(String16* inoutSymbol)
+{
+    inoutSymbol->replaceAll('.', '_');
+    inoutSymbol->replaceAll(':', '_');
+    return NO_ERROR;
 }
 
 static String16 getAttributeComment(const sp<AaptAssets>& assets,
@@ -1642,8 +1616,12 @@ static status_t writeLayoutClasses(
     size_t N = symbols->getNestedSymbols().size();
     for (i=0; i<N; i++) {
         sp<AaptSymbols> nsymbols = symbols->getNestedSymbols().valueAt(i);
-        String8 realClassName(symbols->getNestedSymbols().keyAt(i));
-        String8 nclassName(flattenSymbol(realClassName));
+        String16 nclassName16(symbols->getNestedSymbols().keyAt(i));
+        String8 realClassName(nclassName16);
+        if (fixupSymbol(&nclassName16) != NO_ERROR) {
+            hasErrors = true;
+        }
+        String8 nclassName(nclassName16);
 
         SortedVector<uint32_t> idents;
         Vector<uint32_t> origOrder;
@@ -1733,11 +1711,13 @@ static status_t writeLayoutClasses(
                     }
                     comment = String16(comment.string(), p-comment.string());
                 }
+                String16 name(name8);
+                fixupSymbol(&name);
                 fprintf(fp, "%s   <tr><td><code>{@link #%s_%s %s:%s}</code></td><td>%s</td></tr>\n",
                         indentStr, nclassName.string(),
-                        flattenSymbol(name8).string(),
-                        getSymbolPackage(name8, assets, true).string(),
-                        getSymbolName(name8).string(),
+                        String8(name).string(),
+                        assets->getPackage().string(),
+                        String8(name).string(),
                         String8(comment).string());
             }
         }
@@ -1751,9 +1731,11 @@ static status_t writeLayoutClasses(
                 if (!publicFlags.itemAt(a) && !includePrivate) {
                     continue;
                 }
+                String16 name(sym.name);
+                fixupSymbol(&name);
                 fprintf(fp, "%s   @see #%s_%s\n",
                         indentStr, nclassName.string(),
-                        flattenSymbol(sym.name).string());
+                        String8(name).string());
             }
         }
         fprintf(fp, "%s */\n", getIndentSpace(indent));
@@ -1796,6 +1778,10 @@ static status_t writeLayoutClasses(
                 } else {
                     getAttributeComment(assets, name8, &typeComment);
                 }
+                String16 name(name8);
+                if (fixupSymbol(&name) != NO_ERROR) {
+                    hasErrors = true;
+                }
 
                 uint32_t typeSpecFlags = 0;
                 String16 name16(sym.name);
@@ -1822,8 +1808,9 @@ static status_t writeLayoutClasses(
                             "%s  <p>This symbol is the offset where the {@link %s.R.attr#%s}\n"
                             "%s  attribute's value can be found in the {@link #%s} array.\n",
                             indentStr,
-                            getSymbolPackage(name8, assets, pub).string(),
-                            getSymbolName(name8).string(),
+                            pub ? assets->getPackage().string()
+                                : assets->getSymbolsPrivatePackage().string(),
+                            String8(name).string(),
                             indentStr, nclassName.string());
                 }
                 if (typeComment.size() > 0) {
@@ -1836,19 +1823,18 @@ static status_t writeLayoutClasses(
                 if (comment.size() > 0) {
                     if (pub) {
                         fprintf(fp,
-                                "%s  <p>This corresponds to the global attribute\n"
+                                "%s  <p>This corresponds to the global attribute"
                                 "%s  resource symbol {@link %s.R.attr#%s}.\n",
                                 indentStr, indentStr,
-                                getSymbolPackage(name8, assets, true).string(),
-                                getSymbolName(name8).string());
+                                assets->getPackage().string(),
+                                String8(name).string());
                     } else {
                         fprintf(fp,
                                 "%s  <p>This is a private symbol.\n", indentStr);
                     }
                 }
                 fprintf(fp, "%s  @attr name %s:%s\n", indentStr,
-                        getSymbolPackage(name8, assets, pub).string(),
-                        getSymbolName(name8).string());
+                        "android", String8(name).string());
                 fprintf(fp, "%s*/\n", indentStr);
                 if (deprecated) {
                     fprintf(fp, "%s@Deprecated\n", indentStr);
@@ -1856,7 +1842,7 @@ static status_t writeLayoutClasses(
                 fprintf(fp,
                         "%spublic static final int %s_%s = %d;\n",
                         indentStr, nclassName.string(),
-                        flattenSymbol(name8).string(), (int)pos);
+                        String8(name).string(), (int)pos);
             }
         }
     }
@@ -1879,8 +1865,12 @@ static status_t writeTextLayoutClasses(
     size_t N = symbols->getNestedSymbols().size();
     for (i=0; i<N; i++) {
         sp<AaptSymbols> nsymbols = symbols->getNestedSymbols().valueAt(i);
-        String8 realClassName(symbols->getNestedSymbols().keyAt(i));
-        String8 nclassName(flattenSymbol(realClassName));
+        String16 nclassName16(symbols->getNestedSymbols().keyAt(i));
+        String8 realClassName(nclassName16);
+        if (fixupSymbol(&nclassName16) != NO_ERROR) {
+            hasErrors = true;
+        }
+        String8 nclassName(nclassName16);
 
         SortedVector<uint32_t> idents;
         Vector<uint32_t> origOrder;
@@ -1940,6 +1930,10 @@ static status_t writeTextLayoutClasses(
                 } else {
                     getAttributeComment(assets, name8, &typeComment);
                 }
+                String16 name(name8);
+                if (fixupSymbol(&name) != NO_ERROR) {
+                    hasErrors = true;
+                }
 
                 uint32_t typeSpecFlags = 0;
                 String16 name16(sym.name);
@@ -1954,7 +1948,7 @@ static status_t writeTextLayoutClasses(
                 fprintf(fp,
                         "int styleable %s_%s %d\n",
                         nclassName.string(),
-                        flattenSymbol(name8).string(), (int)pos);
+                        String8(name).string(), (int)pos);
             }
         }
     }
@@ -1988,7 +1982,10 @@ static status_t writeSymbolClass(
         if (!assets->isJavaSymbol(sym, includePrivate)) {
             continue;
         }
-        String8 name8(sym.name);
+        String16 name(sym.name);
+        if (fixupSymbol(&name) != NO_ERROR) {
+            return UNKNOWN_ERROR;
+        }
         String16 comment(sym.comment);
         bool haveComment = false;
         bool deprecated = false;
@@ -2029,7 +2026,7 @@ static status_t writeSymbolClass(
         }
         fprintf(fp, id_format,
                 getIndentSpace(indent),
-                flattenSymbol(name8).string(), (int)sym.int32Val);
+                String8(name).string(), (int)sym.int32Val);
     }
 
     for (i=0; i<N; i++) {
@@ -2040,7 +2037,10 @@ static status_t writeSymbolClass(
         if (!assets->isJavaSymbol(sym, includePrivate)) {
             continue;
         }
-        String8 name8(sym.name);
+        String16 name(sym.name);
+        if (fixupSymbol(&name) != NO_ERROR) {
+            return UNKNOWN_ERROR;
+        }
         String16 comment(sym.comment);
         bool deprecated = false;
         if (comment.size() > 0) {
@@ -2063,7 +2063,7 @@ static status_t writeSymbolClass(
         }
         fprintf(fp, "%spublic static final String %s=\"%s\";\n",
                 getIndentSpace(indent),
-                flattenSymbol(name8).string(), sym.stringVal.string());
+                String8(name).string(), sym.stringVal.string());
     }
 
     sp<AaptSymbols> styleableSymbols;
@@ -2112,10 +2112,14 @@ static status_t writeTextSymbolClass(
             continue;
         }
 
-        String8 name8(sym.name);
+        String16 name(sym.name);
+        if (fixupSymbol(&name) != NO_ERROR) {
+            return UNKNOWN_ERROR;
+        }
+
         fprintf(fp, "int %s %s 0x%08x\n",
                 className.string(),
-                flattenSymbol(name8).string(), (int)sym.int32Val);
+                String8(name).string(), (int)sym.int32Val);
     }
 
     N = symbols->getNestedSymbols().size();
