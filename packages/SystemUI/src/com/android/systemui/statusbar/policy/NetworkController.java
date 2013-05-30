@@ -628,9 +628,12 @@ public class NetworkController extends BroadcastReceiver {
                         // fall through
                     }
                 case TelephonyManager.NETWORK_TYPE_UMTS:
-                    mDataIconList = TelephonyIcons.DATA_3G[mInetCondition];
-                    mDataTypeIconId = R.drawable.stat_sys_data_connected_3g;
-                    mQSDataTypeIconId = R.drawable.ic_qs_signal_3g;
+                case TelephonyManager.NETWORK_TYPE_TD_SCDMA:
+                    mDataIconList = mUseAltSignal ? TelephonyIcons.DATA_3G_ALT[mInetCondition] :
+                        TelephonyIcons.DATA_3G[mInetCondition];
+                    mDataTypeIconId = mDataIconList[0];
+                    mQSDataTypeIconId = (isConnected ? R.drawable.ic_qs_signal_full_3g
+                            : R.drawable.ic_qs_signal_3g);
                     mContentDescriptionDataType = mContext.getString(
                             R.string.accessibility_data_connection_3g);
                     break;
