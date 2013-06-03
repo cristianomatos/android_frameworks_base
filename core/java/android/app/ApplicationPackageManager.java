@@ -1329,6 +1329,27 @@ final class ApplicationPackageManager extends PackageManager {
         return false;
     }
 
+    @CosHook(CosHook.CosHookType.NEW_METHOD)
+    @Override
+    public String[] getRevokedPermissions(String packageName) {
+        try {
+            return mPM.getRevokedPermissions(packageName);
+        } catch (RemoteException e) {
+            // Should never happen!
+        }
+        return new String[0];
+    }
+
+    @CosHook(CosHook.CosHookType.NEW_METHOD)
+    @Override
+    public void setRevokedPermissions(String packageName, String[] perms) {
+        try {
+            mPM.setRevokedPermissions(packageName, perms);
+        } catch (RemoteException e) {
+            // Should never happen!
+        }
+    }
+
     /**
      * @hide
      */
