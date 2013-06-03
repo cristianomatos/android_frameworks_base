@@ -39,6 +39,8 @@ import com.android.server.wm.WindowManagerService;
 
 import dalvik.system.Zygote;
 
+import android.annotation.CosHook;
+import android.annotation.CosHook.CosHookType;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManagerNative;

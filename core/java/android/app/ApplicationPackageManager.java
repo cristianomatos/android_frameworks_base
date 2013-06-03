@@ -16,6 +16,8 @@
 
 package android.app;
 
+import android.annotation.CosHook;
+import android.annotation.CosHook.CosHookType;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Intent;
