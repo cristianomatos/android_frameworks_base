@@ -2915,12 +2915,6 @@ public final class Settings {
         */
         public static final String EXPANDED_RING_MODE = "expanded_ring_mode";
 
-       /**
-         * HALO enabled, should default to 0 (HALO is disabled)
-         * @hide
-         */
-        public static final String HALO_ENABLED = "halo_enabled";
-
         /**
         * Notification Power Widget - Custom Torch Mode
         * @hide
@@ -2955,6 +2949,12 @@ public final class Settings {
          */
         public static final String STATUS_BAR_BATTERY = "status_bar_battery";
 
+	/**
+         * HALO enabled, should default to 0 (HALO is disabled)
+         * @hide
+         */
+        public static final String HALO_ENABLED = "halo_enabled";
+
  	/**
          * HALO, should default to 0 (no, do not show)
          * @hide
@@ -2978,6 +2978,13 @@ public final class Settings {
          * @hide
          */
         public static final String HALO_SIZE = "halo_size";
+
+	/**
+         * HALO pause activities?, defaults to 0 (no, do not pause) on devices which isLargeRAM() == true
+         * otherwise it defaults to 1 (yes, do pause)
+         * @hide
+         */
+        public static final String HALO_PAUSE = "halo_pause";
 
 	/**
          * Sets transparency of statusbar
