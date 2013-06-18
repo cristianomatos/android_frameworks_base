@@ -1,5 +1,8 @@
 /*
  * Copyright (C) 2006 The Android Open Source Project
+ * Copyright (c) 2012-2013 The Linux Foundation. All rights reserved.
+ *
+ * Not a Contribution.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -203,4 +206,26 @@ public interface TelephonyProperties
      * Ignore RIL_UNSOL_NITZ_TIME_RECEIVED completely, used for debugging/testing.
      */
     static final String PROPERTY_IGNORE_NITZ = "telephony.test.ignore.nitz";
+
+    /**
+     * Set to true to indicates support for simultaneous voice and EvDo.
+     */
+    static final String PROPERTY_SVDO = "ro.ril.svdo";
+
+    /**
+     * Property to control alpha ID display for proactive commands
+     * Type: boolean ( true = alpha display enabled, false = alpha display disabled)
+     */
+    static final String PROPERTY_ALPHA_USRCNF = "persist.atel.noalpha.usrcnf";
+
+     /**
+     * Property to set multi sim feature.
+     * Type:  String(dsds, dsda)
+     */
+    static final String PROPERTY_MULTI_SIM_CONFIG = "persist.multisim.config";
+
+    /**
+     * Property to store default subscription.
+     */
+    static final String PROPERTY_DEFAULT_SUBSCRIPTION = "persist.default.subscription";
 }
