@@ -61,6 +61,8 @@ public class NotificationRowLayout
     HashMap<View, ValueAnimator> mDisappearingViews = new HashMap<View, ValueAnimator>();
 
     private SwipeHelper mSwipeHelper;
+
+    private HashMap<View, Runnable> mDismissRunnables = new HashMap<View, Runnable>();
     
     private OnSizeChangedListener mOnSizeChangedListener;
 
@@ -110,6 +112,10 @@ public class NotificationRowLayout
     public void setOnSizeChangedListener(OnSizeChangedListener l) {
         mOnSizeChangedListener = l;
     }
+
+    public void runOnDismiss(View child, Runnable runnable) {
+        mDismissRunnables.put(child, runnable);
+    } 
 
     @Override
     public void onWindowFocusChanged(boolean hasWindowFocus) {
@@ -172,6 +178,12 @@ public class NotificationRowLayout
         if (veto != null && veto.getVisibility() != View.GONE && mRemoveViews) {
             veto.performClick();
         }
+	NotificationData.setUserDismissed(v);
+
+        Runnable dismissRunnable = mDismissRunnables.remove(v);
+        if (dismissRunnable != null) {
+            dismissRunnable.run();
+        } 
     }
 
     public void onBeginDrag(View v) {
