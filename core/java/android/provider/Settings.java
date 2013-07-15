@@ -2787,6 +2787,19 @@ public final class Settings {
          */
         public static final String LOCKSCREEN_QUICK_UNLOCK = "lockscreen_quick_unlock";
 
+       /**
+	* Whether to collapse the notification area after dismissing the last notification
+	* @hide
+	*/
+        public static final String STATUS_BAR_COLLAPSE_ON_DISMISS = "status_bar_collapse_on_dismiss";
+
+        /** @hide */
+        public static final int STATUS_BAR_COLLAPSE_NEVER = 0;
+        /** @hide */
+        public static final int STATUS_BAR_COLLAPSE_IF_EMPTIED = 1;
+        /** @hide */
+        public static final int STATUS_BAR_COLLAPSE_IF_NO_CLEARABLE = 2;
+
         /**
          * Allows lockscreen to show homescreen widgets
          * The value is boolean (1 or 0).

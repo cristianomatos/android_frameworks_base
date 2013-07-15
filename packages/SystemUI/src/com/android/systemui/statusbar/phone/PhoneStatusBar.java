@@ -2386,7 +2386,7 @@ protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutP
                     }
                 }
                 if (snapshot.isEmpty()) {
-                    animateCollapsePanels(CommandQueue.FLAG_EXCLUDE_NONE);
+                    maybeCollapseAfterNotificationRemoval(true);
                     return;
                 }
                 // Decrease the delay for every row we animate to give the sense of
