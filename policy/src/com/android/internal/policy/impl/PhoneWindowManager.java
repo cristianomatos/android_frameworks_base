@@ -344,6 +344,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     // Behavior of home wake
     boolean mHomeWakeScreen;
 
+    // Behaviour of power wake
+    boolean mPowerWakeScreen;
+
     // Behavior of volume wake
     boolean mVolumeWakeScreen;
 
@@ -617,7 +620,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     Settings.Secure.RING_HOME_BUTTON_BEHAVIOR), false, this,
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.HOME_WAKE_SCREEN), false, this,
+		    Settings.System.BUTTON_WAKE_SCREEN), false, this,
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.VOLUME_WAKE_SCREEN), false, this,
@@ -1389,8 +1392,25 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     Settings.Secure.RING_HOME_BUTTON_BEHAVIOR,
                     Settings.Secure.RING_HOME_BUTTON_BEHAVIOR_DEFAULT,
                     UserHandle.USER_CURRENT);
-            mHomeWakeScreen = (Settings.System.getIntForUser(resolver,
-                    Settings.System.HOME_WAKE_SCREEN, 1, UserHandle.USER_CURRENT) == 1);
+	    switch (Settings.System.getIntForUser(resolver,
+                    Settings.System.BUTTON_WAKE_SCREEN, 2, UserHandle.USER_CURRENT)) {
+                case 0:
+                    //wake via Power
+                    mHomeWakeScreen = false;
+                    mPowerWakeScreen = true;
+                    break;
+                case 1:
+                    //wake via Home
+                    mHomeWakeScreen = true;
+                    mPowerWakeScreen = false;
+                    break;
+                case 2:
+                default:
+                    //wake via either
+                    mHomeWakeScreen = true;
+                    mPowerWakeScreen = true;
+                    break;
+            } 
             mVolumeWakeScreen = (Settings.System.getIntForUser(resolver,
                     Settings.System.VOLUME_WAKE_SCREEN, 0, UserHandle.USER_CURRENT) == 1);
             mVolBtnMusicControls = (Settings.System.getIntForUser(resolver,
@@ -4264,7 +4284,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                                                 mKeyguardMediator.isShowingAndNotHidden() :
                                                 mKeyguardMediator.isShowing()));
 
-        if (keyCode == KeyEvent.KEYCODE_POWER) {
+        if (keyCode == KeyEvent.KEYCODE_POWER && mPowerWakeScreen) {
             policyFlags |= WindowManagerPolicy.FLAG_WAKE;
         }
         final boolean isWakeKey = (policyFlags
@@ -4475,6 +4495,15 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                         cancelPendingRingerChordAction();
                         interceptScreenshotChord();
                     }
+		    if (!isScreenOn && isWakeKey && mPowerWakeScreen) {
+                        if (keyguardActive) {
+                            // If the keyguard is showing, let it wake the device when ready.
+                            mKeyguardMediator.onWakeKeyWhenKeyguardShowingTq(keyCode);
+                        } else {
+                            // Otherwise, wake the device ourselves.
+                            result |= ACTION_WAKE_UP;
+                        }
+                    }
 
                     ITelephony telephonyService = getTelephonyService();
                     boolean hungUp = false;
@@ -4605,6 +4634,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
             // home wake can be configurable so default to no here
             case KeyEvent.KEYCODE_HOME:
+	    case KeyEvent.KEYCODE_POWER:
                 return false;
         }
         return true;
