@@ -2417,6 +2417,7 @@ public class PhoneStatusBar extends BaseStatusBar {
             lightsOnObjs.add(ObjectAnimator.ofFloat(battery, View.ALPHA, 1));
             lightsOnObjs.add(ObjectAnimator.ofFloat(battery2, View.ALPHA, 1));
             lightsOnObjs.add(ObjectAnimator.ofFloat(battery3, View.ALPHA, 1));
+            lightsOnObjs.add(ObjectAnimator.ofFloat(traffic, View.ALPHA, 1));
             if (dockBattery != null) {
                 lightsOnObjs.add(ObjectAnimator.ofFloat(dockBattery, View.ALPHA, 1));
             }
