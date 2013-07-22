@@ -2405,10 +2405,12 @@ public class PhoneStatusBar extends BaseStatusBar {
             if (dockBattery3 != null) {
                 lightsOutObjs.add(ObjectAnimator.ofFloat(dockBattery3, View.ALPHA, 0.5f));
             }
-            lightsOutObjs.add(ObjectAnimator.ofFloat(clock, View.ALPHA, 0.5f));
-	    lightsOutObjs.add(ObjectAnimator.ofFloat(traffic, View.ALPHA, 0.5f)); 
-
-	    lightsOutObjs.add(ObjectAnimator.ofFloat(cclock, View.ALPHA, 1));
+	    if (clock != null) {
+                lightsOutObjs.add(ObjectAnimator.ofFloat(clock, View.ALPHA, 0.5f));
+            }
+            if (cclock != null) {
+                lightsOutObjs.add(ObjectAnimator.ofFloat(cclock, View.ALPHA, 0.5f));
+            }
 
             List<ObjectAnimator> lightsOnObjs = new ArrayList<ObjectAnimator>();
             lightsOnObjs.add(ObjectAnimator.ofFloat(notifications, View.ALPHA, 1));
@@ -2428,10 +2430,12 @@ public class PhoneStatusBar extends BaseStatusBar {
             if (dockBattery3 != null) {
                 lightsOnObjs.add(ObjectAnimator.ofFloat(dockBattery3, View.ALPHA, 1));
             }
-            lightsOnObjs.add(ObjectAnimator.ofFloat(clock, View.ALPHA, 1));
-	    lightsOnObjs.add(ObjectAnimator.ofFloat(traffic, View.ALPHA, 1)); 
-
-	    lightsOnObjs.add(ObjectAnimator.ofFloat(cclock, View.ALPHA, 1));
+            if (clock != null) {
+                lightsOnObjs.add(ObjectAnimator.ofFloat(clock, View.ALPHA, 1));
+            }
+            if (cclock != null) {
+                lightsOnObjs.add(ObjectAnimator.ofFloat(cclock, View.ALPHA, 1));
+            } 
 
             final AnimatorSet lightsOutAnim = new AnimatorSet();
             lightsOutAnim.playTogether(
