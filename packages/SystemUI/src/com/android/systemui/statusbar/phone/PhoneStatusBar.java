@@ -39,6 +39,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.content.res.CustomTheme;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -99,6 +100,7 @@ import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.util.pie.PiePosition;
 import com.android.systemui.EventLogTags;
 import com.android.systemui.R;
+import com.android.systemui.statusbar.AppSidebar;
 import com.android.systemui.statusbar.BaseStatusBar;
 import com.android.systemui.statusbar.CommandQueue;
 import com.android.systemui.statusbar.GestureRecorder;
@@ -175,6 +177,9 @@ public class PhoneStatusBar extends BaseStatusBar {
     private final String NOTIF_WALLPAPER_IMAGE_PATH = "/data/data/com.android.settings/files/notification_wallpaper.jpg";
 
     PhoneStatusBarPolicy mIconPolicy;
+
+    //private AppSidebar mAppSidebar;
+    //private int mSidebarPosition;
 
     // These are no longer handled by the policy, because we need custom strategies for them
     BluetoothController mBluetoothController;
@@ -375,8 +380,10 @@ public class PhoneStatusBar extends BaseStatusBar {
                     Settings.System.STATUS_BAR_BRIGHTNESS_CONTROL), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.SCREEN_BRIGHTNESS_MODE), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.AUTO_HIDE_STATUSBAR), false, this, UserHandle.USER_ALL);
 	    resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.AUTO_HIDE_STATUSBAR), false, this, UserHandle.USER_ALL);  
+                    Settings.System.APP_SIDEBAR_POSITION), false, this, UserHandle.USER_ALL);
             update();
         }
 
@@ -392,7 +399,13 @@ public class PhoneStatusBar extends BaseStatusBar {
             mBrightnessControl = brightnessValue != Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC
                     && Settings.System.getIntForUser(resolver, Settings.System.STATUS_BAR_BRIGHTNESS_CONTROL,
                             0, UserHandle.USER_CURRENT) == 1;
-	    //updateStatusBarVisibility();
+	    int sidebarPosition = Settings.System.getInt(
+                    resolver, Settings.System.APP_SIDEBAR_POSITION, AppSidebar.SIDEBAR_POSITION_LEFT);
+            if (sidebarPosition != mSidebarPosition) {
+                mSidebarPosition = sidebarPosition;
+                mWindowManager.updateViewLayout(mAppSidebar, getAppSidebarLayoutParams(sidebarPosition));
+            }
+
 	    if (mNotificationData != null) {
                 updateStatusBarVisibility();
             }
@@ -528,6 +541,15 @@ public class PhoneStatusBar extends BaseStatusBar {
             mNavigationBarView.setDisabledFlags(mDisabled);
             mNavigationBarView.setBar(this);  
         }
+
+        if (mRecreating) {
+            //if (mAppSidebar != null)
+            //    mWindowManager.removeView(mAppSidebar);
+	    removeSidebarView();
+        }
+        //mAppSidebar = (AppSidebar)View.inflate(context, R.layout.app_sidebar, null);
+        //mWindowManager.addView(mAppSidebar, getAppSidebarLayoutParams(mSidebarPosition));
+	addSidebarView();
 
         // figure out which pixel-format to use for the status bar.
         mPixelFormat = PixelFormat.OPAQUE;
@@ -1082,6 +1104,27 @@ public class PhoneStatusBar extends BaseStatusBar {
             }
         }
     }
+
+    /*
+    private WindowManager.LayoutParams getAppSidebarLayoutParams(int position) {
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
+                LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+               WindowManager.LayoutParams.TYPE_STATUS_BAR_SUB_PANEL,
+                0
+                | WindowManager.LayoutParams.FLAG_TOUCHABLE_WHEN_WAKING
+                | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
+                | WindowManager.LayoutParams.FLAG_SPLIT_TOUCH,
+                PixelFormat.TRANSLUCENT);
+        lp.gravity = Gravity.TOP;// | Gravity.FILL_VERTICAL;
+        lp.gravity |= position == AppSidebar.SIDEBAR_POSITION_LEFT ? Gravity.LEFT : Gravity.RIGHT;
+        lp.setTitle("AppSidebar");
+
+        return lp;
+    }
+    */
 
     @Override
     public void addIcon(String slot, int index, int viewIndex, StatusBarIcon icon) {
@@ -2867,11 +2910,28 @@ public class PhoneStatusBar extends BaseStatusBar {
                 if (DEBUG) {
                     Slog.v(TAG, "configuration changed: " + mContext.getResources().getConfiguration());
                 }
+		Configuration config = mContext.getResources().getConfiguration();
                 mDisplay.getSize(mCurrentDisplaySize);
                 updateResources();
                 repositionNavigationBar();
                 updateExpandedViewPos(EXPANDED_LEAVE_ALONE);
                 updateShowSearchHoldoff();
+		try {
+                    // position app sidebar on left if in landscape orientation and device has a navbar
+                    if (mWindowManagerService.hasNavigationBar() &&
+                            NavbarEditor.isDevicePhone(mContext) &&
+                            config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                        mWindowManager.updateViewLayout(mAppSidebar,
+                                getAppSidebarLayoutParams(AppSidebar.SIDEBAR_POSITION_LEFT));
+                        mHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mAppSidebar.setPosition(AppSidebar.SIDEBAR_POSITION_LEFT);
+                            }
+                        }, 500);
+                    }
+                } catch (RemoteException e) {
+                }
             }
             else if (Intent.ACTION_SCREEN_ON.equals(action)) {
                 // work around problem where mDisplay.getRotation() is not stable while screen is off (bug 7086018)
