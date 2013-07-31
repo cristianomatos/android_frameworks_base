@@ -922,8 +922,12 @@ public class PhoneStatusBar extends BaseStatusBar {
     private final View.OnClickListener mRecentsClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            awakenDreams();
-            toggleRecentApps();
+            if(isRecentAppsVisible() && hasRecentApps()) {
+                clearRecentApps();
+            } else {
+                awakenDreams();
+                toggleRecentApps();
+            }
         }
     };
 
