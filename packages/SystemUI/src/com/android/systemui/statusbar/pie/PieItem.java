@@ -106,7 +106,7 @@ public class PieItem extends PieView.PieDrawable {
         mSelectedPaint.setAntiAlias(true);
         mLongPressPaint.setColor(colorSettings.getColor(PieColorUtils.COLOR_LONG_PRESSED)); 
         mLongPressPaint.setAntiAlias(true);
-        mOutlinePaint.setColor(colorSettings.getColor(PieColorUtils.COLOR_OUTLINE))
+        mOutlinePaint.setColor(colorSettings.getColor(PieColorUtils.COLOR_OUTLINE));
         mOutlinePaint.setAntiAlias(true);
         mOutlinePaint.setStyle(Style.STROKE);
         mOutlinePaint.setStrokeWidth(res.getDimensionPixelSize(R.dimen.pie_outline));
