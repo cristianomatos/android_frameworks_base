@@ -2822,6 +2822,24 @@ public final class Settings {
         public static final String STATUS_BAR_BATTERY = "status_bar_battery";
 
 	/**
+         * Circle battery icon color
+         * in statusbar
+         */
+        public static final String STATUS_BAR_CIRCLE_BATTERY_COLOR = "status_bar_circle_battery_color";
+
+        /**
+         * Circle battery icon text color
+         * in statusbar
+         */
+        public static final String STATUS_BAR_CIRCLE_BATTERY_TEXT_COLOR = "status_bar_circle_battery_text_color";
+
+        /**
+         * Circle battery animation speed during charge
+         * in statusbar
+         */
+        public static final String STATUS_BAR_CIRCLE_BATTERY_ANIMATIONSPEED = "status_bar_circle_battery_animationspeed";
+
+        /**
          * Whether to show the battery bar
          * @hide
          */
@@ -2856,6 +2874,54 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_CLOCK = "status_bar_clock";
+
+       /**
+	* AM/PM Style for clock options
+	* 0 - Normal AM/PM
+	* 1 - Small AM/PM
+	* 2 - No AM/PM
+	* @hide	
+	*/
+        public static final String STATUSBAR_CLOCK_AM_PM_STYLE = "statusbar_clock_am_pm_style";
+
+       /**
+	* Style of clock
+	* 0 - Hide Clock
+	* 1 - Right Clock
+	* 2 - Center Clock
+	* @hide
+	*/
+        public static final String STATUSBAR_CLOCK_STYLE = "statusbar_clock_style";
+
+       /**
+	* Setting for clock color
+	* @hide
+	*/
+        public static final String STATUSBAR_CLOCK_COLOR = "statusbar_clock_color";
+
+       /**
+	* @hide
+	* Shows custom date before clock time
+	* 0 - No Date
+	* 1 - Small Date
+	* 2 - Normal Date
+	*/
+        public static final String STATUSBAR_CLOCK_DATE_DISPLAY = "statusbar_clock_date_display";
+
+       /**
+	* @hide
+	* Sets the date string style
+	* 0 - Regular style
+	* 1 - Lowercase
+	* 2 - Uppercase
+	*/
+        public static final String STATUSBAR_CLOCK_DATE_STYLE = "statusbar_clock_date_style";
+
+       /**
+	* @hide
+	* Stores the java DateFormat string for the date
+	*/
+        public static final String STATUSBAR_CLOCK_DATE_FORMAT = "statusbar_clock_date_format";
 
         /**
          * Whether to show the signal text or signal bars.

@@ -519,4 +519,8 @@
     <string name="status_bar_help_title">Notifications appear here</string>
     <!-- Body of help text shown when the notification panel is pulled down for the very first time. [CHAR LIMIT=NONE] -->
     <string name="status_bar_help_text">Access them anytime by swiping down.\nSwipe down again for system controls.</string>
+
+     <!-- Notification drawer toasts -->
+    <string name="calendar_error_alert">No Calendar app installed.</string>
+    <string name="clock_error_alert">No DeskClock app installed.</string>
 </resources>

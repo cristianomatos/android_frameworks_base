@@ -185,6 +185,9 @@ public class TabletStatusBar extends BaseStatusBar implements
     private InputMethodsPanel mInputMethodsPanel;
     private CompatModePanel mCompatModePanel;
 
+    // clock
+    private boolean mShowClock;
+
     private int mSystemUiVisibility = 0;
 
     private int mNavigationIconHints = 0;
@@ -956,12 +959,16 @@ public class TabletStatusBar extends BaseStatusBar implements
     }
 
     public void showClock(boolean show) {
-        if (mClock != null) {
-            mClock.setHidden(!show);
+        ContentResolver resolver = mContext.getContentResolver();
+        View clock = mBarContents.findViewById(R.id.clock);
+        View network_text = mBarContents.findViewById(R.id.network_text);
+        mShowClock = (Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_CLOCK, 1) == 1);
+        if (clock != null) {
+            clock.setVisibility(show ? (mShowClock ? View.VISIBLE : View.GONE) : View.GONE);
         }
-        View networkText = mBarContents.findViewById(R.id.network_text);
-        if (networkText != null) {
-            networkText.setVisibility(show ? View.GONE : View.VISIBLE);
+        if (network_text != null) {
+            network_text.setVisibility((!show) ? View.VISIBLE : View.GONE);
         }
     }
 
