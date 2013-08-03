@@ -2969,6 +2969,12 @@ public final class Settings {
         public static final String STATUS_BAR_COLOR = "status_bar_color"; 
 
 	/**
+         * Notifications Expand Behavior
+         * @hide
+         */
+        public static final String NOTIFICATIONS_BEHAVIOUR = "notifications_behaviour"; 
+
+	/**
          * Sets the portrait background of notification drawer
          * @hide
          */
