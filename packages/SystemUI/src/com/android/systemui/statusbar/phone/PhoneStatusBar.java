@@ -36,6 +36,9 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.CustomTheme;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;   
 import android.database.ContentObserver;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
@@ -111,6 +114,7 @@ import com.android.systemui.statusbar.policy.NotificationRowLayout;
 import com.android.systemui.statusbar.policy.OnSizeChangedListener;
 import com.android.systemui.statusbar.policy.Prefs;
 
+import java.io.File;   
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -161,6 +165,8 @@ public class PhoneStatusBar extends BaseStatusBar {
 
     private float mFlingGestureMaxOutputVelocityPx; // how fast can it really go? (should be a little 
                                                     // faster than mSelfCollapseVelocityPx)
+
+    private final String NOTIF_WALLPAPER_IMAGE_PATH = "/data/data/com.android.settings/files/notification_wallpaper.jpg";
 
     PhoneStatusBarPolicy mIconPolicy;
 
@@ -585,6 +591,9 @@ public class PhoneStatusBar extends BaseStatusBar {
                 }
             });
         }
+
+	// Set notification background
+        setNotificationWallpaperHelper();  
 
         // Quick Settings (where available, some restrictions apply)
         if (mHasSettingsPanel) {
@@ -1103,6 +1112,9 @@ protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutP
         for (View remove : toRemove) {
             mPile.removeView(remove);
         }
+
+	//set alpha for notification pile before it is added
+        setNotificationAlphaHelper(); 
 
         for (int i=0; i<toShow.size(); i++) {
             View v = toShow.get(i);
@@ -2727,6 +2739,7 @@ protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutP
     /**
      *  ContentObserver to watch for Quick Settings tiles changes
      * @author dvtonder
+     * @author kufikugel	
      *
      */
     private class TilesChangedObserver extends ContentObserver {
@@ -2737,10 +2750,21 @@ protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutP
         @Override
         public void onChange(boolean selfChange) {
             onChange(selfChange, null);
+
+	    setNotificationWallpaperHelper();
+            setNotificationAlphaHelper(); 
+
+            if (mSettingsContainer != null) {
+                mQS.setupQuickSettings();
+            }  
         }
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
+
+	    setNotificationWallpaperHelper();
+            setNotificationAlphaHelper();
+
             if (mSettingsContainer != null) {
                 mQS.setupQuickSettings();
             }
@@ -2771,6 +2795,45 @@ protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutP
             cr.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.QS_DYNAMIC_WIFI),
                     false, this);
+	    cr.registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.NOTIF_WALLPAPER_ALPHA),
+                    false, this, UserHandle.USER_ALL);
+                    setNotificationWallpaperHelper(); 
+
+            cr.registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.NOTIF_ALPHA),
+                    false, this, UserHandle.USER_ALL);  
         }
     }
+
+    private void setNotificationWallpaperHelper() {
+        float wallpaperAlpha = Settings.System.getFloat(mContext.getContentResolver(), Settings.System.NOTIF_WALLPAPER_ALPHA, 0.1f);
+        String notifiBack = Settings.System.getString(mContext.getContentResolver(), Settings.System.NOTIFICATION_BACKGROUND);
+        File file = new File(NOTIF_WALLPAPER_IMAGE_PATH);
+        mNotificationPanel.setBackgroundResource(0);
+        mNotificationPanel.setBackgroundResource(R.drawable.notification_panel_bg);
+        Drawable background = mNotificationPanel.getBackground();
+        background.setAlpha(0);
+        if (!file.exists()) {
+            if (notifiBack != null && !notifiBack.isEmpty()) {
+                background.setColorFilter(Integer.parseInt(notifiBack), Mode.SRC_ATOP);
+            }
+         background.setAlpha((int) ((1-wallpaperAlpha) * 255)); 
+        }
+    }
+
+    private void setNotificationAlphaHelper() { 
+        float notifAlpha = Settings.System.getFloat(mContext.getContentResolver(), Settings.System.NOTIF_ALPHA, 0.0f);
+        if (mPile != null) {
+            int N = mNotificationData.size();
+            for (int i=0; i<N; i++) {
+              Entry ent = mNotificationData.get(N-i-1);
+              View expanded = ent.expanded;
+              if (expanded !=null && expanded.getBackground()!=null) expanded.getBackground().setAlpha((int) ((1-notifAlpha) * 255));
+              View large = ent.getLargeView();
+              if (large != null && large.getBackground()!=null) large.getBackground().setAlpha((int) ((1-notifAlpha) * 255));
+            }
+        } 
+    }   
+
 }
