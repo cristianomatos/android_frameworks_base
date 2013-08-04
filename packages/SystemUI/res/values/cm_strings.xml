@@ -102,4 +102,13 @@
 
     <!-- Label in drop down to identify brightness slider -->
     <string name="brightness_label">Brightness</string> 
+
+    <!-- Halo -->
+    <string name="halo_dismiss">Dismiss notification</string>
+    <string name="halo_hide">Hide HALO</string>
+    <string name="halo_clear_all">Clear all notifications</string>
+    <string name="halo_silence">Hide and silence HALO until woken</string>
+    <string name="halo_tutorial1">I am HALO.</string>
+    <string name="halo_tutorial2">Double-tap-drag to move me around, drag to task.</string>
+    <string name="halo_tutorial3">Change my behavior in the settings.</string>
 </resources>
