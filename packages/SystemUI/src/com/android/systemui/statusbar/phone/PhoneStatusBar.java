@@ -2342,6 +2342,7 @@ public class PhoneStatusBar extends BaseStatusBar {
             final View dockBattery3 = mStatusBarView.findViewById(R.id.circle_dock_battery);
             final View clock = mStatusBarView.findViewById(R.id.clock);
 	    final View cclock = mStatusBarView.findViewById(R.id.center_clock);
+	    final View traffic = mStatusBarView.findViewById(R.id.traffic); 
 
             List<ObjectAnimator> lightsOutObjs = new ArrayList<ObjectAnimator>();
             lightsOutObjs.add(ObjectAnimator.ofFloat(notifications, View.ALPHA, 0));
@@ -2361,6 +2362,7 @@ public class PhoneStatusBar extends BaseStatusBar {
                 lightsOutObjs.add(ObjectAnimator.ofFloat(dockBattery3, View.ALPHA, 0.5f));
             }
             lightsOutObjs.add(ObjectAnimator.ofFloat(clock, View.ALPHA, 0.5f));
+	    lightsOutObjs.add(ObjectAnimator.ofFloat(traffic, View.ALPHA, 0.5f)); 
 
 	    lightsOutObjs.add(ObjectAnimator.ofFloat(cclock, View.ALPHA, 1));
 
@@ -2382,6 +2384,7 @@ public class PhoneStatusBar extends BaseStatusBar {
                 lightsOnObjs.add(ObjectAnimator.ofFloat(dockBattery3, View.ALPHA, 1));
             }
             lightsOnObjs.add(ObjectAnimator.ofFloat(clock, View.ALPHA, 1));
+	    lightsOnObjs.add(ObjectAnimator.ofFloat(traffic, View.ALPHA, 1)); 
 
 	    lightsOnObjs.add(ObjectAnimator.ofFloat(cclock, View.ALPHA, 1));
 
