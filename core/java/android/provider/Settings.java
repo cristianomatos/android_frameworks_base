@@ -2729,6 +2729,13 @@ public final class Settings {
          */
         public static final String PIE_COLORS = "pie_colors"; 
 
+	/**
+         * Quick Settings Quick Pulldown if no notifications are present
+         *
+         * @hide
+         */
+        public static final String QS_NO_NOTIFICATION_PULLDOWN = "qs_no_notification_pulldown";
+
         /**
          * Quick Settings Panel Tiles to Use
          *

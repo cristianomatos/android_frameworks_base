@@ -130,6 +130,10 @@ public class NotificationPanelView extends PanelView {
             boolean flip = false;
             boolean swipeFlipJustFinished = false;
             boolean swipeFlipJustStarted = false;
+	    	int noNotificationPulldownMode = Settings.System.getInt(getContext().getContentResolver(),
+                                    Settings.System.QS_NO_NOTIFICATION_PULLDOWN, 0);
+            int quickPulldownMode = Settings.System.getInt(getContext().getContentResolver(),
+                                    Settings.System.QS_QUICK_PULLDOWN, 0);
             switch (event.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN:
                     mGestureStartX = event.getX(0);
@@ -139,12 +143,14 @@ public class NotificationPanelView extends PanelView {
                         mGestureStartY > getHeight() - mHandleBarHeight - getPaddingBottom();
                     mOkToFlip = getExpandedHeight() == 0;
                     if (event.getX(0) > getWidth() * (1.0f - STATUS_BAR_SETTINGS_RIGHT_PERCENTAGE) &&
-                            Settings.System.getIntForUser(getContext().getContentResolver(),
-                                    Settings.System.QS_QUICK_PULLDOWN, 0, UserHandle.USER_CURRENT) == 1) {
+                            quickPulldownMode == 1) {
                         flip = true;
                     } else if (event.getX(0) < getWidth() * (1.0f - STATUS_BAR_SETTINGS_LEFT_PERCENTAGE) &&
-                            Settings.System.getIntForUser(getContext().getContentResolver(),
-                                    Settings.System.QS_QUICK_PULLDOWN, 0, UserHandle.USER_CURRENT) == 2) {
+                            quickPulldownMode == 2) {
+                        flip = true;
+                    } else if (!mStatusBar.hasClearableNotifications() && noNotificationPulldownMode == 1) {
+                        flip = true;
+                    } else if (!mStatusBar.hasVisibleNotifications() && noNotificationPulldownMode == 2) {
                         flip = true;
                     }
                     break;
