@@ -51,6 +51,7 @@ public abstract class PowerButton {
     public static final String BUTTON_MEDIA_NEXT = "toggleMediaNext";
     public static final String BUTTON_LTE = "toggleLte";
     public static final String BUTTON_WIMAX = "toggleWimax";
+    public static final String BUTTON_REBOOT = "toggleReboot"; 
     public static final String BUTTON_UNKNOWN = "unknown";
     private static final String SEPARATOR = "OV=I=XseparatorX=I=VO";
     private static final Mode MASK_MODE = Mode.SCREEN;
@@ -121,6 +122,12 @@ public abstract class PowerButton {
     protected List<Uri> getObservedUris() {
         return new ArrayList<Uri>();
     }
+
+    public void afterInit(){
+        /* this method is added for custom buttons where we need some inits after instantiation
+           like creating listeners or observes.
+         */
+    } 
 
     protected void setupButton(View view) {
         mView = view;

@@ -110,6 +110,7 @@ public class PowerWidget extends FrameLayout {
         sPossibleButtons.put(PowerButton.BUTTON_MEDIA_PREVIOUS, MediaPreviousButton.class);
         sPossibleButtons.put(PowerButton.BUTTON_MEDIA_NEXT, MediaNextButton.class);
         sPossibleButtons.put(PowerButton.BUTTON_WIMAX, WimaxButton.class);
+	sPossibleButtons.put(PowerButton.BUTTON_REBOOT, RebootButton.class); 
         sPossibleButtons.put(PowerButton.BUTTON_LTE, LTEButton.class);
     }
 
@@ -280,6 +281,7 @@ public class PowerWidget extends FrameLayout {
         // cycle through setting the buttons to null
         for (PowerButton pb : mButtons.values()) {
             pb.setupButton(null);
+	    pb = null;  
         }
 
         // clear our list
@@ -458,6 +460,13 @@ public class PowerWidget extends FrameLayout {
         } else {
             setVisibility(View.VISIBLE);
         }
+    }
+
+    public boolean powerWidgetEnabled() {
+        // now check if we need to display the widget still
+        boolean displayPowerWidget = Settings.System.getInt(mContext.getContentResolver(),
+                   Settings.System.EXPANDED_VIEW_WIDGET, 0) == 1;
+        return displayPowerWidget;
     }
 
     private void updateScrollbar() {
