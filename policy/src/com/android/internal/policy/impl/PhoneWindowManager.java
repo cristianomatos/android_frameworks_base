@@ -1610,9 +1610,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             updateDisplayMetrics();
         }
 
-	//if(mDisplay != null) {
-        //    setInitialDisplaySize(mDisplay, mUnrestrictedScreenWidth, mUnrestrictedScreenHeight, density);
-        //} 
+	if(mDisplay != null) {
+            setInitialDisplaySize(mDisplay, mUnrestrictedScreenWidth, mUnrestrictedScreenHeight, density);
+        } 
     }
 
     private void enablePointerLocation() {
@@ -3466,8 +3466,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         final Rect cf = mTmpContentFrame;
         final Rect vf = mTmpVisibleFrame;
 
-        final boolean hasNavBar = (isDefaultDisplay && mNavigationBar != null
-                && mNavigationBar.isVisibleLw());  
+        final boolean hasNavBar = (isDefaultDisplay && mHasNavigationBar
+                && mNavigationBar != null && mNavigationBar.isVisibleLw());   
 
         final int adjust = sim & SOFT_INPUT_MASK_ADJUST;
 
