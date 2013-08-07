@@ -193,6 +193,7 @@ public class PhoneStatusBar extends BaseStatusBar {
     int mIconHPadding = -1;
     Display mDisplay;
     Point mCurrentDisplaySize = new Point();
+    int mCurrUiInvertedMode;
 
     int mCurrUiInvertedMode;
 
