@@ -871,7 +871,7 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
         popup.show();
     }
 
-    private void UpdateRamBar() {
+    private void updateRamBar() {
         mRamUsageBar = (LinearColorBar) findViewById(R.id.ram_usage_bar);
 
         int mRamBarMode = (Settings.System.getInt(mContext.getContentResolver(),
