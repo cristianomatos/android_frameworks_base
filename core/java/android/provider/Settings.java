@@ -3154,6 +3154,13 @@ public final class Settings {
         public static final String STATUS_BAR_TRAFFIC_COLOR = "status_bar_traffic_color"; 
 
 	/**
+         * whether to hide the Ram Usage Bar on recent switcher
+         *
+         * @hide
+         */
+        public static final String RECENTS_RAM_BAR = "recents_ram_bar";
+
+	/**
          * Circle battery icon color
          * in statusbar
          */
