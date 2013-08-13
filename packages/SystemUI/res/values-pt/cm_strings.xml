@@ -72,4 +72,24 @@
     <string name="quick_settings_volume">Volume</string>
     <string name="quick_settings_expanded_desktop_off">Normal</string>
     <string name="accessibility_data_connection_DC">DCHSPAP</string>
+
+    <!-- Label in drop down to identify brightness slider -->
+    <string name="brightness_label">Brilho</string> 
+
+    <!-- Halo -->
+    <string name="halo_dismiss">Descartar notificações</string>
+    <string name="halo_hide">Esconder o HALO</string>
+    <string name="halo_clear_all">Limpar todas as notificações</string>
+    <string name="halo_silence">Esconda and silencie o HALO até ser acordado</string>
+    <string name="halo_tutorial1">Eu sou HALO.</string>
+    <string name="halo_tutorial2">Duplo clique arrastando para mover ao redor, Arraste para relizar uma tarefa</string>
+    <string name="halo_tutorial3">Mude meu comportamento nas configurações.</string>
+
+    <!-- App sidebar -->
+    <string name="default_folder_text">Pasta</string>
+    <string name="title_activity_sidebar_configuration">Ajuste do(s) contído(s) no Appbar</string>
+    <string name="action_save">Salvar</string>
+    <string name="toast_items_saved">Item do Appbar foi salvo</string>
+    <string name="content_setup_instructions">Adicione itens ao appbar pressionando por um tempo qualquer item à direita e arraste-o para o appbar. Itens \ n \ nCombine itens em pastas arrastando-os para dentro de pastas na appbar. \ N \ nPara remover um item basta arrastá-lo fora da \ @ appbar</string>
+    <string name="content_setup_dismiss">Continue</string>
 </resources>
