@@ -5311,8 +5311,8 @@ public final class Settings {
             MOUNT_UMS_PROMPT,
             MOUNT_UMS_NOTIFY_ENABLED,
             UI_NIGHT_MODE,
-            DIALPAD_AUTOCOMPLETE
-	    UI_INVERTED_MODE,
+            DIALPAD_AUTOCOMPLETE,
+            UI_INVERTED_MODE,
             DIALPAD_AUTOCOMPLETE,
             LOCK_SCREEN_OWNER_INFO,
             LOCK_SCREEN_OWNER_INFO_ENABLED,
