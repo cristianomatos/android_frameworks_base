@@ -232,7 +232,7 @@ public class PhoneStatusBar extends BaseStatusBar {
 
     // settings
     QuickSettingsController mQS;
-    boolean mHasSettingsPanel, mHasFlipSettings;
+    boolean mHasSettingsPanel, mHideSettingsPanel, mHasFlipSettings; 
     boolean mUiModeIsToggled; 
     SettingsPanelView mSettingsPanel;
     View mFlipSettingsView;
@@ -593,7 +593,14 @@ public class PhoneStatusBar extends BaseStatusBar {
         mClearButton.setEnabled(false);
         mDateView = (DateView)mStatusBarWindow.findViewById(R.id.date);
 
-	mHasSettingsPanel = res.getBoolean(R.bool.config_hasSettingsPanel);
+	if (mStatusBarView.hasFullWidthNotifications()) {
+            mHideSettingsPanel = Settings.System.getInt(mContext.getContentResolver(),
+                                    Settings.System.QS_DISABLE_PANEL, 0) == 1;
+            mHasSettingsPanel = res.getBoolean(R.bool.config_hasSettingsPanel) && !mHideSettingsPanel;
+        } else {
+            mHideSettingsPanel = false;
+            mHasSettingsPanel = res.getBoolean(R.bool.config_hasSettingsPanel);
+        } 
         mHasFlipSettings = res.getBoolean(R.bool.config_hasFlipSettingsPanel);
 
         mDateTimeView = mNotificationPanelHeader.findViewById(R.id.datetime);
@@ -805,12 +812,16 @@ public class PhoneStatusBar extends BaseStatusBar {
                 mQS.setupQuickSettings();
 
                 // Start observing for changes
-                if (mTilesChangedObserver == null) {
-                    mTilesChangedObserver = new TilesChangedObserver(mHandler);
-                    mTilesChangedObserver.startObserving();
-                }
+                //if (mTilesChangedObserver == null) {
+                //    mTilesChangedObserver = new TilesChangedObserver(mHandler);
+                //    mTilesChangedObserver.startObserving();
+                //}
             }
         }
+
+	// Start observing for changes on QuickSettings (needed here for enable/hide qs)
+        mTilesChangedObserver = new TilesChangedObserver(mHandler);
+        mTilesChangedObserver.startObserving(); 
 
         mClingShown = ! (DEBUG_CLINGS
             || !Prefs.read(mContext).getBoolean(Prefs.SHOWN_QUICK_SETTINGS_HELP, false));
@@ -2075,7 +2086,8 @@ public class PhoneStatusBar extends BaseStatusBar {
             mHaloButtonVisible = true;
             updateHaloButton(); 
             mNotificationPanel.setVisibility(View.GONE);
-            mFlipSettingsView.setVisibility(View.GONE);
+            if (!mHideSettingsPanel)
+                mFlipSettingsView.setVisibility(View.GONE); 
             mNotificationButton.setVisibility(View.GONE);
             setAreThereNotifications(); // show the clear button
         }
@@ -3261,25 +3273,20 @@ public class PhoneStatusBar extends BaseStatusBar {
 
         @Override
         public void onChange(boolean selfChange) {
-            onChange(selfChange, null);
+            //onChange(selfChange, null);
 
 	setNotificationWallpaperHelper();
-            setNotificationAlphaHelper(); 
+        setNotificationAlphaHelper(); 
+
+	boolean hideSettingsPanel = Settings.System.getInt(mContext.getContentResolver(),
+                                    Settings.System.QS_DISABLE_PANEL, 0) == 1;
+        if (hideSettingsPanel != mHideSettingsPanel) {
+                recreateStatusBar();
+        } 
 
         if (mSettingsContainer != null) {
 	        mQS.setupQuickSettings();
             } 
-        }
-
-        @Override
-        public void onChange(boolean selfChange, Uri uri) {
-
-	    setNotificationWallpaperHelper();
-            setNotificationAlphaHelper();
-
-            if (mSettingsContainer != null) {
-                mQS.setupQuickSettings();
-            }
         }
 
         public void startObserving() {
@@ -3319,7 +3326,11 @@ public class PhoneStatusBar extends BaseStatusBar {
 
 	    cr.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.NOTIF_ALPHA),
-                    false, this, UserHandle.USER_ALL);  
+                    false, this, UserHandle.USER_ALL);
+
+	    cr.registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.QS_DISABLE_PANEL),
+                    false, this);   
         }
     }
 
