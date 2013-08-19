@@ -110,7 +110,8 @@ public class PowerWidget extends FrameLayout {
         sPossibleButtons.put(PowerButton.BUTTON_MEDIA_PREVIOUS, MediaPreviousButton.class);
         sPossibleButtons.put(PowerButton.BUTTON_MEDIA_NEXT, MediaNextButton.class);
         sPossibleButtons.put(PowerButton.BUTTON_WIMAX, WimaxButton.class);
-	sPossibleButtons.put(PowerButton.BUTTON_REBOOT, RebootButton.class); 
+	sPossibleButtons.put(PowerButton.BUTTON_REBOOT, RebootButton.class);
+	sPossibleButtons.put(PowerButton.BUTTON_FCHARGE, FChargeButton.class);  
         sPossibleButtons.put(PowerButton.BUTTON_LTE, LTEButton.class);
     }
 
