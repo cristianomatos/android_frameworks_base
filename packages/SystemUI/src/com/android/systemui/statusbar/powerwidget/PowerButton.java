@@ -60,6 +60,7 @@ public abstract class PowerButton {
     protected int mIcon;
     protected int mState;
     protected View mView;
+    public Context mContext;
     protected String mType = BUTTON_UNKNOWN;
 
     private ImageView mIconView;
@@ -133,6 +134,7 @@ public abstract class PowerButton {
     protected void setupButton(View view) {
         mView = view;
         if (mView != null) {
+	    mContext = mView.getContext();
             mView.setTag(mType);
             mView.setOnClickListener(mClickListener);
             mView.setOnLongClickListener(mLongClickListener);
