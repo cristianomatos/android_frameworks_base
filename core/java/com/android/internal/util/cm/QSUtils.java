@@ -16,7 +16,8 @@ import android.telephony.TelephonyManager;
 import com.android.internal.telephony.PhoneConstants;
 
 public class QSUtils {
-        public static boolean deviceSupportsImeSwitcher(Context ctx) {
+
+	public static boolean deviceSupportsImeSwitcher(Context ctx) {
             Resources res = ctx.getResources();
             return res.getBoolean(com.android.internal.R.bool.config_show_cmIMESwitcher);
         }
@@ -66,4 +67,5 @@ public class QSUtils {
         public static boolean deviceSupportsCamera() {
             return Camera.getNumberOfCameras() > 0;
         }
+
 }
