@@ -341,7 +341,7 @@ public class PhoneStatusBarView extends PanelBar {
         }
 
 	updateBackgroundAlpha();
-        mBar.updateCarrierLabelVisibility(false);
+        mBar.updateCarrierAndWifiLabelVisibility(false); 
     }
 
     /*

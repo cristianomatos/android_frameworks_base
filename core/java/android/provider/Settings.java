@@ -3794,7 +3794,15 @@ public final class Settings {
          * will bring the default text back.
          * @hide
          */
-        public static final String CUSTOM_CARRIER_LABEL = "custom_carrier_label"; 
+        public static final String CUSTOM_CARRIER_LABEL = "custom_carrier_label";
+
+	/**
+         * @hide
+         * Show Wifi network name in notification shade
+         * 0 - don't show
+         * 1 - show
+         */
+        public static final String NOTIFICATION_SHOW_WIFI_SSID = "notification_show_wifi_ssid";  
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
