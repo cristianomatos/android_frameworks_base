@@ -86,6 +86,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.IPowerManager;
 import android.os.IUserManager;
+import android.hardware.IIrdaManager;
+import android.hardware.IrdaManager;
 import android.os.Looper;
 import android.os.PowerManager;
 import android.os.Process;
@@ -549,6 +551,38 @@ class ContextImpl extends Context {
                 IAppOpsService service = IAppOpsService.Stub.asInterface(b);
                 return new AppOpsManager(ctx, service);
             }});
+
+        registerService(PROFILE_SERVICE, new ServiceFetcher() {
+                public Object createService(ContextImpl ctx) {
+                    final Context outerContext = ctx.getOuterContext();
+                    return new ProfileManager (outerContext, ctx.mMainThread.getHandler());
+                }});
+
+        registerService(WimaxManagerConstants.WIMAX_SERVICE, new ServiceFetcher() {
+                public Object createService(ContextImpl ctx) {
+                    return WimaxHelper.createWimaxService(ctx, ctx.mMainThread.getHandler());
+                }});
+
+        registerService("fm_receiver", new ServiceFetcher() {
+                public Object createService(ContextImpl ctx) {
+                    IBinder b = ServiceManager.getService("fm_receiver");
+                    IFmReceiver service = IFmReceiver.Stub.asInterface(b);
+                    return new FmReceiverImpl(service);
+                }});
+
+        registerService("fm_transmitter", new ServiceFetcher() {
+                public Object createService(ContextImpl ctx) {
+                    IBinder b = ServiceManager.getService("fm_transmitter");
+                    IFmTransmitter service = IFmTransmitter.Stub.asInterface(b);
+                    return new FmTransmitterImpl(service);
+                }});
+
+        registerService(IRDA_SERVICE, new StaticServiceFetcher() {
+                public Object createStaticService() {
+                    IBinder b = ServiceManager.getService(IRDA_SERVICE);
+                    IIrdaManager service = IIrdaManager.Stub.asInterface(b);
+                    return new IrdaManager(service);
+                }});
     }
 
     static ContextImpl getImpl(Context context) {

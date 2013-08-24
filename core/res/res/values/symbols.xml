@@ -1966,6 +1966,7 @@
   <java-symbol type="attr" name="actionModeWebSearchDrawable" />
   <java-symbol type="string" name="websearch" />
 
+<<<<<<< HEAD
   <!-- Developer settings - Kill app back press -->
   <java-symbol type="string" name="app_killed_message" /> 
   <java-symbol type="integer" name="config_backKillTimeout" />
@@ -2007,4 +2008,8 @@
 
   <!-- LED flashlight -->
   <java-symbol type="bool" name="config_enableTorch" />
+
+  <!-- Irda Service -->
+  <java-symbol type="bool" name="config_enableIrdaManagerService" />
+
 </resources>
