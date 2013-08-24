@@ -8,6 +8,7 @@ import android.app.ActivityManagerNative;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences; 
 import android.net.Uri;
 import android.os.Handler;
 import android.os.RemoteException;
@@ -39,6 +40,7 @@ public class QuickSettingsTile implements OnClickListener {
     protected String mLabel;
     protected PhoneStatusBar mStatusbarService;
     protected QuickSettingsController mQsc;
+    protected SharedPreferences mPrefs;
 
     private Handler mHandler = new Handler();
 
@@ -53,10 +55,13 @@ public class QuickSettingsTile implements OnClickListener {
         mStatusbarService = qsc.mStatusBarService;
         mQsc = qsc;
         mTileLayout = layout;
+	mPrefs = mContext.getSharedPreferences("quicksettings", Context.MODE_PRIVATE); 
     }
 
-    public void setupQuickSettingsTile(LayoutInflater inflater, QuickSettingsContainerView container) {
-        mTile = (QuickSettingsTileView) inflater.inflate(R.layout.quick_settings_tile, container, false);
+    public void setupQuickSettingsTile(LayoutInflater inflater,
+            QuickSettingsContainerView container) {
+        mTile = (QuickSettingsTileView) inflater.inflate(
+                R.layout.quick_settings_tile, container, false); 
         mTile.setContent(mTileLayout, inflater);
         mContainer = container;
         mContainer.addView(mTile);
@@ -66,7 +71,18 @@ public class QuickSettingsTile implements OnClickListener {
         mTile.setOnLongClickListener(mOnLongClick);
     }
 
-    void onPostCreate(){}
+    public void setLabelVisibility(boolean visible) {
+        TextView tv = (TextView) mTile.findViewById(R.id.text);
+        if (tv != null) {
+            tv.setVisibility(visible ? View.VISIBLE : View.GONE);
+        }
+        View sepPadding = mTile.findViewById(R.id.separator_padding);
+        if (sepPadding != null) {
+            sepPadding.setVisibility(visible ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    void onPostCreate() {} 
 
     public void onDestroy() {}
 
@@ -80,7 +96,7 @@ public class QuickSettingsTile implements OnClickListener {
         }
     }
 
-    void updateQuickSettings(){
+    void updateQuickSettings() {
         TextView tv = (TextView) mTile.findViewById(R.id.text);
         if (tv != null) {
             tv.setText(mLabel);
