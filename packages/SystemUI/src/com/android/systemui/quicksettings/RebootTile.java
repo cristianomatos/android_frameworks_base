@@ -48,9 +48,12 @@ public class RebootTile extends QuickSettingsTile {
 
             @Override
             public void onClick(View v) {
-               rebootToRecovery = !rebootToRecovery;
-               updateTileState();
-               updateQuickSettings();
+                rebootToRecovery = !rebootToRecovery;
+                updateTileState();
+                updateQuickSettings();
+	       	if (isFlipTilesEnabled()) {
+                    flipTile(0);
+                }
             }
         };
         mOnLongClick = new OnLongClickListener() {
