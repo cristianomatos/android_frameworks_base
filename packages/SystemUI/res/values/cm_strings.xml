@@ -103,9 +103,6 @@
     <string name="pie_phone_status_airplane_mode">Airplane mode on</string>
     <string name="pie_phone_status_emergency_only">Emergency calls only</string>
 
-    <!-- Label in drop down to identify brightness slider -->
-    <string name="brightness_label">Brightness</string> 
-
     <!-- Halo -->
     <string name="halo_dismiss">Dismiss notification</string>
     <string name="halo_hide">Hide HALO</string>

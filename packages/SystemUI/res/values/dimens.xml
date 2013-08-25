@@ -158,9 +158,6 @@
     <!-- Height of the notification panel header bar -->
     <dimen name="notification_panel_header_height">48dp</dimen>
 
-    <!-- Height of the notification panel brightness slider -->
-    <dimen name="notification_panel_brightness_height">42dp</dimen> 
-
     <!-- Height of the notification panel widget bar -->
     <dimen name="notification_panel_widget_height">48dp</dimen>
 
