@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2012-2013 The CyanogenMod Project
+<!--
+     Copyright (C) 2012-2013 The CyanogenMod Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,6 +15,8 @@
      limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="imProtocolGoogleTalk">Conversaciones</string>
+    <string name="progress_nomediapresent" product="default">No hay medios extraíbles\u2026</string>
     <string name="profileNameDefault">Predeterminado</string>
     <string name="profileNameWork">Trabajo</string>
     <string name="profileNameHome">Casa</string>
@@ -42,15 +45,17 @@
     <string name="reboot_confirm" product="default">El teléfono se reiniciará.</string>
     <string name="permlab_preventpower">anular tecla encendido</string>
     <string name="permdesc_preventpower">Permite que la aplicación cambie el comportamiento de la tecla de encendido.</string>
-    <string name="lockscreen_discharging">Descargando, <xliff:g id="number">%d</xliff:g><xliff:g id="percent">%%</xliff:g></string>
-    <string name="app_killed_message">Aplicación finalizada</string>
-    <string name="global_action_reboot">Reiniciar</string>
-    <string name="global_action_choose_profile">Perfil</string>
     <string name="permlab_fm_radio_receiver">controlar receptor FM</string>
     <string name="permdesc_fm_radio_receiver">Permite que la aplicación controle el receptor FM.</string>
     <string name="permlab_fm_radio_transmitter">controlar transmisor FM</string>
     <string name="permdesc_fm_radio_transmitter">Permite que la aplicación controle el transmisor FM.</string>
+    <string name="permlab_sendMockSms">enviar mensajes SMS simulados</string>
+    <string name="permdesc_sendMockSms">Permite que la aplicación envíe mensajes SMS simulados a aplicaciones de confianza. Las aplicaciones maliciosas pueden enviar mensajes SMS continuamente, bloqueando la barra de notificaciones e interrumpiendo al usuario.</string>
+    <string name="lockscreen_discharging">Descargando, <xliff:g id="number">%d</xliff:g><xliff:g id="percent">%%</xliff:g></string>
     <string name="storage_sd_dock_card">Tarjeta SD de la base</string>
+    <string name="app_killed_message">Aplicación finalizada</string>
+    <string name="global_action_reboot">Reiniciar</string>
+    <string name="global_action_choose_profile">Perfil</string>
     <string name="toast_rotation_unlocked">Rotación de pantalla desbloqueada</string>
     <string name="toast_rotation_locked">Rotación de pantalla bloqueada</string>
     <string name="stylus_app_not_installed">%s no está instalada</string>
@@ -64,4 +69,8 @@
     <string name="permdesc_cancelNotifications">Permite que la aplicación cancele las notificaciones creadas por otras.</string>
     <string name="permlab_interceptSmsSent">interceptar mensajes SMS salientes</string>
     <string name="permdesc_interceptSmsSent">Permite que la aplicación intercepte mensajes SMS salientes. Las aplicaciones maliciosas pueden impedir los mensajes SMS salientes.</string>
+    <string name="policylab_enforceSelinux">Forzar SELinux</string>
+    <string name="policydesc_enforceSelinux">Alternar entre el modo permisivo o restrictivo de SELinux.</string>
+    <string name="policylab_enforceMmac">Forzar MMAC</string>
+    <string name="policydesc_enforceMmac">Alternar entre el modo permisivo o restrictivo de MMAC.</string>
 </resources>
