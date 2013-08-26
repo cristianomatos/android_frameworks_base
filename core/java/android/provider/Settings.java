@@ -5243,8 +5243,6 @@ public final class Settings {
         @Deprecated
         public static final String WIFI_WATCHDOG_AP_COUNT = "wifi_watchdog_ap_count";
 
-        public static final String ENABLE_PERMISSIONS_MANAGEMENT = "enable_permissions_management";
-
         /**
          * The delay between background checks.
          * @deprecated This setting is not used.
