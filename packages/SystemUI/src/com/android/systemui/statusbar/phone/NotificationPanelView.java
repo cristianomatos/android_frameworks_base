@@ -136,8 +136,6 @@ public class NotificationPanelView extends PanelView {
                                     Settings.System.QS_QUICK_PULLDOWN, 0);
             switch (event.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN:
-		    if (mStatusBar.mHideSettingsPanel)
-                        break;
                     mGestureStartX = event.getX(0);
                     mGestureStartY = event.getY(0);
                     mTrackingSwipe = isFullyExpanded() &&
@@ -157,8 +155,6 @@ public class NotificationPanelView extends PanelView {
                     }
                     break;
                 case MotionEvent.ACTION_MOVE:
-		    if (mStatusBar.mHideSettingsPanel)
-                        break;
                     final float deltaX = Math.abs(event.getX(0) - mGestureStartX);
                     final float deltaY = Math.abs(event.getY(0) - mGestureStartY);
                     final float maxDeltaY = getHeight() * STATUS_BAR_SWIPE_VERTICAL_MAX_PERCENTAGE;
@@ -191,8 +187,7 @@ public class NotificationPanelView extends PanelView {
                     }
                     break;
                 case MotionEvent.ACTION_POINTER_DOWN:
-                    if (!mStatusBar.mHideSettingsPanel)
-                        flip = true; 
+                    flip = true;
                     break;
                 case MotionEvent.ACTION_UP:
                     swipeFlipJustFinished = mSwipeTriggered;
@@ -200,7 +195,7 @@ public class NotificationPanelView extends PanelView {
                     mTrackingSwipe = false;
                     break;
             }
-            if (mOkToFlip && flip && !mStatusBar.mHideSettingsPanel) { 
+            if (mOkToFlip && flip) {
                 float miny = event.getY(0);
                 float maxy = miny;
                 for (int i=1; i<event.getPointerCount(); i++) {
