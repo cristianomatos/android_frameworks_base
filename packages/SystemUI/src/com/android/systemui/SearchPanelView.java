@@ -56,6 +56,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnPreDrawListener;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.FrameLayout;
 
 import com.android.systemui.R;
@@ -142,6 +143,7 @@ public class SearchPanelView extends FrameLayout implements
                 if (!mSearchPanelLock) {
                     mLongPress = true;
                     mBar.hideSearchPanel();
+                    sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_LONG_CLICKED);
                     SlimActions.processAction(mContext, longList.get(mTarget));
                     mSearchPanelLock = true;
                  }
@@ -181,6 +183,7 @@ public class SearchPanelView extends FrameLayout implements
             final int resId = mGlowPadView.getResourceIdForTarget(target);
             mTarget = target;
             if (!mLongPress) {
+                sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_CLICKED);
                 SlimActions.processAction(mContext, intentList.get(target));
                 mHandler.removeCallbacks(SetLongPress);
             }
