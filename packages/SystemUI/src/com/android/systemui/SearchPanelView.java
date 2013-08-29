@@ -342,6 +342,8 @@ public class SearchPanelView extends FrameLayout implements
             return new TargetDrawable(mResources, mResources.getDrawable(R.drawable.ic_action_lastapp));
         if (action.equals(ButtonsConstants.ACTION_POWER))
             return new TargetDrawable(mResources, mResources.getDrawable(R.drawable.ic_action_power));
+	if (action.equals(ButtonsConstants.ACTION_POWER_MENU))
+            return new TargetDrawable(mResources, mResources.getDrawable(R.drawable.ic_action_power_menu));
 	if (action.equals(ButtonsConstants.ACTION_NOTIFICATIONS))
             return new TargetDrawable(mResources, mResources.getDrawable(R.drawable.ic_action_notifications));
         if (action.equals(ButtonsConstants.ACTION_EXPANDED_DESKTOP))
