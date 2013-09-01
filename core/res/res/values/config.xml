@@ -1293,7 +1293,11 @@
     <bool name="config_allowPieService">true</bool>
 
     <!-- True if the Irda service should be started at system start -->
-    <bool name="config_enableIrdaManagerService">false</bool> 
+    <bool name="config_enableIrdaManagerService">false</bool>
+
+    <!-- The list of components which should be automatically disabled. -->
+    <string-array name="config_disabledComponents" translatable="false">
+    </string-array>  
 
     <!-- empty string to disable, or eg: /sys/kernel/fast_charge/force_fast_charge
          for a custom path the delivered kernel supports.
