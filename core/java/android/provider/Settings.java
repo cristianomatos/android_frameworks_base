@@ -2870,13 +2870,7 @@ public final class Settings {
          */
         public static final String NAV_BUTTONS = "nav_buttons";
 
-	/**
-         * Navigation bar color
-         * @hide
-         */
-        public static final String NAVIGATION_BAR_COLOR = "navigation_bar_color";
- 
-         /**
+	 /**
          * Navigation bar alpha
          * @hide
          */
