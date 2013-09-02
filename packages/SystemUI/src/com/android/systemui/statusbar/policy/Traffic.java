@@ -119,10 +119,12 @@ public class Traffic extends TextView {
 			setText(DecimalFormatfnum.format(speed) + "KB/s");
 		}
 		// Hide if there is no traffic
-                if ((TrafficMeter_hide) && (speed == 0)) {
+                if ((enable_TrafficMeter) && (TrafficMeter_hide) && (speed == 0)) { 
                    setVisibility(View.GONE);
-                } else {
+                } else if (enable_TrafficMeter) { 
                    setVisibility(View.VISIBLE);
+		} else {
+                   setVisibility(View.GONE);
                 } 
 		update();
 		super.handleMessage(msg);
