@@ -670,7 +670,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 		    UserHandle.USER_ALL);
 	    resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_SHOW), false, this, 
-	            UserHandle.USER_ALL); 
+	            UserHandle.USER_ALL);
+	    resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.NAVIGATION_BAR_CAN_MOVE), false, this,
+		    UserHandle.USER_ALL);  
 	    resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_HEIGHT), false, this,
 	            UserHandle.USER_ALL);
@@ -1347,7 +1350,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         if (shortSizeDp < 600) {
             // 0-599dp: "phone" UI with a separate status & navigation bar
             mHasSystemNavBar = false;
-            mNavigationBarCanMove = true;
+            if (Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.NAVIGATION_BAR_CAN_MOVE, 1) == 1) {
+                mNavigationBarCanMove = true;
+            } else {
+                mNavigationBarCanMove = false;
+            } 
 	    Settings.System.putInt(mContext.getContentResolver(),
                     Settings.System.TABLET_UI, 0); 
         } else if (shortSizeDp < 720) {
@@ -1460,6 +1468,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     Settings.System.VOLUME_WAKE_SCREEN, 0, UserHandle.USER_CURRENT) == 1);
             mVolBtnMusicControls = (Settings.System.getIntForUser(resolver,
                     Settings.System.VOLBTN_MUSIC_CONTROLS, 1, UserHandle.USER_CURRENT) == 1);
+
+	    if (mShortSizeDp < 600) {
+                mNavigationBarCanMove = (Settings.System.getInt(resolver,
+                        Settings.System.NAVIGATION_BAR_CAN_MOVE, 1) == 1);
+            } 
 
 	    updateKeyAssignments(); 
 

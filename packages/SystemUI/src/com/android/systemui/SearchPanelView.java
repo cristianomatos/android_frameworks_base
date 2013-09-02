@@ -259,7 +259,11 @@ public class SearchPanelView extends FrameLayout implements
         int endPosOffset;
         int middleBlanks = 0;
 
-         if (screenLayout() == Configuration.SCREENLAYOUT_SIZE_LARGE || isScreenPortrait()) {
+          boolean navbarCanMove = Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.NAVIGATION_BAR_CAN_MOVE, 1) == 1;
+
+         if (screenLayout() == Configuration.SCREENLAYOUT_SIZE_LARGE || isScreenPortrait()
+                || (screenLayout() != Configuration.SCREENLAYOUT_SIZE_LARGE && !isScreenPortrait() && !navbarCanMove)) {
              startPosOffset =  1;
              endPosOffset =  (mNavRingAmount) + 1;
          } else {
@@ -575,6 +579,8 @@ public class SearchPanelView extends FrameLayout implements
                     Settings.System.SYSTEMUI_NAVRING_AMOUNT), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.SYSTEMUI_NAVRING_LONG_ENABLE), false, this);
+	    resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.NAVIGATION_BAR_CAN_MOVE), false, this); 
 
             for (int i = 0; i < 5; i++) {
                 resolver.registerContentObserver(
