@@ -962,7 +962,7 @@ public abstract class BaseStatusBar extends SystemUI implements
                  break;
              case MSG_CLOSE_SEARCH_PANEL:
                  if (DEBUG) Slog.d(TAG, "closing search panel");
-                 if (mSearchPanelView != null && mSearchPanelView.isShowing()) {
+                 if (mSearchPanelView != null) {
                      mSearchPanelView.show(false, true);
                  }
                  break;

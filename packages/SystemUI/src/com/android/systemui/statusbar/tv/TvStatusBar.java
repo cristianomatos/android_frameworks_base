@@ -87,6 +87,11 @@ public class TvStatusBar extends BaseStatusBar {
     }
 
     @Override
+    public void toggleNotificationShade() {
+    }
+
+
+    @Override
     public void toggleRecentApps() {
     }
 
