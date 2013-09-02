@@ -402,10 +402,6 @@ public class KeyButtonView extends ImageView {
                     false, this);
             resolver.registerContentObserver(
                     Settings.System.getUriFor(
-                    Settings.System.NAVIGATION_BAR_BUTTON_TINT),
-                    false, this);
-            resolver.registerContentObserver(
-                    Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_GLOW_TINT),
                     false, this);
             resolver.registerContentObserver(
@@ -442,15 +438,6 @@ public class KeyButtonView extends ImageView {
             }
             mGlowBG.setColorFilter(null);
             mGlowBG.setColorFilter(mGlowBGColor, PorterDuff.Mode.SRC_ATOP);
-        }
-
-        int color = Settings.System.getInt(resolver,
-                Settings.System.NAVIGATION_BAR_BUTTON_TINT, 0x00000000);
-        if (color == 0x00000000) {
-            setColorFilter(null);
-        } else {
-            setColorFilter(null);
-            setColorFilter(color);
         }
 
         invalidate();
