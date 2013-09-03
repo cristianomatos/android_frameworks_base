@@ -1482,9 +1482,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             mHasNavigationBar = Settings.System.getInt(resolver, 
                     Settings.System.NAVIGATION_BAR_SHOW, showByDefault) == 1;
 
-      	     if ((mExpandedState == 1 &&
+      	    if ((mExpandedState == 1 &&
                 (mExpandedStyle == 1 || mExpandedStyle == 3))
-                || !mHasNavigationBar) {
+                || !mHasNavigationBar) { 
                 // Set the navigation bar's dimensions to 0 in expanded desktop mode
                 mNavigationBarWidthForRotation[mPortraitRotation]
                         = mNavigationBarWidthForRotation[mUpsideDownRotation]
@@ -1945,12 +1945,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             // For the system navigation bar, we always place it at the bottom.
             return fullHeight - mNavigationBarHeightForRotation[rotation];
         }
-        if (mHasNavigationBar && !expandedDesktopHidesNavigationBar()) {
-            // For a basic navigation bar, when we are in portrait mode we place
-            // the navigation bar to the bottom.
-            if (!mNavigationBarCanMove || fullWidth < fullHeight) {
-                return fullHeight - mNavigationBarHeightForRotation[rotation];
-            }
+        // For a basic navigation bar, when we are in portrait mode we place
+        // the navigation bar to the bottom.
+        if (!mNavigationBarCanMove || fullWidth < fullHeight) {
+            return fullHeight - mNavigationBarHeightForRotation[rotation]; 
         }
         return fullHeight;
     }
@@ -3456,8 +3454,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         final Rect cf = mTmpContentFrame;
         final Rect vf = mTmpVisibleFrame;
 
-        final boolean hasNavBar = (isDefaultDisplay && mHasNavigationBar
-                && mNavigationBar != null && mNavigationBar.isVisibleLw());   
+        final boolean hasNavBar = (isDefaultDisplay && mNavigationBar != null
+                && mNavigationBar.isVisibleLw());    
 
         final int adjust = sim & SOFT_INPUT_MASK_ADJUST;
 
