@@ -98,7 +98,6 @@ import android.widget.TextView;
 import android.service.notification.StatusBarNotification;
 
 import com.android.internal.statusbar.StatusBarIcon;
-import com.android.internal.util.pie.PiePosition;
 import com.android.systemui.EventLogTags;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.BaseStatusBar;
@@ -122,6 +121,7 @@ import com.android.systemui.statusbar.policy.NetworkController;
 import com.android.systemui.statusbar.policy.NotificationRowLayout;
 import com.android.systemui.statusbar.policy.OnSizeChangedListener;
 import com.android.systemui.statusbar.policy.Prefs;
+import com.android.systemui.statusbar.policy.PieController.Position; 
 
 public class PhoneStatusBar extends BaseStatusBar {
     static final String TAG = "PhoneStatusBar";
@@ -373,7 +373,9 @@ public class PhoneStatusBar extends BaseStatusBar {
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.SCREEN_BRIGHTNESS_MODE), false, this);
 	    resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.AUTO_HIDE_STATUSBAR), false, this, UserHandle.USER_ALL);  
+                    Settings.System.AUTO_HIDE_STATUSBAR), false, this, UserHandle.USER_ALL); 
+	    resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.PIE_DISABLE_STATUSBAR_INFO), false, this);  
             update();
         }
 
@@ -560,7 +562,8 @@ public class PhoneStatusBar extends BaseStatusBar {
                 (NavigationBarView) View.inflate(context, R.layout.navigation_bar, null);
     
                 mNavigationBarView.setDisabledFlags(mDisabled);
-                mNavigationBarView.setBar(this); 
+                mNavigationBarView.setBar(this);
+		addNavigationBarCallback(mNavigationBarView);  
         }
 
         // figure out which pixel-format to use for the status bar.
@@ -1490,13 +1493,19 @@ public class PhoneStatusBar extends BaseStatusBar {
 
     public void showClock(boolean show) {
 	if (mStatusBarView == null) return;
+	if (Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.PIE_DISABLE_STATUSBAR_INFO, 0) == 1) {
+            show = false;
+        } 
         ContentResolver resolver = mContext.getContentResolver();
         View clock = mStatusBarView.findViewById(R.id.clock);
         View cclock = mStatusBarView.findViewById(R.id.center_clock);
         mShowClock = (Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_CLOCK, 1) == 1);
-        boolean rightClock = (Settings.System.getInt(mContext.getContentResolver(), Settings.System.STATUSBAR_CLOCK_STYLE, 0) == 0);
-        boolean centerClock = (Settings.System.getInt(mContext.getContentResolver(), Settings.System.STATUSBAR_CLOCK_STYLE, 0) == 1);
+        boolean rightClock = (Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUSBAR_CLOCK_STYLE, 0) == 0);
+        boolean centerClock = (Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUSBAR_CLOCK_STYLE, 0) == 1); 
         if (rightClock && clock != null) {
             clock.setVisibility(show ? (mShowClock ? View.VISIBLE : View.GONE) : View.GONE);
         }
@@ -2485,19 +2494,17 @@ public class PhoneStatusBar extends BaseStatusBar {
         }
         propagateMenuVisibility(showMenu);
 
+        propagateMenuVisibility(showMenu);
+
         // hide pie triggers when keyguard is visible
         try {
             if (mWindowManagerService.isKeyguardLocked()) {
-                updatePieTriggerMask(PiePosition.BOTTOM.FLAG
-                        | PiePosition.TOP.FLAG);
+                disablePie(true);
             } else {
-                updatePieTriggerMask(PiePosition.LEFT.FLAG
-                        | PiePosition.BOTTOM.FLAG
-                        | PiePosition.RIGHT.FLAG
-                        | PiePosition.TOP.FLAG);
+                disablePie(false);
             }
         } catch (RemoteException e) {
-            // nothing else to do ...
+            // nothing else to do ... 
         }
 
         // See above re: lights-out policy for legacy apps.

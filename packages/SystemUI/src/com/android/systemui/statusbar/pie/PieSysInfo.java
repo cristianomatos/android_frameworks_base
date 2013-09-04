@@ -27,12 +27,14 @@ import android.graphics.Typeface;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiSsid;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 
-import com.android.internal.util.pie.PiePosition;
 import com.android.systemui.R;
+import com.android.systemui.statusbar.pie.PieLayout.PieDrawable;
 import com.android.systemui.statusbar.policy.PieController;
+import com.android.systemui.statusbar.policy.PieController.Position;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -65,25 +67,32 @@ public class PieSysInfo extends PieSliceContainer implements ValueAnimator.Anima
     private String mTimeFormatString;
     private SimpleDateFormat mTimeFormat;
 
-    public PieSysInfo(Context context, PieView parent,
+    public PieSysInfo(Context context, PieLayout parent,
             PieController controller, int initialFlags) {
         super(parent, initialFlags);
         mController = controller;
         mContext = context;
 
-        int textColor = context.getResources().getColor(R.color.pie_text_color);
-
-        mClockPaint.setColor(textColor);
+        setColor();
         mClockPaint.setAntiAlias(true);
         mClockPaint.setTypeface(Typeface.create("sans-serif-light", Typeface.BOLD));
 
-        mInfoPaint.setColor(textColor);
         mInfoPaint.setAntiAlias(true);
         mInfoPaint.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
     }
 
+    private void setColor() {
+        int textColor = (Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.PIE_TEXT_COLOR, -2));
+        if (textColor == -2) {
+            textColor = mContext.getResources().getColor(R.color.pie_text_color);
+        }
+        mClockPaint.setColor(textColor);
+        mInfoPaint.setColor(textColor);
+    }
+
     @Override
-    public void prepare(PiePosition position, float scale) {
+    public void prepare(Position position, float scale) { 
 
         // We are updating data later when we starting to get visible.
         // This does not save work on the main thread, but for fast gestures
@@ -96,6 +105,8 @@ public class PieSysInfo extends PieSliceContainer implements ValueAnimator.Anima
         mInfoPaint.setAlpha(0);
 
         final Resources res = mContext.getResources();
+        final RectF innerBB = new RectF(-mInner * scale, -mInner * scale,
+                mInner * scale, mInner * scale);
         int textsize = res.getDimensionPixelSize(R.dimen.pie_textsize);
 
         mInfoPaint.setTextSize(textsize * scale);
@@ -117,12 +128,14 @@ public class PieSysInfo extends PieSliceContainer implements ValueAnimator.Anima
     }
 
     @Override
-    public void draw(Canvas canvas, PiePosition position) {
+    public void draw(Canvas canvas, Position position) {
         // as long as there is no new data, we don't need to draw anything.
-        if (mStaleData) {
+        if (mStaleData || Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.PIE_SHOW_TEXT, 1) == 0) {
             return;
         }
 
+        setColor();
         float lastPos = 0;
         for(int i = 0; i < mClockText.length(); i++) {
             canvas.drawTextOnPath("" + mClockText.charAt(i), mClockPath, lastPos, 0, mClockPaint);
@@ -191,7 +204,6 @@ public class PieSysInfo extends PieSliceContainer implements ValueAnimator.Anima
     }
 
     private SimpleDateFormat getTimeFormat() {
-
         String format = DateFormat.getTimeFormatString(mContext);
         if (format.equals(mTimeFormatString)) {
             return mTimeFormat;

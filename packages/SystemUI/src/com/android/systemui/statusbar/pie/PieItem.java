@@ -20,20 +20,19 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.PorterDuff.Mode;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.android.internal.util.pie.PieColorUtils; 
-
-import com.android.internal.util.pie.PiePosition;
-import com.android.internal.util.pie.PieColorUtils.PieColorSettings; 
 import com.android.systemui.R;
-import com.android.systemui.statusbar.pie.PieView.PieDrawable;
+import com.android.systemui.statusbar.pie.PieLayout.PieDrawable;
+import com.android.systemui.statusbar.policy.PieController.Position;
 
 /**
  * A clickable pie menu item.
@@ -41,20 +40,23 @@ import com.android.systemui.statusbar.pie.PieView.PieDrawable;
  * This is the actual end point for user interaction.<br>
  * ( == This is what a user clicks on.)
  */
-public class PieItem extends PieView.PieDrawable {
+public class PieItem extends PieLayout.PieDrawable {
 
-    private PieView mPieLayout;
+    private PieLayout mPieLayout;
+    private Context mContext;
 
     private Paint mBackgroundPaint = new Paint();
     private Paint mSelectedPaint = new Paint();
-    private Paint mLongPressPaint = new Paint();
     private Paint mOutlinePaint = new Paint();
+    private Paint mLongPressPaint = new Paint();
 
     private View mView;
     private Path mPath;
+    private int mPieIconType;
 
     public final int width;
-    public final Object tag;
+    public final String tag;
+    public final String longTag;
 
     /**
      * The gap between two pie items. This more like a padding on both sides of the item.
@@ -81,37 +83,74 @@ public class PieItem extends PieView.PieDrawable {
      * The item is selected / has the focus from the gesture.
      */
     public final static int SELECTED = 0x100;
+
     /**
      * The item was long pressed.
      */
     public final static int LONG_PRESSED = 0x200;
+
     /**
      * The item can be long pressed.
      */
     public final static int CAN_LONG_PRESS = 0x400;
 
-    public PieItem(Context context, PieView parent, int flags, int width, Object tag, View view,
-            PieColorSettings colorSettings) { 
+    public PieItem(Context context, PieLayout parent, int flags, int width, String tag,
+                String longTag, View view, int iconType) {
+        mContext = context;
         mView = view;
         mPieLayout = parent;
+        mPieIconType = iconType;
         this.tag = tag;
+        this.longTag = longTag;
         this.width = width;
         this.flags = flags | PieDrawable.VISIBLE | PieDrawable.DISPLAY_ALL;
 
         final Resources res = context.getResources();
 
-        mBackgroundPaint.setColor(colorSettings.getColor(PieColorUtils.COLOR_NORMAL));
+        float backgroundAlpha = (Settings.System.getFloat(context.getContentResolver(),
+                Settings.System.PIE_BUTTON_ALPHA, 0.3f));
+        float backgroundSelectedAlpha = (Settings.System.getFloat(context.getContentResolver(),
+                Settings.System.PIE_BUTTON_PRESSED_ALPHA, 0.0f));
+
+        int backgroundPaintColor = (Settings.System.getInt(context.getContentResolver(),
+                Settings.System.PIE_BUTTON_COLOR, -2));
+        if (backgroundPaintColor == -2) {
+            backgroundPaintColor = res.getColor(R.color.pie_background_color);
+        }
+        mBackgroundPaint.setColor(stripAlpha(backgroundPaintColor));
+        mBackgroundPaint.setAlpha((int) ((1-backgroundAlpha) * 255));
         mBackgroundPaint.setAntiAlias(true);
-        mSelectedPaint.setColor(colorSettings.getColor(PieColorUtils.COLOR_SELECTED));
+
+        int selectedPaintColor = (Settings.System.getInt(context.getContentResolver(),
+                Settings.System.PIE_BUTTON_PRESSED_COLOR, -2));
+        if (selectedPaintColor == -2) {
+            selectedPaintColor = res.getColor(R.color.pie_selected_color);
+        }
+        mSelectedPaint.setColor(stripAlpha(selectedPaintColor));
+        mSelectedPaint.setAlpha((int) ((1-backgroundSelectedAlpha) * 255));
         mSelectedPaint.setAntiAlias(true);
-        mLongPressPaint.setColor(colorSettings.getColor(PieColorUtils.COLOR_LONG_PRESSED)); 
+
+        int longPressPaintColor = (Settings.System.getInt(context.getContentResolver(),
+                Settings.System.PIE_BUTTON_LONG_PRESSED_COLOR, -2));
+        if (longPressPaintColor == -2) {
+            longPressPaintColor = res.getColor(R.color.pie_long_pressed_color);
+        }
+        mLongPressPaint.setColor(stripAlpha(longPressPaintColor));
+        mLongPressPaint.setAlpha((int) ((1-backgroundSelectedAlpha) * 255));
         mLongPressPaint.setAntiAlias(true);
-        mOutlinePaint.setColor(colorSettings.getColor(PieColorUtils.COLOR_OUTLINE));
+
+        int outlinePaintColor = (Settings.System.getInt(context.getContentResolver(),
+                Settings.System.PIE_BUTTON_OUTLINE_COLOR, -2));
+        if (outlinePaintColor == -2) {
+            outlinePaintColor = res.getColor(R.color.pie_outline_color);
+        }
+        mOutlinePaint.setColor(outlinePaintColor);
+        mOutlinePaint.setAlpha((int) ((1-backgroundAlpha) * 255));
         mOutlinePaint.setAntiAlias(true);
         mOutlinePaint.setStyle(Style.STROKE);
         mOutlinePaint.setStrokeWidth(res.getDimensionPixelSize(R.dimen.pie_outline));
 
-        setColor(colorSettings.getColor(PieColorUtils.COLOR_ICON));
+        setColor(res.getColor(R.color.pie_foreground_color));
     }
 
     public void setGap(float gap) {
@@ -133,9 +172,9 @@ public class PieItem extends PieView.PieDrawable {
 
     public void show(boolean show) {
         if (show) {
-            flags |= PieView.PieDrawable.VISIBLE;
+            flags |= PieLayout.PieDrawable.VISIBLE;
         } else {
-            flags &= ~PieView.PieDrawable.VISIBLE;
+            flags &= ~PieLayout.PieDrawable.VISIBLE;
         }
     }
 
@@ -164,15 +203,33 @@ public class PieItem extends PieView.PieDrawable {
 
     public void setColor(int color) {
         if (mView instanceof ImageView) {
-            ImageView imageView = (ImageView)mView;
+            int drawableColorMode = (Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.System.PIE_ICON_COLOR_MODE, 0));
+            int drawableColor = (Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.System.PIE_ICON_COLOR, -2));
+
+            ImageView imageView = (ImageView) mView;
             Drawable drawable = imageView.getDrawable();
-            drawable.setColorFilter(color, Mode.SRC_ATOP);
+
+            if (drawableColor != -2) {
+                color = drawableColor;
+                if ((mPieIconType == 2 && drawableColorMode != 1)
+                    || (mPieIconType == 1 && drawableColorMode == 0)) {
+                    drawable.setColorFilter(color, Mode.MULTIPLY);
+                } else if (mPieIconType == 0) {
+                    drawable.setColorFilter(color, Mode.SRC_ATOP);
+                } else {
+                    drawable.setColorFilter(null);
+                }
+            } else {
+                drawable.setColorFilter(null);
+            }
             imageView.setImageDrawable(drawable);
         }
     }
 
     @Override
-    public void prepare(PiePosition position, float scale) {
+    public void prepare(Position position, float scale) {
         mPath = getOutline(scale);
         if (mView != null) {
             mView.measure(mView.getLayoutParams().width, mView.getLayoutParams().height);
@@ -192,7 +249,7 @@ public class PieItem extends PieView.PieDrawable {
     }
 
     @Override
-    public void draw(Canvas canvas, PiePosition position) {
+    public void draw(Canvas canvas, Position position) {
         if ((flags & SELECTED) != 0) {
             Paint paint = (flags & LONG_PRESSED) == 0
                     ? mSelectedPaint : mLongPressPaint;
@@ -206,7 +263,7 @@ public class PieItem extends PieView.PieDrawable {
             int state = canvas.save();
             canvas.translate(mView.getLeft(), mView.getTop());
             // keep icons "upright" if we get displayed on TOP position
-            if (position != PiePosition.TOP) {
+            if (position != Position.TOP) {
                 canvas.rotate(mStart + mSweep / 2 - 270);
             } else {
                 canvas.rotate(mStart + mSweep / 2 - 90);
@@ -257,5 +314,9 @@ public class PieItem extends PieView.PieDrawable {
         path.close();
 
         return path;
+    }
+
+    private static int stripAlpha(int color){
+        return Color.rgb(Color.red(color), Color.green(color), Color.blue(color));
     }
 }

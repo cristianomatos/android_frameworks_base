@@ -76,6 +76,9 @@ public class BatteryController extends BroadcastReceiver {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY), false, this);
+	    resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.PIE_DISABLE_STATUSBAR_INFO),
+                    false, this);
         }
 
         @Override public void onChange(boolean selfChange) {
@@ -255,6 +258,12 @@ public class BatteryController extends BroadcastReceiver {
         mBatteryStyle = (Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_BATTERY, BATTERY_STYLE_NORMAL,
                 UserHandle.USER_CURRENT));
+
+	if (Settings.System.getInt(resolver,
+                Settings.System.PIE_DISABLE_STATUSBAR_INFO, 0) == 1) {
+            mBatteryStyle = BATTERY_STYLE_GONE;
+        } 
+
         updateBattery();
     }
 }

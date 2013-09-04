@@ -672,6 +672,12 @@ public class InputMethodService extends AbstractInputMethodService {
         if (mHardwareAccelerated) {
             mWindow.getWindow().addFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
         }
+
+	//IME is not showing on first onCreate to be sure
+        //toggle it off for PIE
+        //Settings.System.putInt(getContentResolver(),
+        //        Settings.System.PIE_SOFTKEYBOARD_IS_SHOWING, 0);
+
         initViews();
         mWindow.getWindow().setLayout(MATCH_PARENT, WRAP_CONTENT);
     }
@@ -1436,6 +1442,11 @@ public class InputMethodService extends AbstractInputMethodService {
             mWindowWasVisible = true;
             mInShowWindow = false;
         }
+
+	//IME softkeyboard is showing....toggle it
+        Settings.System.putInt(getContentResolver(),
+                Settings.System.PIE_SOFTKEYBOARD_IS_SHOWING, 1);
+
     }
 
     void showWindowInner(boolean showInput) {
@@ -1518,6 +1529,11 @@ public class InputMethodService extends AbstractInputMethodService {
             onWindowHidden();
             mWindowWasVisible = false;
         }
+
+	//IME softkeyboard is hiding....toggle it
+        Settings.System.putInt(getContentResolver(),
+                Settings.System.PIE_SOFTKEYBOARD_IS_SHOWING, 0); 
+
     }
 
     /**
