@@ -1304,4 +1304,8 @@
          it is disabled by default so devices need to add an overlay to enable -->
     <string name="config_fastChargePath" translatable="false">/sys/kernel/fast_charge/force_fast_charge</string> 
 
+    <!-- Boolean to enable/disable SlimPIE
+        default is enabled -->
+    <bool name="config_slimPie">true</bool> 
+
 </resources>
