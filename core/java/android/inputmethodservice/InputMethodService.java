@@ -675,8 +675,8 @@ public class InputMethodService extends AbstractInputMethodService {
 
 	//IME is not showing on first onCreate to be sure
         //toggle it off for PIE
-        //Settings.System.putInt(getContentResolver(),
-        //        Settings.System.PIE_SOFTKEYBOARD_IS_SHOWING, 0);
+        Settings.System.putInt(getContentResolver(),
+                Settings.System.PIE_SOFTKEYBOARD_IS_SHOWING, 0);
 
         initViews();
         mWindow.getWindow().setLayout(MATCH_PARENT, WRAP_CONTENT);
