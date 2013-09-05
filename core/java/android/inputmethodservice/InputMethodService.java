@@ -29,7 +29,9 @@ import android.graphics.Rect;
 import android.graphics.Region;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.RemoteException; 
 import android.os.ResultReceiver;
+import android.os.ServiceManager; 
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.text.InputType;
@@ -62,6 +64,8 @@ import android.view.inputmethod.InputMethodSubtype;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+
+import com.android.internal.statusbar.IStatusBarService; 
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -316,6 +320,9 @@ public class InputMethodService extends AbstractInputMethodService {
     
     int mStatusIcon;
     int mBackDisposition;
+
+    private IStatusBarService mStatusBarService;
+    private Object mServiceAquireLock = new Object(); 
 
     final Insets mTmpInsets = new Insets();
     final int[] mTmpLocation = new int[2];
@@ -675,8 +682,14 @@ public class InputMethodService extends AbstractInputMethodService {
 
 	//IME is not showing on first onCreate to be sure
         //toggle it off for PIE
-        Settings.System.putInt(getContentResolver(),
-                Settings.System.PIE_SOFTKEYBOARD_IS_SHOWING, 0);
+        try {
+	     IStatusBarService statusbar = getStatusBarService();
+             if (statusbar != null) {
+                statusbar.setImeShowStatus(false);
+            }
+	} catch (RemoteException e) {
+            mStatusBarService = null; 
+	}  
 
         initViews();
         mWindow.getWindow().setLayout(MATCH_PARENT, WRAP_CONTENT);
@@ -1444,8 +1457,14 @@ public class InputMethodService extends AbstractInputMethodService {
         }
 
 	//IME softkeyboard is showing....toggle it
-        Settings.System.putInt(getContentResolver(),
-                Settings.System.PIE_SOFTKEYBOARD_IS_SHOWING, 1);
+        IStatusBarService statusbar = getStatusBarService();
+        try {
+            if (statusbar != null) {
+                statusbar.setImeShowStatus(true);
+            }
+        } catch (RemoteException e) {
+            mStatusBarService = null;
+        } 
 
     }
 
@@ -1531,8 +1550,14 @@ public class InputMethodService extends AbstractInputMethodService {
         }
 
 	//IME softkeyboard is hiding....toggle it
-        Settings.System.putInt(getContentResolver(),
-                Settings.System.PIE_SOFTKEYBOARD_IS_SHOWING, 0); 
+        try {
+            IStatusBarService statusbar = getStatusBarService();
+            if (statusbar != null) {
+                statusbar.setImeShowStatus(false);
+            }
+        } catch (RemoteException e) {
+            mStatusBarService = null;
+        }  
 
     }
 
@@ -2204,6 +2229,16 @@ public class InputMethodService extends AbstractInputMethodService {
         }
         return true;
     }
+
+    IStatusBarService getStatusBarService() {
+        synchronized (mServiceAquireLock) {
+            if (mStatusBarService == null) {
+                mStatusBarService = IStatusBarService.Stub.asInterface(
+                        ServiceManager.getService("statusbar"));
+            }
+            return mStatusBarService;
+        }
+    } 
     
     /**
      * Return text that can be used as a button label for the given

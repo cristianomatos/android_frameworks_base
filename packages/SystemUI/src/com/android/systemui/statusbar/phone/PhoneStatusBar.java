@@ -917,6 +917,13 @@ public class PhoneStatusBar extends BaseStatusBar {
     }
 
     @Override
+    public void setImeShowStatus(boolean enabled) {
+        Settings.System.putInt(mContext.getContentResolver(),
+                Settings.System.PIE_SOFTKEYBOARD_IS_SHOWING,
+                enabled ? 1 : 0);
+    }
+
+    @Override
     public void toggleNotificationShade() {
 	int msg = (mExpandedVisible)
                 ? MSG_CLOSE_PANELS : MSG_OPEN_NOTIFICATION_PANEL;
