@@ -918,11 +918,7 @@ public class PhoneStatusBar extends BaseStatusBar {
 
     @Override
     public void toggleNotificationShade() {
-	Settings.System.putInt(mContext.getContentResolver(),
-                Settings.System.TOGGLE_NOTIFICATION_SHADE,
-                (mExpandedVisible) ? 0 : 1); 
-
-        int msg = (mExpandedVisible)
+	int msg = (mExpandedVisible)
                 ? MSG_CLOSE_PANELS : MSG_OPEN_NOTIFICATION_PANEL;
         mHandler.removeMessages(msg);
         mHandler.sendEmptyMessage(msg);
