@@ -511,11 +511,7 @@ public abstract class BaseStatusBar extends SystemUI implements
             }
         }, filter);
 
-	mPieController = new PieController(mContext);
-        mPieController.attachTo(this);
-        addNavigationBarCallback(mPieController);
-
-        mSettingsObserver = new PieSettingsObserver(new Handler());
+	mSettingsObserver = new PieSettingsObserver(new Handler());
 
         // this calls attachPie() implicitly
         mSettingsObserver.onChange(true);
@@ -1823,7 +1819,6 @@ public abstract class BaseStatusBar extends SystemUI implements
 
     private void attachPie() {
         if (isPieEnabled()) {
-            setupTriggers(false);
             // Create our container, if it does not exist already
             if (mPieContainer == null) {
                 mPieContainer = new PieLayout(mContext);
@@ -1843,18 +1838,23 @@ public abstract class BaseStatusBar extends SystemUI implements
                 lp.screenOrientation = ActivityInfo.SCREEN_ORIENTATION_BEHIND;
 
                 mWindowManager.addView(mPieContainer, lp);
-                if (mPieController != null) {
-                    mPieController.attachTo(mPieContainer);
-                } 
+                // once we need a pie controller, we create one and keep it forever ...
+                if (mPieController == null) {
+                    mPieController = new PieController(mContext);
+                    mPieController.attachStatusBar(this);
+                    addNavigationBarCallback(mPieController);
+                }
+		mPieController.attachContainer(mPieContainer);  
             }
 
             // add or update pie triggers
+	    setupTriggers(false);
+            refreshPieTriggers(); 
+
             if (DEBUG) {
                 Slog.d(TAG, "AttachPie with trigger position flags: "
                         + mPieTriggerSlots + " masked: " + (mPieTriggerSlots & mPieTriggerMask));
             }
-
-            refreshPieTriggers();
 
         } else {
             for (int i = 0; i < mPieTrigger.length; i++) {
@@ -1863,16 +1863,19 @@ public abstract class BaseStatusBar extends SystemUI implements
                     mPieTrigger[i] = null;
                 }
             }
-            // destroy the pie container
-            mPieContainer = null;
-            // unregister listener and receiver
-            mPieController.detachContainer();
+            // detach from the pie container and unregister observers and receivers
+            if (mPieController != null) {
+                mPieController.detachContainer();
+                mPieContainer = null;
+            } 
         }
     }
 
-    public void disableTriggers( boolean disableTriggers) {
-        mDisableTriggers = disableTriggers;
-        setupTriggers(false);
+    public void disableTriggers(boolean disableTriggers) {
+        if (mPieContainer != null) {
+            mDisableTriggers = disableTriggers;
+            setupTriggers(false);
+        } 
     }
 
     public void setupTriggers(boolean forceDisableBottomAndTopTrigger) {
@@ -1993,9 +1996,6 @@ public abstract class BaseStatusBar extends SystemUI implements
         int oldState = mPieTriggerSlots & mPieTriggerMask;
         mPieTriggerMask = newMask;
 
-        Settings.System.putInt(mContext.getContentResolver(),
-                Settings.System.PIE_TRIGGER_MASK, mPieTriggerMask);
-
         // first we check, if it would make a change
         if ((mPieTriggerSlots & mPieTriggerMask) != oldState
                 || mForceDisableBottomAndTopTrigger) {
@@ -2007,6 +2007,8 @@ public abstract class BaseStatusBar extends SystemUI implements
 
     // This should only be called, when is is clear that the pie controls are active
     private void refreshPieTriggers() {
+	// pass actual trigger mask and slots to the attached container
+        mPieContainer.setPieTriggers(mPieTriggerMask, mPieTriggerSlots); 
         for (Position g : Position.values()) {
             View trigger = mPieTrigger[g.INDEX];
             if (trigger == null && (mPieTriggerSlots & mPieTriggerMask & g.FLAG) != 0) {
