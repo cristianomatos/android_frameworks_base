@@ -367,6 +367,8 @@ public abstract class BaseStatusBar extends SystemUI implements
         }
     };
 
+    private SettingsObserver mNotifShadeSettingsObserver = new SettingsObserver(mHandler);
+
         //0: normal; 1: never expand; 2: always expand; 3: revert to o old
         int notificationsBehaviour = 0;
         private ContentObserver SettingsObserver = new ContentObserver(new Handler()) {
@@ -422,6 +424,8 @@ public abstract class BaseStatusBar extends SystemUI implements
 	mContext.getContentResolver().registerContentObserver(
                 Settings.System.getUriFor(Settings.System.NOTIFICATIONS_BEHAVIOUR), true,
                 SettingsObserver); 
+
+	mNotifShadeSettingsObserver.observe();
 
         mBarService = IStatusBarService.Stub.asInterface(
                 ServiceManager.getService(Context.STATUS_BAR_SERVICE));
