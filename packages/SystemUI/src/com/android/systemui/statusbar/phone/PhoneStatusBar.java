@@ -121,7 +121,6 @@ import com.android.systemui.statusbar.policy.NetworkController;
 import com.android.systemui.statusbar.policy.NotificationRowLayout;
 import com.android.systemui.statusbar.policy.OnSizeChangedListener;
 import com.android.systemui.statusbar.policy.Prefs;
-import com.android.systemui.statusbar.policy.PieController.Position; 
 
 public class PhoneStatusBar extends BaseStatusBar {
     static final String TAG = "PhoneStatusBar";
@@ -2990,7 +2989,10 @@ public class PhoneStatusBar extends BaseStatusBar {
             // recreate and reposition navigationbar
             mNavigationBarView.recreateNavigationBar();
             repositionNavigationBar();
-        } 
+        }
+
+	// recreate pie navigation
+        recreatePie();  
 
         // recreate StatusBarIconViews.
         for (int i = 0; i < nIcons; i++) {
