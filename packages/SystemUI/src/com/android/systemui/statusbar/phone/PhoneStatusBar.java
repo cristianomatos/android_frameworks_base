@@ -2547,7 +2547,8 @@ public class PhoneStatusBar extends BaseStatusBar {
 
         // hide pie triggers when keyguard is visible
         try {
-            if (mWindowManagerService.isKeyguardLocked()) {
+            if (mWindowManagerService.isKeyguardLocked()
+                && (mDisabled & View.STATUS_BAR_DISABLE_HOME) != 0) { 
                 disableTriggers(true);  
             } else {
                 disableTriggers(false);  
