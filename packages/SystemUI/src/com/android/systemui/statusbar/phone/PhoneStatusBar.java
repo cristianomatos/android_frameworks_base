@@ -96,6 +96,9 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import android.service.notification.StatusBarNotification;
+import com.android.internal.util.cm.ButtonConfig;
+import com.android.internal.util.cm.ButtonsConstants;
+import com.android.internal.util.cm.ButtonsHelper; 
 
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.systemui.EventLogTags;
@@ -315,6 +318,10 @@ public class PhoneStatusBar extends BaseStatusBar {
 
     // for disabling the status bar
     int mDisabled = 0;
+
+    // navbar recreate and longpress home handling
+    boolean mDisableHomeLongpress;
+    String mOldNavBarConfig = ""; 
 
     // tracking calls to View.setSystemUiVisibility()
     int mSystemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE;
@@ -989,7 +996,7 @@ public class PhoneStatusBar extends BaseStatusBar {
         public boolean onTouch(View v, MotionEvent event) {
             switch(event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (!shouldDisableNavbarGestures()) {
+                if (!shouldDisableNavbarGestures() && !mDisableHomeLongpress) { 
                     mHandler.removeCallbacks(mShowSearchPanel);
                     mHandler.postDelayed(mShowSearchPanel, mShowSearchHoldoff);
                 }
@@ -3248,9 +3255,30 @@ public class PhoneStatusBar extends BaseStatusBar {
                 } 
             } 
 	
-	    setNotificationWallpaperHelper();
-            setNotificationAlphaHelper(); 
+	    String navBarConfig = Settings.System.getStringForUser(mContext.getContentResolver(),
+                                    Settings.System.SYSTEMUI_NAVBAR_CONFIG,
+                                    UserHandle.USER_CURRENT);
+
+            if (!mOldNavBarConfig.equals(navBarConfig) && mNavigationBarView != null) {
+                mOldNavBarConfig = navBarConfig;
+                mDisableHomeLongpress = false;
+                ArrayList<ButtonConfig> buttonsConfig =
+                    ButtonsHelper.getNavBarConfig(mContext);
+                ButtonConfig buttonConfig;
+                for (int j = 0; j < buttonsConfig.size(); j++) {
+                    buttonConfig = buttonsConfig.get(j);
+                    if (buttonConfig.getClickAction().equals(ButtonsConstants.ACTION_HOME)
+                            && !buttonConfig.getLongpressAction().equals(ButtonsConstants.ACTION_NULL)) {
+                        mDisableHomeLongpress = true;
+                    }
+                }
+                // recreate navigationbar
+                mNavigationBarView.recreateNavigationBar();
+            }  
  
+	    setNotificationWallpaperHelper();
+            setNotificationAlphaHelper();
+
         }
 
         public void startObserving() {
@@ -3291,6 +3319,10 @@ public class PhoneStatusBar extends BaseStatusBar {
 	    cr.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.NOTIF_ALPHA),
                     false, this, UserHandle.USER_ALL);
+
+	    cr.registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.SYSTEMUI_NAVBAR_CONFIG),
+                    false, this, UserHandle.USER_ALL); 
 
 	    cr.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.QS_QUICK_ACCESS),
