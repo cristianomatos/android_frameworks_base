@@ -1988,38 +1988,39 @@ public abstract class BaseStatusBar extends SystemUI implements
                                 || (hasNavigationBar && !isScreenPortrait() && !navBarCanMove
                                     && navigationBarHeightLandscape);
 
-	    // let's set the triggers if enabled
-            if (!(mForceBottomTrigger && hasNavigationBar)) {
-                if ((mForceBottomTrigger && !hasNavigationBar
-                        || mForceBottomTrigger && disableRightTriggerForNavbar)
-                    && !forceDisableBottomAndTopTrigger) { 
-                    bottomTriggerEnabled = true;
-                } else if ((!expanded && hasNavigationBar && !autoHideStatusBar)
-                    || forceDisableBottomAndTopTrigger) { 
-                    leftTriggerEnabled = true;
-                    rightTriggerEnabled = true;
-                } else if ((!expanded && !hasNavigationBar && !autoHideStatusBar)
-                    || (expandedStyle == 1 && expanded && !autoHideStatusBar)) {
-                    leftTriggerEnabled = true;
-                    rightTriggerEnabled = true;
-                    bottomTriggerEnabled = true;
-                } else if (expandedStyle == 2 && expanded && hasNavigationBar
-                            || !expanded && hasNavigationBar && autoHideStatusBar) {
-                    leftTriggerEnabled = true;
-                    rightTriggerEnabled = true;
-                    topTriggerEnabled = true; 
-                } else {
-                    leftTriggerEnabled = true;
-                    rightTriggerEnabled = true;
-                    bottomTriggerEnabled = true;
-                    topTriggerEnabled = true; 
-                }
-                if (disableRightTriggerForNavbar) {
-                    rightTriggerEnabled = false; 
-                }
+	    // let's set the triggers
+            if ((mForceBottomTrigger && !hasNavigationBar
+                    || mForceBottomTrigger && disableRightTriggerForNavbar
+                    || mForceBottomTrigger && ((expandedMode == 1 || expandedMode == 3) && expanded))
+                && !forceDisableBottomAndTopTrigger) {
+                bottomTriggerEnabled = true;
+            } else if (mForceBottomTrigger && hasNavigationBar) {
+                //do nothing all triggers are disabled and exit
+            } else if ((!expanded && hasNavigationBar && !autoHideStatusBar)
+                || forceDisableBottomAndTopTrigger) {
+                leftTriggerEnabled = true;
+                rightTriggerEnabled = true;
+            } else if ((!expanded && !hasNavigationBar && !autoHideStatusBar)
+                || (expandedStyle == 1 && expanded && !autoHideStatusBar)) {
+                leftTriggerEnabled = true;
+                rightTriggerEnabled = true;
+                bottomTriggerEnabled = true;
+            } else if (expandedStyle == 2 && expanded && hasNavigationBar
+                        || !expanded && hasNavigationBar && autoHideStatusBar) {
+                leftTriggerEnabled = true;
+                rightTriggerEnabled = true;
+                topTriggerEnabled = true;
             } else {
-                if (mPieImeIsShowing) {
-                    bottomTriggerEnabled = false; 
+                leftTriggerEnabled = true;
+                rightTriggerEnabled = true;
+                bottomTriggerEnabled = true;
+                topTriggerEnabled = true;
+            }
+            if (disableRightTriggerForNavbar) {
+                    rightTriggerEnabled = false;
+            }
+            if (mPieImeIsShowing) {
+                    bottomTriggerEnabled = false;  
                 }
             }
 
