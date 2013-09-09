@@ -460,6 +460,7 @@ public class PhoneStatusBar extends BaseStatusBar {
         super.start(); // calls createAndAddWindows()
 
         addNavigationBar();
+	setDisableHomeLongpress(); 
 
         if (ENABLE_INTRUDERS) addIntruderView();
 
@@ -991,7 +992,7 @@ public class PhoneStatusBar extends BaseStatusBar {
         }
     };
 
-    View.OnTouchListener mHomeSearchActionListener = new View.OnTouchListener() {
+    View.OnTouchListener mHomeActionListener = new View.OnTouchListener() { 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             switch(event.getAction()) {
@@ -1011,6 +1012,27 @@ public class PhoneStatusBar extends BaseStatusBar {
         return false;
         }
     };
+
+    View.OnTouchListener mSearchActionListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            switch(event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                if (!shouldDisableNavbarGestures()) {
+                    mHandler.removeCallbacks(mShowSearchPanel);
+                    mHandler.postDelayed(mShowSearchPanel, mShowSearchHoldoff);
+                }
+            break;
+
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                mHandler.removeCallbacks(mShowSearchPanel);
+                awakenDreams();
+            break;
+        }
+        return false;
+        }
+    }; 
 
     private void awakenDreams() {
         if (mDreamManager != null) {
@@ -1048,9 +1070,9 @@ public class PhoneStatusBar extends BaseStatusBar {
     private void prepareNavigationBarView() {
         mNavigationBarView.reorient();
         if (mNavigationBarView.getHomeButton() != null) {
-            mNavigationBarView.getHomeButton().setOnTouchListener(mHomeSearchActionListener);
+            mNavigationBarView.getHomeButton().setOnTouchListener(mHomeActionListener); 
         }
-        mNavigationBarView.getSearchLight().setOnTouchListener(mHomeSearchActionListener);
+        mNavigationBarView.getSearchLight().setOnTouchListener(mSearchActionListener); 
         updateSearchPanel();
     }
 
@@ -1060,7 +1082,6 @@ public class PhoneStatusBar extends BaseStatusBar {
         if (mNavigationBarView == null) return;
 
         prepareNavigationBarView();
-
         mWindowManager.addView(mNavigationBarView, getNavigationBarLayoutParams());
     }
 
@@ -1074,7 +1095,6 @@ public class PhoneStatusBar extends BaseStatusBar {
             return;
         }
         prepareNavigationBarView();
-
         mWindowManager.updateViewLayout(mNavigationBarView, getNavigationBarLayoutParams());
     }
 
@@ -3167,7 +3187,13 @@ public class PhoneStatusBar extends BaseStatusBar {
         return !isDeviceProvisioned()
                 || mExpandedVisible
                 || (mNavigationBarView != null && mNavigationBarView.isInEditMode())
-                || (mDisabled & StatusBarManager.DISABLE_SEARCH) != 0;
+                || !hasNavringTargets();
+    }
+
+    private boolean hasNavringTargets() {
+        ArrayList<ButtonConfig> buttonsConfig =
+            ButtonsHelper.getNavRingConfig(mContext);
+        return buttonsConfig.size() > 0; 
     }
 
     private static class FastColorDrawable extends Drawable {
@@ -3262,19 +3288,9 @@ public class PhoneStatusBar extends BaseStatusBar {
             if (navBarConfig != null  && mNavigationBarView != null
                     && !mOldNavBarConfig.equals(navBarConfig)) { 
                 mOldNavBarConfig = navBarConfig;
-                mDisableHomeLongpress = false;
-                ArrayList<ButtonConfig> buttonsConfig =
-                    ButtonsHelper.getNavBarConfig(mContext);
-                ButtonConfig buttonConfig;
-                for (int j = 0; j < buttonsConfig.size(); j++) {
-                    buttonConfig = buttonsConfig.get(j);
-                    if (buttonConfig.getClickAction().equals(ButtonsConstants.ACTION_HOME)
-                            && !buttonConfig.getLongpressAction().equals(ButtonsConstants.ACTION_NULL)) {
-                        mDisableHomeLongpress = true;
-                    }
-                }
                 // recreate navigationbar
                 mNavigationBarView.recreateNavigationBar();
+		setDisableHomeLongpress(); 
             }  
  
 	    setNotificationWallpaperHelper();
@@ -3338,6 +3354,21 @@ public class PhoneStatusBar extends BaseStatusBar {
                     false, this, UserHandle.USER_ALL);    
         }
     }
+
+    private void setDisableHomeLongpress() {
+        mDisableHomeLongpress = false;
+        ArrayList<ButtonConfig> buttonsConfig =
+            ButtonsHelper.getNavBarConfig(mContext);
+        ButtonConfig buttonConfig;
+        for (int j = 0; j < buttonsConfig.size(); j++) {
+            buttonConfig = buttonsConfig.get(j);
+            if (buttonConfig.getClickAction().equals(ButtonsConstants.ACTION_HOME)
+                    && !buttonConfig.getLongpressAction().equals(ButtonsConstants.ACTION_NULL)) {
+                mDisableHomeLongpress = true;
+            }
+        }
+        prepareNavigationBarView();
+    } 
 
     private void setNotificationWallpaperHelper() {
         float wallpaperAlpha = Settings.System.getFloat(mContext.getContentResolver(), Settings.System.NOTIF_WALLPAPER_ALPHA, 0.1f);
