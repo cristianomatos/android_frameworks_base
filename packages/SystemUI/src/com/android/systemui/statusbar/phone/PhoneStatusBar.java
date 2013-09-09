@@ -2549,9 +2549,9 @@ public class PhoneStatusBar extends BaseStatusBar {
         try {
             if (mWindowManagerService.isKeyguardLocked()
                 && (mDisabled & View.STATUS_BAR_DISABLE_HOME) != 0) { 
-                disableTriggers(true);  
+                keyguardTriggers(true);   
             } else {
-                disableTriggers(false);  
+                keyguardTriggers(false);   
             }
         } catch (RemoteException e) {
             // nothing else to do ... 
