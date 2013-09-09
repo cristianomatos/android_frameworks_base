@@ -3259,7 +3259,8 @@ public class PhoneStatusBar extends BaseStatusBar {
                                     Settings.System.SYSTEMUI_NAVBAR_CONFIG,
                                     UserHandle.USER_CURRENT);
 
-            if (!mOldNavBarConfig.equals(navBarConfig) && mNavigationBarView != null) {
+            if (navBarConfig != null  && mNavigationBarView != null
+                    && !mOldNavBarConfig.equals(navBarConfig)) { 
                 mOldNavBarConfig = navBarConfig;
                 mDisableHomeLongpress = false;
                 ArrayList<ButtonConfig> buttonsConfig =
