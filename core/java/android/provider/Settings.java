@@ -2882,13 +2882,7 @@ public final class Settings {
          */
         public static final String PIE_BUTTONS_CONFIG = "pie_buttons_config"; 
 
-       /**
-        *
-        * @hide
-        */
-        public static final String PIE_LONG_PRESS_ENABLE = "pie_long_press_enable"; 
-
-	/**
+        /**
          * @hide
          */
         public static final String PIE_SECOND_LAYER_ACTIVE = "pie_second_layer_active";
@@ -2898,13 +2892,7 @@ public final class Settings {
          */
         public static final String PIE_BUTTONS_CONFIG_SECOND_LAYER = "pie_buttons_config_second_layer"; 
 
-       /**
-        *
-        * @hide
-        */
-        public static final String PIE_LONG_PRESS_ENABLE_SECOND_LAYER = "pie_long_press_enable_second_layer";
-
-	/**
+        /**
          * Quick Settings Quick Pulldown if no notifications are present
          *
          * @hide
@@ -3914,13 +3902,7 @@ public final class Settings {
         /**
          * @hide
          */
-        public static final String SYSTEMUI_NAVBAR_CONFIG = "systemui_navbar_config";
-
-       /**
-        *
-        * @hide
-        */
-        public static final String SYSTEMUI_NAVBAR_LONG_ENABLE = "systemui_navbar_long_enable";
+        public static final String SYSTEMUI_NAVBAR_CONFIG = "systemui_navbar_config"; 
 
         /**
          * @hide
@@ -3956,12 +3938,6 @@ public final class Settings {
             "navigation_bar_glow_duration_off",
             "navigation_bar_glow_duration_on",
         };
-
-       /**
-        *
-        * @hide
-        */
-        public static final String SYSTEMUI_NAVRING_LONG_ENABLE = "systemui_navring_long_enable";
 
         /**
          * Custom navring configuration

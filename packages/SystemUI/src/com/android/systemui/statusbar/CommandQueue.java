@@ -57,8 +57,11 @@ public class CommandQueue extends IStatusBar.Stub {
     private static final int MSG_CANCEL_PRELOAD_RECENT_APPS = 15 << MSG_SHIFT;
     private static final int MSG_SET_NAVIGATION_ICON_HINTS  = 16 << MSG_SHIFT;
     private static final int MSG_TOGGLE_NOTIFICATION_SHADE  = 17 << MSG_SHIFT;
-    private static final int MSG_SET_IME_STATUS             = 18 << MSG_SHIFT; 
-
+    private static final int MSG_TOGGLE_SCREENSHOT          = 18 << MSG_SHIFT;
+    private static final int MSG_TOGGLE_LAST_APP            = 19 << MSG_SHIFT;
+    private static final int MSG_TOGGLE_KILL_APP            = 20 << MSG_SHIFT;  
+    private static final int MSG_SET_IME_STATUS             = 21 << MSG_SHIFT;
+    
     public static final int FLAG_EXCLUDE_NONE = 0;
     public static final int FLAG_EXCLUDE_SEARCH_PANEL = 1 << 0;
     public static final int FLAG_EXCLUDE_RECENTS_PANEL = 1 << 1;
@@ -97,6 +100,9 @@ public class CommandQueue extends IStatusBar.Stub {
 	public void setImeShowStatus(boolean enabled); 
         public void toggleNotificationShade();
         public void toggleRecentApps();
+	public void toggleScreenshot();
+        public void toggleLastApp();
+        public void toggleKillApp(); 
         public void preloadRecentApps();
         public void showSearchPanel();
         public void hideSearchPanel();
@@ -230,6 +236,27 @@ public class CommandQueue extends IStatusBar.Stub {
         }
     }
 
+    public void toggleScreenshot() {
+        synchronized (mList) {
+            mHandler.removeMessages(MSG_TOGGLE_SCREENSHOT);
+            mHandler.obtainMessage(MSG_TOGGLE_SCREENSHOT, 0, 0, null).sendToTarget();
+        }
+    }
+
+    public void toggleLastApp() {
+        synchronized (mList) {
+            mHandler.removeMessages(MSG_TOGGLE_LAST_APP);
+            mHandler.obtainMessage(MSG_TOGGLE_LAST_APP, 0, 0, null).sendToTarget();
+        }
+    }
+
+    public void toggleKillApp() {
+        synchronized (mList) {
+            mHandler.removeMessages(MSG_TOGGLE_KILL_APP);
+            mHandler.obtainMessage(MSG_TOGGLE_KILL_APP, 0, 0, null).sendToTarget();
+        }
+    } 
+
     public void preloadRecentApps() {
         synchronized (mList) {
             mHandler.removeMessages(MSG_PRELOAD_RECENT_APPS);
@@ -325,6 +352,15 @@ public class CommandQueue extends IStatusBar.Stub {
                 case MSG_TOGGLE_NOTIFICATION_SHADE:
                     mCallbacks.toggleNotificationShade();
                     break;
+		case MSG_TOGGLE_SCREENSHOT:
+                    mCallbacks.toggleScreenshot();
+                    break;
+                case MSG_TOGGLE_LAST_APP:
+                    mCallbacks.toggleLastApp();
+                    break;
+                case MSG_TOGGLE_KILL_APP:
+                    mCallbacks.toggleKillApp();
+                    break; 
                 case MSG_TOGGLE_RECENT_APPS:
                     mCallbacks.toggleRecentApps();
                     break;
