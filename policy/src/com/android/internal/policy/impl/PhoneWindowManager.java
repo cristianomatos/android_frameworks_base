@@ -1349,8 +1349,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         if (mShortSizeDp < 600) {
             // 0-599dp: "phone" UI with a separate status & navigation bar
             mHasSystemNavBar = false;
-            if (Settings.System.getInt(mContext.getContentResolver(),
-                        Settings.System.NAVIGATION_BAR_CAN_MOVE, 1) == 1) {
+            if (Settings.System.getIntForUser(mContext.getContentResolver(),
+                        Settings.System.NAVIGATION_BAR_CAN_MOVE, 1, UserHandle.USER_CURRENT) == 1) {
                 mNavigationBarCanMove = true;
             } else {
                 mNavigationBarCanMove = false;
@@ -1435,8 +1435,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 Settings.System.EXPANDED_DESKTOP_STYLE, 0);
         mExpandedState = Settings.System.getInt(resolver,
                 Settings.System.EXPANDED_DESKTOP_STATE, 0); 
-        //mHideStatusBar = Settings.System.getInt(resolver,
-        //        Settings.System.HIDE_STATUSBAR, 0) == 1;
+        mHideStatusBar = Settings.System.getInt(resolver,
+                Settings.System.HIDE_STATUSBAR, 0) == 1;
         //mToggleNotificationAndQSShade = Settings.System.getInt(resolver,
         //        Settings.System.TOGGLE_NOTIFICATION_SHADE, 0) == 1;
 
@@ -1478,8 +1478,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     Settings.System.VOLBTN_MUSIC_CONTROLS, 1, UserHandle.USER_CURRENT) == 1);
 
 	    if (mShortSizeDp < 600) {
-                mNavigationBarCanMove = (Settings.System.getInt(resolver,
-                        Settings.System.NAVIGATION_BAR_CAN_MOVE, 1) == 1);
+                mNavigationBarCanMove = (Settings.System.getIntForUser(resolver,
+                        Settings.System.NAVIGATION_BAR_CAN_MOVE, 1, UserHandle.USER_CURRENT) == 1); 
             } 
 
 	    updateKeyAssignments(); 
@@ -3909,10 +3909,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 // and mTopIsFullscreen is that that mTopIsFullscreen is set only if the window
                 // has the FLAG_FULLSCREEN set.  Not sure if there is another way that to be the
                 // case though.
-		mHideStatusBar = Settings.System.getInt(mContext.getContentResolver(),
-                        Settings.System.HIDE_STATUSBAR, 0) == 1;
-                 if (topIsFullscreen || (mExpandedState == 1 &&
-                        (mExpandedStyle == 2 || mExpandedStyle == 3)) || mHideStatusBar) {    
+		if ((topIsFullscreen
+                        || mExpandedState == 1 && mExpandedStyle > 1
+                        || mHideStatusBar)) {     
                     if (DEBUG_LAYOUT) Log.v(TAG, "** HIDING status bar");
                     if (mStatusBar.hideLw(true)) {
                         changes |= FINISH_LAYOUT_REDO_LAYOUT;
