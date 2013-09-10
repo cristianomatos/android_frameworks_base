@@ -23,6 +23,7 @@ public class SleepScreenTile extends QuickSettingsTile {
             @Override
             public void onClick(View v) {
                 pm.goToSleep(SystemClock.uptimeMillis());
+		mQsc.mBar.collapseAllPanels(true);
             }
         };
         mOnLongClick = new OnLongClickListener() {
