@@ -18,27 +18,36 @@ package com.android.internal.util.cm;
 
 import android.app.Activity;
 import android.app.ActivityManagerNative;
-import android.app.SearchManager; 
+import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.input.InputManager;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
 import android.os.PowerManager;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.os.SystemClock;
-import android.os.UserHandle; 
+import android.os.UserHandle;
 import android.os.Vibrator;
 import android.util.Log;
-import android.view.IWindowManager; 
+import android.view.InputDevice;
+import android.view.IWindowManager;
+import android.view.KeyCharacterMap;
+import android.view.KeyEvent;
 
 import com.android.internal.statusbar.IStatusBarService;
 
 import java.net.URISyntaxException;
 
 public class SlimActions {
+
+    private static final int MSG_INJECT_KEY_DOWN = 1066;
+    private static final int MSG_INJECT_KEY_UP = 1067;
 
     private SlimActions() {
     }
@@ -51,7 +60,7 @@ public class SlimActions {
             final IStatusBarService barService = IStatusBarService.Stub.asInterface(
                     ServiceManager.getService(Context.STATUS_BAR_SERVICE));
 
-	    final IWindowManager windowManagerService = IWindowManager.Stub.asInterface(
+            final IWindowManager windowManagerService = IWindowManager.Stub.asInterface(
                     ServiceManager.getService("window"));
 
             boolean isKeyguardShowing = false;
@@ -71,40 +80,53 @@ public class SlimActions {
                     barService.collapsePanels();
                 } catch (RemoteException ex) {
                 }
-            } 
+            }
 
-            if (action.equals(ButtonsConstants.ACTION_POWER)) {
+            // process the actions
+            if (action.equals(ButtonsConstants.ACTION_HOME)) {
+                injectKeyDelayed(KeyEvent.KEYCODE_HOME, false);
+                return;
+            } else if (action.equals(ButtonsConstants.ACTION_BACK)) {
+                injectKeyDelayed(KeyEvent.KEYCODE_BACK, false);
+                return;
+            } else if (action.equals(ButtonsConstants.ACTION_SEARCH)) {
+                injectKeyDelayed(KeyEvent.KEYCODE_SEARCH, false);
+                return;
+            } else if (action.equals(ButtonsConstants.ACTION_MENU)) {
+                injectKeyDelayed(KeyEvent.KEYCODE_MENU, false);
+                return;
+            } else if (action.equals(ButtonsConstants.ACTION_POWER)) {
                 PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
                 pm.goToSleep(SystemClock.uptimeMillis());
                 return;
             } else if (action.equals(ButtonsConstants.ACTION_IME)) {
-		if (isKeyguardShowing) {
+                if (isKeyguardShowing) {
                     return;
-                } 
+                }
                 context.sendBroadcast(new Intent("android.settings.SHOW_INPUT_METHOD_PICKER"));
                 return;
             } else if (action.equals(ButtonsConstants.ACTION_KILL)) {
-		if (isKeyguardShowing) {
+                if (isKeyguardShowing) {
                     return;
-                } 
+                }
                 try {
                     barService.toggleKillApp();
                 } catch (RemoteException e) {
                 }
                 return;
             } else if (action.equals(ButtonsConstants.ACTION_LAST_APP)) {
-		if (isKeyguardShowing) {
+                if (isKeyguardShowing) {
                     return;
-                } 
+                }
                 try {
                     barService.toggleLastApp();
                 } catch (RemoteException e) {
                 }
                 return;
             } else if (action.equals(ButtonsConstants.ACTION_RECENTS)) {
-		if (isKeyguardShowing) {
+                if (isKeyguardShowing) {
                     return;
-                } 
+                }
                 try {
                     barService.toggleRecentApps();
                 } catch (RemoteException e) {
@@ -117,22 +139,22 @@ public class SlimActions {
                 }
                 return;
             } else if (action.equals(ButtonsConstants.ACTION_NOTIFICATIONS)) {
-		if (isKeyguardShowing) {
+                if (isKeyguardShowing && isKeyguardSecure) {
                     return;
-                } 
+                }
                 try {
                     barService.toggleNotificationShade();
                 } catch (RemoteException e) {
                 }
                 return;
             } else if (action.equals(ButtonsConstants.ACTION_ASSIST)
-                    || action.equals(ButtonsConstants.ACTION_KEYGUARD_SEARCH)) { 
+                    || action.equals(ButtonsConstants.ACTION_KEYGUARD_SEARCH)) {
                 Intent intent = ((SearchManager) context.getSystemService(Context.SEARCH_SERVICE))
                   .getAssistIntent(context, true, UserHandle.USER_CURRENT);
                 if (intent == null) {
-                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com")); 
+                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"));
                 }
-		startActivity(context, windowManagerService, isKeyguardShowing, intent); 
+                startActivity(context, windowManagerService, isKeyguardShowing, intent);
                 return;
             } else if (action.equals(ButtonsConstants.ACTION_VIB)) {
                 AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
@@ -187,14 +209,14 @@ public class SlimActions {
                 }
             } else {
                 // we must have a custom uri
-		Intent intent = null; 
+                Intent intent = null;
                 try {
-                    intent = Intent.parseUri(action, 0); 
+                    intent = Intent.parseUri(action, 0);
                 } catch (URISyntaxException e) {
                     Log.e("SlimActions:", "URISyntaxException: [" + action + "]");
-                return; 
+                    return;
                 }
-		startActivity(context, windowManagerService, isKeyguardShowing, intent); 
+                startActivity(context, windowManagerService, isKeyguardShowing, intent);
                 return;
             }
 
@@ -223,6 +245,56 @@ public class SlimActions {
             context.startActivityAsUser(intent,
                     new UserHandle(UserHandle.USER_CURRENT));
         }
-    } 
+    }
+
+    public static boolean isActionKeyEvent(String action) {
+        if (action.equals(ButtonsConstants.ACTION_HOME)
+                || action.equals(ButtonsConstants.ACTION_BACK)
+                || action.equals(ButtonsConstants.ACTION_SEARCH)
+                || action.equals(ButtonsConstants.ACTION_MENU)
+                || action.equals(ButtonsConstants.ACTION_NULL)) {
+            return true;
+        }
+        return false;
+    }
+
+    private static class H extends Handler {
+        public void handleMessage(Message m) {
+            final InputManager inputManager = InputManager.getInstance();
+            switch (m.what) {
+                case MSG_INJECT_KEY_DOWN:
+                    inputManager.injectInputEvent((KeyEvent) m.obj,
+                            InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
+                    break;
+                case MSG_INJECT_KEY_UP:
+                    inputManager.injectInputEvent((KeyEvent) m.obj,
+                            InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
+                    break;
+            }
+        }
+    }
+    private static H mHandler = new H();
+
+    private static void injectKeyDelayed(int keyCode, boolean longpress) {
+        long when = SystemClock.uptimeMillis();
+        int downflags = KeyEvent.FLAG_FROM_SYSTEM | KeyEvent.FLAG_VIRTUAL_HARD_KEY;
+        if (longpress) {
+            downflags |= KeyEvent.FLAG_LONG_PRESS;
+        }
+        mHandler.removeMessages(MSG_INJECT_KEY_DOWN);
+        mHandler.removeMessages(MSG_INJECT_KEY_UP);
+
+        KeyEvent down = new KeyEvent(when, when + 10, KeyEvent.ACTION_DOWN, keyCode, 0, 0,
+                KeyCharacterMap.VIRTUAL_KEYBOARD, 0,
+                downflags,
+                InputDevice.SOURCE_KEYBOARD);
+        KeyEvent up = new KeyEvent(when, when + 30, KeyEvent.ACTION_UP, keyCode, 0, 0,
+                KeyCharacterMap.VIRTUAL_KEYBOARD, 0,
+                KeyEvent.FLAG_FROM_SYSTEM | KeyEvent.FLAG_VIRTUAL_HARD_KEY,
+                InputDevice.SOURCE_KEYBOARD);
+
+        mHandler.sendMessageDelayed(Message.obtain(mHandler, MSG_INJECT_KEY_DOWN, down), 10);
+        mHandler.sendMessageDelayed(Message.obtain(mHandler, MSG_INJECT_KEY_UP, up), 30);
+    }
 
 }
