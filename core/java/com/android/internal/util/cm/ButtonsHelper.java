@@ -388,9 +388,9 @@ public class ButtonsHelper {
         } else if (clickAction.equals(ButtonsConstants.ACTION_POWER)) {
             resId = systemUiResources.getIdentifier(
                         SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_power", null, null);
-        } else if (clickAction.equals(ButtonsConstants.ACTION_POWER_MENU)) {
+	} else if (clickAction.equals(ButtonsConstants.ACTION_POWER_MENU)) {
             resId = systemUiResources.getIdentifier(
-                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_power_menu", null, null);
+                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_power_menu", null, null); 
         } else if (clickAction.equals(ButtonsConstants.ACTION_NOTIFICATIONS)) {
             resId = systemUiResources.getIdentifier(
                         SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_notifications", null, null);
@@ -414,7 +414,10 @@ public class ButtonsHelper {
                         SYSTEMUI_METADATA_NAME + ":drawable/ic_navbar_ring_vib_silent", null, null);
 	} else if (clickAction.equals(ButtonsConstants.ACTION_EXPANDED_DESKTOP)) {
             resId = systemUiResources.getIdentifier(
-                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_expanded_desktop", null, null); 
+                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_expanded_desktop", null, null);
+	} else if (clickAction.equals(ButtonsConstants.ACTION_TORCH)) {
+            resId = systemUiResources.getIdentifier(
+                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_torch", null, null);  
         } else {
             resId = systemUiResources.getIdentifier(
                         SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_null", null, null);
