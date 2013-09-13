@@ -95,8 +95,18 @@ public class BatteryController extends BroadcastReceiver {
     private ArrayList<BatteryStateChangeCallback> mChangeCallbacks =
             new ArrayList<BatteryStateChangeCallback>();
 
+    // For HALO Mods
+    private ArrayList<BatteryStateChangeCallbackHalo> mChangeCallbacksHalo =
+            new ArrayList<BatteryStateChangeCallbackHalo>();
+	
+
     public interface BatteryStateChangeCallback {
         public void onBatteryLevelChanged(int level, int status);
+    }
+
+    //For HALO Mods
+    public interface BatteryStateChangeCallbackHalo {
+        public void onBatteryLevelChangedHalo(int level, boolean pluggedIn);
     }
 
     public BatteryController(Context context) {
@@ -136,6 +146,16 @@ public class BatteryController extends BroadcastReceiver {
     public void removeStateChangedCallback(BatteryStateChangeCallback cb) {
         mChangeCallbacks.remove(cb);
     }
+
+    // For Halo Mods
+    public void addStateChangedCallbackHalo(BatteryStateChangeCallbackHalo cb_Halo) {
+        mChangeCallbacksHalo.add(cb_Halo);
+    }
+
+    // For Halo Mods
+    public void removeStateChangedCallbackHalo(BatteryStateChangeCallbackHalo cb_Halo) {
+        mChangeCallbacksHalo.remove(cb_Halo);
+    }	
 
     // Allow override battery icons
     public int getIconStyleUnknown() {
@@ -220,6 +240,11 @@ public class BatteryController extends BroadcastReceiver {
 
         for (BatteryStateChangeCallback cb : mChangeCallbacks) {
             cb.onBatteryLevelChanged(level, getBatteryStatus());
+        }
+
+	// For HALO Mods
+	for (BatteryStateChangeCallbackHalo cb_Halo : mChangeCallbacksHalo) {
+            cb_Halo.onBatteryLevelChangedHalo(mBatteryLevel, mBatteryPlugged);
         }
     }
 
