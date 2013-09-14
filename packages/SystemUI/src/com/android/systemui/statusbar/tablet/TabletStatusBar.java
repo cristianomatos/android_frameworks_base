@@ -736,6 +736,10 @@ public class TabletStatusBar extends BaseStatusBar implements
 
     @Override
     public void setImeShowStatus(boolean enabled) {
+    }
+
+    @Override
+    public void toggleQSShade() {
     } 
 
     @Override
@@ -1122,7 +1126,7 @@ public class TabletStatusBar extends BaseStatusBar implements
     }
 
     @Override
-    public void animateExpandSettingsPanel() {
+    public void animateExpandSettingsPanel(boolean flip) {
         // TODO: Implement when TabletStatusBar begins to be used.
     }
 

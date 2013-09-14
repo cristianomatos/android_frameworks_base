@@ -156,6 +156,12 @@ public class SlimActions {
                 } catch (RemoteException e) {
                 }
                 return;
+	    } else if (action.equals(ButtonsConstants.ACTION_QS)) {
+                try {
+                    barService.toggleQSShade();
+                } catch (RemoteException e) {
+                }
+                return; 
             } else if (action.equals(ButtonsConstants.ACTION_ASSIST)
                     || action.equals(ButtonsConstants.ACTION_KEYGUARD_SEARCH)) {
                 Intent intent = ((SearchManager) context.getSystemService(Context.SEARCH_SERVICE))

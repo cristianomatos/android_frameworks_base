@@ -346,7 +346,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     int mExpandedStyle; 
 
     boolean mHideStatusBar;
-    boolean mtoggleNotificationShade;
+    boolean mToggleNotificationAndQSShade;
     
     private static final class PointerLocationInputEventReceiver extends InputEventReceiver {
         private final PointerLocationView mView;
@@ -669,7 +669,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     Settings.System.HIDE_STATUSBAR), false, this,
 		    UserHandle.USER_ALL);
 	    resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.TOGGLE_NOTIFICATION_SHADE), false, this,
+                    Settings.System.TOGGLE_NOTIFICATION_AND_QS_SHADE), false, this,
 		    UserHandle.USER_ALL); 
 	    resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_SHOW), false, this, 
@@ -1441,8 +1441,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 Settings.System.EXPANDED_DESKTOP_STATE, 0); 
         mHideStatusBar = Settings.System.getInt(resolver,
                 Settings.System.HIDE_STATUSBAR, 0) == 1;
-        mtoggleNotificationShade = Settings.System.getInt(resolver,
-                Settings.System.TOGGLE_NOTIFICATION_SHADE, 0) == 1;
+        mToggleNotificationAndQSShade = Settings.System.getInt(resolver,
+                Settings.System.TOGGLE_NOTIFICATION_AND_QS_SHADE, 0) == 1;
 
 	synchronized (mLock) {
             mEndcallBehavior = Settings.System.getIntForUser(resolver,
@@ -3913,10 +3913,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 // and mTopIsFullscreen is that that mTopIsFullscreen is set only if the window
                 // has the FLAG_FULLSCREEN set.  Not sure if there is another way that to be the
                 // case though.
-		if ((topIsFullscreen && !mtoggleNotificationShade)
-                        || (mExpandedState == 1 &&
-                        (mExpandedStyle == 2 || mExpandedStyle == 3) && !mtoggleNotificationShade)
-                        || (mHideStatusBar && !mtoggleNotificationShade)) {      
+                if ((topIsFullscreen && !mToggleNotificationAndQSShade)
+                         || (mExpandedState == 1 &&
+                        (mExpandedStyle == 2 || mExpandedStyle == 3) && !mToggleNotificationAndQSShade)
+                        || (mHideStatusBar && !mToggleNotificationAndQSShade)) {       
                     if (DEBUG_LAYOUT) Log.v(TAG, "** HIDING status bar");
                     if (mStatusBar.hideLw(true)) {
                         changes |= FINISH_LAYOUT_REDO_LAYOUT;

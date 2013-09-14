@@ -92,6 +92,10 @@ public class TvStatusBar extends BaseStatusBar {
 
     @Override
     public void setImeShowStatus(boolean enabled) {
+    }
+
+    @Override
+    public void toggleQSShade() {
     } 
 
     @Override
@@ -159,7 +163,7 @@ public class TvStatusBar extends BaseStatusBar {
     }
 
     @Override
-    public void animateExpandSettingsPanel() {
+    public void animateExpandSettingsPanel(boolean flip) {
     }
 
     @Override

@@ -50,6 +50,7 @@ interface IStatusBarService
     void setHardKeyboardEnabled(boolean enabled);
     void setImeShowStatus(boolean enabled); 
     void toggleNotificationShade();
+    void toggleQSShade();
     void toggleScreenshot();
     void toggleLastApp();
     void toggleKillApp(); 
