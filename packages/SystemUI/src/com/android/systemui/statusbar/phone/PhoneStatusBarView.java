@@ -212,7 +212,10 @@ public class PhoneStatusBarView extends PanelBar {
         mLastFullyOpenedPanel = null;
 
         // show up you pie controls
-        mBar.setupTriggers(false); 
+        mBar.setupTriggers(false);
+
+	Settings.System.putInt(mContext.getContentResolver(),
+            Settings.System.TOGGLE_NOTIFICATION_SHADE, 0); 
     }
 
     @Override

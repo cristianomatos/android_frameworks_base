@@ -2129,6 +2129,14 @@ public final class Settings {
         public static final String STATUSBAR_PEEK = "statusbar_peek";
 
 	/**
+         * Whether Status Bar is currently hidden or not for notification
+         * toggle notification shade
+         *
+         * @hide
+         */
+        public static final String TOGGLE_NOTIFICATION_SHADE = "toggle_notification_shade"; 
+
+	/**
          * The mapping of stream type (integer) to its setting.
          */
         public static final String[] VOLUME_SETTINGS = {
