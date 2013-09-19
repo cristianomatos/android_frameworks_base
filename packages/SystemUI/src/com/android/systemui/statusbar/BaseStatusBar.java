@@ -371,12 +371,19 @@ public abstract class BaseStatusBar extends SystemUI implements
         public void observe() {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_COLLAPSE_ON_DISMISS), false, this);
+                    Settings.System.STATUS_BAR_COLLAPSE_ON_DISMISS), false, this,
+		    UserHandle.USER_ALL);
+	    //resolver.registerContentObserver(Settings.System.getUriFor(
+            //        Settings.System.QUICK_TILES_PER_ROW), false, this,
+            //        UserHandle.USER_ALL);
             update();
         }
 
         @Override
-        public void onChange(boolean selfChange) {
+        public void onChange(boolean selfChange, Uri uri) {
+            //if (uri.equals(Settings.System.getUriFor(Settings.System.QUICK_TILES_PER_ROW))) {
+            //    android.os.Process.killProcess(android.os.Process.myPid());
+            //} 
 	    update();
         }
 

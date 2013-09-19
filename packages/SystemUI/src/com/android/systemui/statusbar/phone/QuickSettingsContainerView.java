@@ -18,7 +18,9 @@ package com.android.systemui.statusbar.phone;
 
 import android.animation.LayoutTransition;
 import android.content.Context;
+import android.content.res.Configuration; 
 import android.content.res.Resources;
+import android.provider.Settings; 
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.View;
@@ -34,9 +36,16 @@ public class QuickSettingsContainerView extends FrameLayout {
 
     // The number of columns in the QuickSettings grid
     private int mNumColumns;
+    private int mNumFinalColumns;
+
+    // Duplicate number of columns in the QuickSettings grid on landscape view
+    private boolean mDuplicateColumnsLandscape; 
 
     // The gap between tiles in the QuickSettings grid
     private float mCellGap;
+
+    private Context mContext;
+    private Resources mResources; 
 
     private boolean mSingleRow;
 
@@ -45,6 +54,8 @@ public class QuickSettingsContainerView extends FrameLayout {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.QuickSettingsContainer, 0, 0);
         mSingleRow = a.getBoolean(R.styleable.QuickSettingsContainer_singleRow, false);
         a.recycle();
+        mContext = context;
+	mResources = getContext().getResources(); 
         updateResources();
     }
 
@@ -57,20 +68,30 @@ public class QuickSettingsContainerView extends FrameLayout {
     }
 
     void updateResources() {
-        Resources r = getContext().getResources();
-        mCellGap = r.getDimension(R.dimen.quick_settings_cell_gap);
-        mNumColumns = r.getInteger(R.integer.quick_settings_num_columns);
+        mCellGap = mResources.getDimension(R.dimen.quick_settings_cell_gap);
+        mNumColumns = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.QUICK_TILES_PER_ROW, 3);
+        // do not allow duplication on tablets or any device which do not have
+        // flipsettings
+        mDuplicateColumnsLandscape = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.QUICK_TILES_PER_ROW_DUPLICATE_LANDSCAPE, 1) == 1
+                        && mResources.getBoolean(R.bool.config_hasFlipSettingsPanel); 
         requestLayout();
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+	if (mDuplicateColumnsLandscape && isLandscape()) {
+            mNumFinalColumns = mNumColumns * 2;
+        } else {
+            mNumFinalColumns = mNumColumns;
+        } 
         // Calculate the cell width dynamically
         int width = MeasureSpec.getSize(widthMeasureSpec);
 
         int availableWidth = (int) (width - getPaddingLeft() - getPaddingRight() -
                 (mNumColumns - 1) * mCellGap);
-        float cellWidth = (float) Math.ceil(((float) availableWidth) / mNumColumns);
+        float cellWidth = (float) Math.ceil(((float) availableWidth) / mNumFinalColumns);
         int cellHeight = 0;
         float cellGap = mCellGap;
 
@@ -95,6 +116,10 @@ public class QuickSettingsContainerView extends FrameLayout {
                 lp.width = (int) ((colSpan * cellWidth) + (colSpan - 1) * cellGap);
                 lp.height = cellHeight;
 
+		if (mNumFinalColumns > 3 && !isLandscape()) {
+                    lp.height = (lp.width * mNumFinalColumns - 1) / mNumFinalColumns;
+                }
+
                 // Measure the child
                 int newWidthSpec = MeasureSpec.makeMeasureSpec(lp.width, MeasureSpec.EXACTLY);
                 int newHeightSpec = MeasureSpec.makeMeasureSpec(lp.height, MeasureSpec.EXACTLY);
@@ -106,7 +131,7 @@ public class QuickSettingsContainerView extends FrameLayout {
 
         // Set the measured dimensions.  We always fill the tray width, but wrap to the height of
         // all the tiles.
-        int numRows = (int) Math.ceil((float) cursor / mNumColumns);
+        int numRows = (int) Math.ceil((float) cursor / mNumFinalColumns);
         int newHeight = (int) ((numRows * cellHeight) + ((numRows - 1) * cellGap)) +
                 getPaddingTop() + getPaddingBottom();
         if (mSingleRow) {
@@ -133,20 +158,26 @@ public class QuickSettingsContainerView extends FrameLayout {
             cellGap /= 2;
         }
 
+	if (mDuplicateColumnsLandscape && isLandscape()) {
+            mNumFinalColumns = mNumColumns * 2;
+        } else {
+            mNumFinalColumns = mNumColumns;
+        } 
+
         for (int i = 0; i < N; ++i) {
             QuickSettingsTileView child = (QuickSettingsTileView) getChildAt(i);
             ViewGroup.LayoutParams lp = child.getLayoutParams();
             if (child.getVisibility() != GONE) {
-                final int col = cursor % mNumColumns;
+                final int col = cursor % mNumFinalColumns;
                 final int colSpan = child.getColumnSpan();
 
                 final int childWidth = lp.width;
                 final int childHeight = lp.height;
 
-                int row = (int) (cursor / mNumColumns);
+                int row = (int) (cursor / mNumFinalColumns);
 
                 // Push the item to the next row if it can't fit on this one
-                if ((col + colSpan) > mNumColumns && !mSingleRow) {
+                if ((col + colSpan) > mNumFinalColumns && !mSingleRow) {
                     x = getPaddingStart();
                     y += childHeight + cellGap;
                     row++;
@@ -164,7 +195,7 @@ public class QuickSettingsContainerView extends FrameLayout {
                 // Offset the position by the cell gap or reset the position and cursor when we
                 // reach the end of the row
                 cursor += child.getColumnSpan();
-                if (cursor < (((row + 1) * mNumColumns)) || mSingleRow) {
+                if (cursor < (((row + 1) * mNumFinalColumns)) || mSingleRow) {
                     x += childWidth + cellGap;
                 } else if (!mSingleRow) {
                     x = getPaddingStart();
@@ -173,4 +204,10 @@ public class QuickSettingsContainerView extends FrameLayout {
             }
         }
     }
+
+    private boolean isLandscape() {
+        final boolean isLandscape =
+            Resources.getSystem().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+        return isLandscape;
+    } 
 }
