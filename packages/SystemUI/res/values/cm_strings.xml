@@ -142,6 +142,10 @@
     <string name="service_used_mem"><xliff:g id="memory">%1$s</xliff:g> used</string>
 
     <!--  General action Strings --> 
-    <string name="app_killed_message">App Killed</string> 
+    <string name="app_killed_message">App Killed</string>
+
+    <!-- Never sleep screen mode -->
+    <string name="quick_settings_screen_timeout_summary_never">Never</string>
+    <string name="powerwidget_screen_timeout_never_toast">Screen set to always on</string>   
 
 </resources>
