@@ -211,29 +211,29 @@ public class ButtonsHelper {
 
     // get and set the notification shortcut configs from provider and return propper arraylist objects
     // @ButtonConfig
-    //public static ArrayList<ButtonConfig> getNotificationsShortcutConfig(Context context) {
-    //    String config = Settings.System.getStringForUser(
-    //                context.getContentResolver(),
-    //                Settings.System.NOTIFICATION_SHORTCUTS_CONFIG,
-    //                UserHandle.USER_CURRENT);
-    //    if (config == null) {
-    //        config = "";
-    //    }
+    public static ArrayList<ButtonConfig> getNotificationsShortcutConfig(Context context) {
+        String config = Settings.System.getStringForUser(
+                    context.getContentResolver(),
+                    Settings.System.NOTIFICATION_SHORTCUTS_CONFIG,
+                    UserHandle.USER_CURRENT);
+        if (config == null) {
+            config = "";
+        }
 
-    //    return (getButtonsConfigValues(context, config, null, null, true));
-    //}
+        return (getButtonsConfigValues(context, config, null, null, true));
+    }
 
-    //public static void setNotificationShortcutConfig(Context context, ArrayList<ButtonConfig> buttonsConfig, boolean reset) {
-    //    String config;
-    //    if (reset) {
-    //        config = "";
-    //    } else {
-    //        config = setButtonsConfig(buttonsConfig, true);
-    //    }
-    //    Settings.System.putString(context.getContentResolver(),
-    //                Settings.System.NOTIFICATION_SHORTCUTS_CONFIG,
-    //                config);
-    //}
+    public static void setNotificationShortcutConfig(Context context, ArrayList<ButtonConfig> buttonsConfig, boolean reset) {
+        String config;
+        if (reset) {
+            config = "";
+        } else {
+            config = setButtonsConfig(buttonsConfig, true);
+        }
+        Settings.System.putString(context.getContentResolver(),
+                    Settings.System.NOTIFICATION_SHORTCUTS_CONFIG,
+                    config);
+    }
 
     private static ArrayList<ButtonConfig> getButtonsConfigValues(Context context, String config,
                 String values, String entries, boolean isShortcut) {

@@ -50,5 +50,10 @@
     <color name="pie_outline_color">#ff0099cc</color>
 
     <!-- app sidebar trigger region color -->
-    <color name="trigger_region_color">#8015a0e5</color>  
+    <color name="trigger_region_color">#8015a0e5</color>
+
+    <!-- Notification Shortcuts -->
+    <drawable name="notification_shortcut_background_color">#00000000</drawable>
+    <drawable name="notification_item_background_color">#ff111111</drawable>
+    <drawable name="notification_item_background_color_pressed">#ff257390</drawable>   
 </resources>
