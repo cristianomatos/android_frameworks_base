@@ -4143,12 +4143,6 @@ public final class Settings {
         public static final String CUSTOM_CARRIER_LABEL = "custom_carrier_label";
 
         /**
-         * Hide carrier information on notification drawer
-         * @hide
-         */
-        public static final String NOTIFICATION_HIDE_CARRIER = "notification_hide_carrier"; 
-
-	/**
          * @hide
          * Show Wifi network name in notification shade
          * 0 - don't show

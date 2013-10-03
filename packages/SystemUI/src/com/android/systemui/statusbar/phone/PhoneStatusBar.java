@@ -303,7 +303,6 @@ public class PhoneStatusBar extends BaseStatusBar {
     HorizontalScrollView mNotificationShortcutsScrollView;
     private boolean mNotificationShortcutsVisible;
     private boolean mNotificationShortcutsIsActive;
-    private boolean mNotificationHideCarrier; 
     FrameLayout.LayoutParams lpScrollView;
     FrameLayout.LayoutParams lpCarrierLabel;
     int mShortcutsDrawerMargin;
@@ -413,8 +412,6 @@ public class PhoneStatusBar extends BaseStatusBar {
                     Settings.System.APP_SIDEBAR_POSITION), false, this, UserHandle.USER_ALL);
 	    resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NOTIFICATION_SHORTCUTS_CONFIG), false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.NOTIFICATION_HIDE_CARRIER), false, this, UserHandle.USER_ALL);   
             update();
         }
 
@@ -435,9 +432,8 @@ public class PhoneStatusBar extends BaseStatusBar {
                     Settings.System.NOTIFICATION_SHORTCUTS_CONFIG, UserHandle.USER_CURRENT);
             mNotificationShortcutsIsActive = !(notificationShortcutsIsActive == null
                     || notificationShortcutsIsActive.isEmpty());
-            mNotificationHideCarrier = Settings.System.getIntForUser(resolver,
-                    Settings.System.NOTIFICATION_HIDE_CARRIER, 0, UserHandle.USER_CURRENT) != 0;
-            if (mCarrierLabel != null) {
+            
+	    if (mCarrierLabel != null) {
                 toggleCarrierAndWifiLabelVisibility();
             }
             if (mNotificationData != null) {
@@ -552,22 +548,17 @@ public class PhoneStatusBar extends BaseStatusBar {
         return mNotificationShortcutsIsActive ? mShortcutsSpacingHeight : 0; 
     }
 
-    private void updateCarrierMargin(boolean forceHide) {
+    private void updateCarrierMargin() {
         lpScrollView.bottomMargin = mNotificationShortcutsIsActive ? mShortcutsDrawerMargin : 0; 
         mScrollView.setLayoutParams(lpScrollView);
 
-        if (!mShowCarrierInPanel) return;
-        if (forceHide) {
-            lpCarrierLabel.bottomMargin = mNotificationShortcutsIsActive ? mShortcutsSpacingHeight : 0;
-        } else {
-            lpCarrierLabel.bottomMargin = mNotificationShortcutsIsActive ? mShortcutsSpacingHeight : mCloseViewHeight;
-        }
+        lpCarrierLabel.bottomMargin = mNotificationShortcutsIsActive ? mShortcutsSpacingHeight : mCloseViewHeight;
+        
 	mCarrierAndWifiView.setLayoutParams(lpCarrierLabel); 
     }
 
     private void toggleCarrierAndWifiLabelVisibility() {
-        mShowCarrierInPanel = !mNotificationHideCarrier;
-        updateCarrierMargin(mNotificationHideCarrier); 
+        updateCarrierMargin(); 
         mCarrierAndWifiView.setVisibility(mShowCarrierInPanel ? View.VISIBLE : View.INVISIBLE);
     }  
 
@@ -792,9 +783,6 @@ public class PhoneStatusBar extends BaseStatusBar {
             }
         }
 
-	mNotificationHideCarrier = Settings.System.getIntForUser(mContext.getContentResolver(),
-                    Settings.System.NOTIFICATION_HIDE_CARRIER, 0, UserHandle.USER_CURRENT) != 0;  
-
 	mCarrierAndWifiView = mStatusBarWindow.findViewById(R.id.carrier_wifi);
         mWifiView = mStatusBarWindow.findViewById(R.id.wifi_view); 
 
@@ -804,9 +792,7 @@ public class PhoneStatusBar extends BaseStatusBar {
         if (DEBUG) Slog.v(TAG, "carrierlabel=" + mCarrierLabel + " show=" + mShowCarrierInPanel);
         if (mShowCarrierInPanel) {
 	    lpCarrierLabel = (FrameLayout.LayoutParams) mCarrierAndWifiView.getLayoutParams();
-            mCarrierLabel.setVisibility((mCarrierAndWifiViewVisible && !mNotificationHideCarrier) ? View.VISIBLE : View.INVISIBLE);
-            if (mNotificationHideCarrier) 
-                mShowCarrierInPanel = false; 	            
+            mCarrierLabel.setVisibility((mCarrierAndWifiViewVisible) ? View.VISIBLE : View.INVISIBLE);
             // for mobile devices, we always show mobile connection info here (SPN/PLMN)
             // for other devices, we show whatever network is connected
             if (mNetworkController.hasMobileDataFeature()) {
@@ -949,7 +935,7 @@ public class PhoneStatusBar extends BaseStatusBar {
         mShortcutsDrawerMargin = res.getDimensionPixelSize(R.dimen.notification_shortcuts_drawer_margin);
         mShortcutsSpacingHeight = res.getDimensionPixelSize(R.dimen.notification_shortcuts_spacing_height);
         mCloseViewHeight = res.getDimensionPixelSize(R.dimen.close_handle_height);
-        updateCarrierMargin(false); 
+        updateCarrierMargin(); 
 
 //        final ImageView wimaxRSSI =
 //                (ImageView)sb.findViewById(R.id.wimax_signal);
