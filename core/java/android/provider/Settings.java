@@ -4048,6 +4048,14 @@ public final class Settings {
           */
          public static final String KEY_CAMERA_LONG_PRESS_ACTION = "key_camera_long_press_action";
 
+       /**
+        * MediaScanner behavior on boot.
+        * 0 = enabled
+        * 1 = ask (notification)
+        * 2 = disabled
+        * @hide
+        */
+        public static final String MEDIA_SCANNER_ON_BOOT = "media_scanner_on_boot"; 
 
         /**
          * Control the display of the action overflow button within app UI.
