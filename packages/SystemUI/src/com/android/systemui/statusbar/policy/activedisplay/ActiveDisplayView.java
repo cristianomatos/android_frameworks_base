@@ -685,7 +685,8 @@ public class ActiveDisplayView extends FrameLayout {
     }
 
     private void turnScreenOff() {
-	mWakedByPocketMode = false; 
+	mWakedByPocketMode = false;
+	Log.i(TAG, "ActiveDisplay: turn screen off");  
         try {
             mPM.goToSleep(SystemClock.uptimeMillis(), 0);
         } catch (RemoteException e) {
@@ -703,6 +704,7 @@ public class ActiveDisplayView extends FrameLayout {
 
     private void enableProximitySensor() {
         if (mPocketModeEnabled && mDisplayNotifications) {
+	    Log.i(TAG, "ActiveDisplay: enable ProximitySensor"); 
             mProximityIsFar = true;
             registerSensorListener(mProximitySensor);
         }
@@ -710,6 +712,7 @@ public class ActiveDisplayView extends FrameLayout {
 
     private void disableProximitySensor() {
         if (mPocketModeEnabled && mDisplayNotifications) {
+	    Log.i(TAG, "ActiveDisplay: disable ProximitySensor"); 
             unregisterSensorListener(mProximitySensor);
         }
     } 
@@ -799,6 +802,7 @@ public class ActiveDisplayView extends FrameLayout {
 
     private void registerCallbacks() {
         if (!mCallbacksRegistered) {
+	    Log.i(TAG, "ActiveDisplay: register callbacks"); 
             registerBroadcastReceiver();
             registerNotificationListener();
             mCallbacksRegistered = true;
@@ -807,6 +811,7 @@ public class ActiveDisplayView extends FrameLayout {
 
     private void unregisterCallbacks() {
         if (mCallbacksRegistered) {
+	    Log.i(TAG, "ActiveDisplay: unregister callbacks"); 
             unregisterBroadcastReceiver();
             unregisterNotificationListener();
             mCallbacksRegistered = false;
@@ -958,6 +963,7 @@ public class ActiveDisplayView extends FrameLayout {
             mPM.wakeUp(SystemClock.uptimeMillis());
         } catch (RemoteException e) {
         }
+	Log.i(TAG, "ActiveDisplay: Wake device"); 
         updateTimeoutTimer();
     }
 
@@ -1086,6 +1092,7 @@ public class ActiveDisplayView extends FrameLayout {
                     if (!isScreenOn() && mPocketModeEnabled && !isOnCall() && !inQuietHours()) {
                         if (System.currentTimeMillis() >= (mPocketTime + POCKET_THRESHOLD)) {
                             mWakedByPocketMode = true;
+			    Log.i(TAG, "ActiveDisplay: waked by Pocketmode"); 
 
                             mNotification = getNextAvailableNotification();
                             if (mNotification != null) showNotification(mNotification, true);
@@ -1096,6 +1103,7 @@ public class ActiveDisplayView extends FrameLayout {
                     mProximityIsFar = false;
 		    if (isScreenOn() && mPocketModeEnabled && !isOnCall() && mWakedByPocketMode) {
                         mWakedByPocketMode = false;
+			Log.i(TAG, "ActiveDisplay: sent to sleep by Pocketmode"); 
 
                         restoreBrightness();
                         cancelTimeoutTimer();
