@@ -1924,23 +1924,6 @@
   <java-symbol type="drawable" name="ic_lockscreen_sms" />
   <java-symbol type="drawable" name="ic_lockscreen_twitter" />
 
-  <!-- From Chromium-WebView -->
-  <java-symbol type="attr" name="actionModeWebSearchDrawable" />
-  <java-symbol type="string" name="websearch" />
-
-  <!-- Multi SIM related -->
-  <java-symbol type="string" name="msim_kg_sim_pin_msg_format" />
-  <java-symbol type="string" name="msim_carrier_text_format" />
-
-  <java-symbol type="id" name="msim_keyguard_sim_pin_view" />
-  <java-symbol type="id" name="msim_keyguard_sim_puk_view" />
-  <java-symbol type="id" name="msim_keyguard_carrier_area" />
-  <java-symbol type="id" name="stub_msim_carrier_text" />
-
-  <java-symbol type="layout" name="msim_keyguard_sim_pin_view" />
-  <java-symbol type="layout" name="msim_keyguard_sim_puk_view" />
-  <java-symbol type="layout" name="msim_keyguard_carrier_area" />
-
 <!-- ===============================================================
    Resources added in version 10 of CyanogenMod
    =============================================================== -->
@@ -1966,7 +1949,6 @@
   <java-symbol type="attr" name="actionModeWebSearchDrawable" />
   <java-symbol type="string" name="websearch" />
 
-<<<<<<< HEAD
   <!-- Developer settings - Kill app back press -->
   <java-symbol type="string" name="app_killed_message" /> 
   <java-symbol type="integer" name="config_backKillTimeout" />
@@ -2012,4 +1994,6 @@
   <!-- Irda Service -->
   <java-symbol type="bool" name="config_enableIrdaManagerService" />
 
+  <!-- Gesture Sensor -->
+  <java-symbol type="bool" name="config_enableGestureService" />
 </resources>
