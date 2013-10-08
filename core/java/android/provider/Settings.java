@@ -3472,6 +3472,12 @@ public final class Settings {
         public static final String STATUS_BAR_TRAFFIC_COLOR = "status_bar_traffic_color"; 
 
 	/**
+         * Show summary of traffic.
+         * @hide
+         */
+        public static final String STATUS_BAR_TRAFFIC_SUMMARY = "status_bar_traffic_summary";
+
+	/**
          * whether which Ram Usage Bar mode is used on recent switcher
          * 0 = none, 1 = only app use, 2 = app and cache use, 3 = app, cache and system use
          * @hide
