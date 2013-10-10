@@ -4976,6 +4976,12 @@ public final class Settings {
          */
         public static final String DIALPAD_AUTOCOMPLETE = "dialpad_autocomplete";
 
+	/**
+         * Whether to allow killing of the foreground app by long-pressing the Back button
+         * @hide
+         */
+        public static final String KILL_APP_LONGPRESS_BACK = "kill_app_longpress_back";
+
         /**
          * This are the settings to be backed up.
          *
