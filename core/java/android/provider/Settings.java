@@ -2921,7 +2921,13 @@ public final class Settings {
          * Sets the alpha (transparency) of notifications
          * @hide
          */
-        public static final String NOTIF_ALPHA = "notif_alpha";   
+        public static final String NOTIF_ALPHA = "notif_alpha";
+
+        /**
+         * Notifications Expand Behavior
+         * @hide
+         */
+        public static final String NOTIFICATIONS_BEHAVIOUR = "notifications_behaviour";   
 
         /**
          * Quick Settings Panel Tiles to Use
