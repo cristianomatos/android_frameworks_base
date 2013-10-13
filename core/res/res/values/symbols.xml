@@ -1792,6 +1792,9 @@
   <!-- From Phone -->
   <java-symbol type="bool" name="config_built_in_sip_phone" />
 
+  <!-- Developer settings - Kill app back press -->
+  <java-symbol type="string" name="app_killed_message" />
+
   <!-- From TelephonyProvider -->
   <java-symbol type="xml" name="apns" />
 
@@ -1916,5 +1919,20 @@
   <!-- Developer settings - Kill app back press -->
   <java-symbol type="string" name="app_killed_message" /> 
   <java-symbol type="integer" name="config_backKillTimeout" />
+
+  <!-- Navigation Ring -->
+  <java-symbol type="drawable" name="ic_navigation_ring_blank_normal" />
+  <java-symbol type="drawable" name="ic_navigation_ring_blank_activated" />
+  <java-symbol type="drawable" name="ic_navigation_ring_empty" />
+  <java-symbol type="drawable" name="ic_navigation_ring_ime_switcher" />
+  <java-symbol type="drawable" name="ic_navigation_ring_killtask" />
+  <java-symbol type="drawable" name="ic_navigation_ring_power" />
+  <java-symbol type="drawable" name="ic_navigation_ring_screenshot" />
+  <java-symbol type="drawable" name="ic_navigation_ring_silent" />
+  <java-symbol type="drawable" name="ic_navigation_ring_sound_on" />
+  <java-symbol type="drawable" name="ic_navigation_ring_torch" />
+  <java-symbol type="drawable" name="ic_navigation_ring_torch_on" />
+  <java-symbol type="drawable" name="ic_navigation_ring_torch_off" />
+  <java-symbol type="drawable" name="ic_navigation_ring_vibrate" />
 
 </resources>
