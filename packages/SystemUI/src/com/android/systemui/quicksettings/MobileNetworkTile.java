@@ -49,6 +49,9 @@ public class MobileNetworkTile extends QuickSettingsTile implements NetworkSigna
                     updateOverlayImage(DISABLED_OVERLAY);
                     mCm.setMobileDataEnabled(false);
                 }
+		if (isFlipTilesEnabled()) {
+                    flipTile(0);
+                } 
             }
         };
 
