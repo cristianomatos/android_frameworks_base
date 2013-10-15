@@ -47,9 +47,9 @@ public class Traffic extends TextView {
             resolver.registerContentObserver(Settings.System
                     .getUriFor(Settings.System.STATUS_BAR_TRAFFIC_COLOR), false, this);
 	    resolver.registerContentObserver(Settings.System
-                    .getUriFor(Settings.System.STATUS_BAR_TRAFFIC_SUMMARY), false, this); 
-            
-            updateSettings();
+                    .getUriFor(Settings.System.STATUS_BAR_TRAFFIC_SUMMARY), false, this);
+
+	    updateSettings();
         }
 
         @Override
@@ -171,55 +171,59 @@ public class Traffic extends TextView {
     Runnable mRunnable = new Runnable() {
         @Override
         public void run() {
-            long td = SystemClock.elapsedRealtime() - lastUpdateTime;
+	    // Handling the systemUI FC's when toggling UI inverted mode 	
+	    try {	
+                long td = SystemClock.elapsedRealtime() - lastUpdateTime;
 
-            if (td == 0 || !trafficMeterEnable) {
-                // we just updated the view, nothing further to do
-                return;
-            }
-
-            long currentRxBytes = TrafficStats.getTotalRxBytes();
-            long newBytes = currentRxBytes - totalRxBytes;
-
-            if (trafficMeterHide && newBytes == 0) {
-                long trafficBurstBytes = currentRxBytes - trafficBurstStartBytes;
-
-                if (trafficBurstBytes != 0 && trafficMeterSummaryTime != 0) { 
-                    setText(formatTraffic(trafficBurstBytes, false));
-
-                    Log.i(TAG,
-                            "Traffic burst ended: " + trafficBurstBytes + "B in "
-                                    + (SystemClock.elapsedRealtime() - trafficBurstStartTime)
-                                    / 1000 + "s");
-                    keepOnUntil = SystemClock.elapsedRealtime() + trafficMeterSummaryTime; 
-                    trafficBurstStartTime = Long.MIN_VALUE;
-                    trafficBurstStartBytes = currentRxBytes;
+                if (td == 0 || !trafficMeterEnable) {
+                    // we just updated the view, nothing further to do
+                    return;
                 }
-            } else {
-                if (trafficMeterHide && trafficBurstStartTime == Long.MIN_VALUE) {
-                    trafficBurstStartTime = lastUpdateTime;
-                    trafficBurstStartBytes = totalRxBytes;
-                }
-                setText(formatTraffic(newBytes * 1000 / td, true));
-            }
 
-            // Hide if there is no traffic
-            if (trafficMeterHide && newBytes == 0) {
-                if (getVisibility() != GONE
-                        && keepOnUntil < SystemClock.elapsedRealtime()) {
-                    setText("");
-                    setVisibility(View.GONE);
-                }
-            } else {
-                if (getVisibility() != VISIBLE) {
-                    setVisibility(View.VISIBLE);
-                }
-            }
+                long currentRxBytes = TrafficStats.getTotalRxBytes();
+                long newBytes = currentRxBytes - totalRxBytes;
 
-            totalRxBytes = currentRxBytes;
-            lastUpdateTime = SystemClock.elapsedRealtime();
-            getHandler().postDelayed(mRunnable, 1000);
-        }
+                if (trafficMeterHide && newBytes == 0) {
+                    long trafficBurstBytes = currentRxBytes - trafficBurstStartBytes;
+
+                    if (trafficBurstBytes != 0 && trafficMeterSummaryTime != 0) { 
+                        setText(formatTraffic(trafficBurstBytes, false));
+
+                        Log.i(TAG,
+                                "Traffic burst ended: " + trafficBurstBytes + "B in "
+                                        + (SystemClock.elapsedRealtime() - trafficBurstStartTime)
+                                        / 1000 + "s");
+                        keepOnUntil = SystemClock.elapsedRealtime() + trafficMeterSummaryTime; 
+                        trafficBurstStartTime = Long.MIN_VALUE;
+                        trafficBurstStartBytes = currentRxBytes;
+                    }
+                } else {
+                    if (trafficMeterHide && trafficBurstStartTime == Long.MIN_VALUE) {
+                        trafficBurstStartTime = lastUpdateTime;
+                        trafficBurstStartBytes = totalRxBytes;
+                    }
+                    setText(formatTraffic(newBytes * 1000 / td, true));
+                }
+
+                // Hide if there is no traffic
+                if (trafficMeterHide && newBytes == 0) {
+                    if (getVisibility() != GONE
+                            && keepOnUntil < SystemClock.elapsedRealtime()) {
+                        setText("");
+                        setVisibility(View.GONE);
+                    }
+                } else {
+                    if (getVisibility() != VISIBLE) {
+                        setVisibility(View.VISIBLE);
+                    }
+                }
+
+                totalRxBytes = currentRxBytes;
+                lastUpdateTime = SystemClock.elapsedRealtime();
+	        getHandler().postDelayed(mRunnable, 1000);
+	    } catch (Exception ex) {
+	    }
+	}
     };
 
     private void updateSettings() {
