@@ -116,12 +116,19 @@ public class NotificationPanelView extends PanelView {
         }
         if (PhoneStatusBar.SETTINGS_DRAG_SHORTCUT && mStatusBar.mHasFlipSettings) {
             boolean flip = false;
+	    int noNotificationPulldownMode = Settings.System.getInt(getContext().getContentResolver(),
+                                    Settings.System.QS_NO_NOTIFICATION_PULLDOWN, 0);
+            int quickPulldownMode = Settings.System.getInt(getContext().getContentResolver(),
+                                    Settings.System.QS_QUICK_PULLDOWN, 0); 
             switch (event.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN:
                     mOkToFlip = getExpandedHeight() == 0;
                     if (event.getX(0) > getWidth() * (1.0f - STATUS_BAR_SETTINGS_FLIP_PERCENTAGE) &&
-                            Settings.System.getInt(getContext().getContentResolver(),
-                                    Settings.System.QS_QUICK_PULLDOWN, 0) != 0) {
+                            quickPulldownMode == 1) {
+                        flip = true;
+                    } else if (!mStatusBar.hasClearableNotifications() && noNotificationPulldownMode == 1) {
+                        flip = true;
+                    } else if (!mStatusBar.hasVisibleNotifications() && noNotificationPulldownMode == 2) { 
                         flip = true;
                     }
                     break;
