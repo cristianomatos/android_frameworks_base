@@ -2877,6 +2877,30 @@ public final class Settings {
          */
         public static final String STATUSBAR_PEEK = "statusbar_peek";
 
+	/**
+         * Hide network speed indicator when there is no traffic
+         * @hide
+         */
+        public static final String STATUS_BAR_TRAFFIC_HIDE = "status_bar_traffic_hide"; 
+
+	/**
+         * Network speed indicator
+         * @hide
+         */
+        public static final String STATUS_BAR_TRAFFIC_ENABLE = "status_bar_traffic_enable"; 
+
+	/**
+         * Sets color of statusbar traffic indicator
+         * @hide
+         */
+        public static final String STATUS_BAR_TRAFFIC_COLOR = "status_bar_traffic_color";
+
+        /**
+         * Show summary of traffic.
+         * @hide
+         */
+        public static final String STATUS_BAR_TRAFFIC_SUMMARY = "status_bar_traffic_summary"; 
+
         /**
          * Show the notification ticker (or not)
          * @hide
