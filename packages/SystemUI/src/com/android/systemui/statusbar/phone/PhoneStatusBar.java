@@ -594,25 +594,24 @@ public class PhoneStatusBar extends BaseStatusBar {
         mWifiLabel = (TextView)mStatusBarWindow.findViewById(R.id.wifi_text);
         mNetworkController.addWifiLabelView(mWifiLabel);
 
+	try {
         mWifiLabel.addTextChangedListener(new TextWatcher() { 
 
             public void afterTextChanged(Editable s) {
             }
-            public void beforeTextChanged(CharSequence s, int start, int count,
-                    int after) {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
-            public void onTextChanged(CharSequence s, int start, int before,
-                    int count) {
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (Settings.System.getInt(mContext.getContentResolver(),
-                       Settings.System.NOTIFICATION_SHOW_WIFI_SSID, 0) == 1 &&
-                       count > 0) {
-                   mWifiView.setVisibility(View.VISIBLE); 
+                       Settings.System.NOTIFICATION_SHOW_WIFI_SSID, 0) == 1 && count > 0) {
+                    mWifiView.setVisibility(View.VISIBLE); 
                 } else {
                     mWifiView.setVisibility(View.GONE);
                 }
             }
 
-        });
+        }); } catch (Exception ex) {
+	}
 
         // set up the dynamic hide/show of the labels
         mPile.setOnSizeChangedListener(new OnSizeChangedListener() {
@@ -1221,6 +1220,7 @@ protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutP
             && mPile.getHeight() < (mNotificationPanel.getHeight() - mCarrierAndWifiViewHeight - mNotificationHeaderHeight)
             && mScrollView.getVisibility() == View.VISIBLE;
         
+	try {
         if (force || mCarrierAndWifiViewVisible != makeVisible) {
             mCarrierAndWifiViewVisible = makeVisible;
             if (DEBUG) {
@@ -1246,8 +1246,10 @@ protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutP
                 })
                 .start();
         }
+	} catch (Exception ex) {
+	}
     }
-
+    
     boolean hasClearableNotifications() {
         if (mNotificationData != null) {
             return mNotificationData.size() > 0 && mNotificationData.hasClearableItems();

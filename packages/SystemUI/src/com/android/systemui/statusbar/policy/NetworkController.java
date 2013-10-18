@@ -1370,17 +1370,20 @@ public class NetworkController extends BroadcastReceiver {
             }
         }
 
-        // wifi label
-        N = mWifiLabelViews.size();
-        for (int i=0; i<N; i++) {
-            TextView v = mWifiLabelViews.get(i);
-            v.setText(wifiLabel);
-            if ("".equals(wifiLabel)) {
-                v.setVisibility(View.GONE);
-            } else {
-                v.setVisibility(View.VISIBLE);
-            }
-        }
+	try {
+	    // wifi label
+            N = mWifiLabelViews.size();
+            for (int i=0; i<N; i++) {
+                TextView v = mWifiLabelViews.get(i);
+                v.setText(wifiLabel);
+                if ("".equals(wifiLabel)) {
+                    v.setVisibility(View.GONE);
+                } else {
+                    v.setVisibility(View.VISIBLE);
+                }
+            } 	
+	} catch (Exception ex) {
+	}
 
         // mobile label
         N = mMobileLabelViews.size();
