@@ -29,6 +29,7 @@ import android.app.PendingIntent;
 import android.app.StatusBarManager;
 import android.service.notification.StatusBarNotification;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -54,6 +55,7 @@ import android.inputmethodservice.InputMethodService;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Message;
 import android.os.RemoteException;
 import android.os.ServiceManager;
@@ -2457,8 +2459,11 @@ protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutP
 
     private View.OnClickListener mClockClickListener = new View.OnClickListener() {
         public void onClick(View v) {
-            startActivityDismissingKeyguard(
-                    new Intent(Intent.ACTION_QUICK_CLOCK), true); // have fun, everyone
+        	Intent intent = new Intent("android.intent.action.MAIN");
+        	intent.setComponent(ComponentName.unflattenFromString("com.android.deskclock/com.android.deskclock.DeskClock"));
+        	intent.addCategory("android.intent.category.LAUNCHER");
+        	startActivityDismissingKeyguard(
+        			intent, true);
         }
     };
 

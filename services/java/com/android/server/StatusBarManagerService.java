@@ -379,7 +379,7 @@ public class StatusBarManagerService extends IStatusBarService.Stub
             }
         });
     }
-
+    
     @Override
     public void toggleRecentApps() {
         if (mBar != null) {
@@ -388,7 +388,7 @@ public class StatusBarManagerService extends IStatusBarService.Stub
             } catch (RemoteException ex) {}
         }
     }
-
+    
     @Override
     public void preloadRecentApps() {
         if (mBar != null) {

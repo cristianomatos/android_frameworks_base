@@ -724,9 +724,6 @@ public class Activity extends ContextThemeWrapper
     private CharSequence mTitle;
     private int mTitleColor = 0;
 
-    private boolean mQuickPeekAction = false;
-    private float mQuickPeekInitialY;
-
     final FragmentManagerImpl mFragments = new FragmentManagerImpl();
     final FragmentContainer mContainer = new FragmentContainer() {
         @Override
@@ -2421,67 +2418,26 @@ public class Activity extends ContextThemeWrapper
         return onKeyShortcut(event.getKeyCode(), event);
     }
 
-    /**
-     * Called to process touch screen events.  You can override this to
-     * intercept all touch screen events before they are dispatched to the
-     * window.  Be sure to call this implementation for touch screen events
-     * that should be handled normally.
-     * 
-     * @param ev The touch screen event.
-     * 
-     * @return boolean Return true if this event was consumed.
-     */
-     public boolean dispatchTouchEvent(MotionEvent ev) {
-     final int action = ev.getAction();
-        switch (action) {
-            case MotionEvent.ACTION_DOWN:
-	    	if (Settings.System.getInt(getContentResolver(),
-                    Settings.System.STATUSBAR_PEEK, 0) == 1) {
-                    if (ev.getY() < getStatusBarHeight()) {
-	    		mQuickPeekInitialY = ev.getY();
-                        mQuickPeekAction = true;
-	    	    }	
-                }
-	        onUserInteraction();
-                break;
+   /**
+    * Called to process touch screen events.  You can override this to
+    * intercept all touch screen events before they are dispatched to the
+    * window.  Be sure to call this implementation for touch screen events
+    * that should be handled normally.
+    * 
+    * @param ev The touch screen event.
+    * 
+    * @return boolean Return true if this event was consumed.
+    */
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+       if (ev.getAction() == MotionEvent.ACTION_DOWN){
+               onUserInteraction();
+       }
+       if (getWindow().superDispatchTouchEvent(ev)) {
+           return true;
+       }
+       return onTouchEvent(ev);
+    }	
 
-            case MotionEvent.ACTION_MOVE:
-	        if (!mQuickPeekAction) {
-                    break;
-                }
-                if (Math.abs(ev.getY() - mQuickPeekInitialY) > getStatusBarHeight()) {
-                        mQuickPeekAction = false;
-                }
-	        if (mQuickPeekAction) {
-                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-                    mHandler.postDelayed(new Runnable() {
-                        public void run() {
-                            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-                        }
-
-                    }, 10000);
-
-                    mQuickPeekAction = false;
-                    return true;
-                }
-
-                break;
-
-            default:
-	        mQuickPeekAction = false;
-                break;
-        }
-
-        if (getWindow().superDispatchTouchEvent(ev)) {
-            return true;
-        }
-        return onTouchEvent(ev);
-    }
-    
-    public int getStatusBarHeight() {
-        return getResources().getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
-    }
-    
     /**
      * Called to process trackball events.  You can override this to
      * intercept all trackball events before they are dispatched to the

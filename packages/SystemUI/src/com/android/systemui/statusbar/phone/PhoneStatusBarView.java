@@ -21,6 +21,7 @@ import android.app.StatusBarManager;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.Resources.NotFoundException;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.EventLog;
 import android.util.Slog;
@@ -154,6 +155,7 @@ public class PhoneStatusBarView extends PanelBar {
     @Override
     public void startOpeningPanel(PanelView panel) {
         super.startOpeningPanel(panel);
+        Settings.System.putInt(mContext.getContentResolver(), Settings.System.NOTIFICATION_SHADE_ACTIVE, 1);
         // we only want to start fading if this is the "first" or "last" panel,
         // which is kind of tricky to determine
         mShouldFade = (mFadingPanel == null || mFadingPanel.isFullyExpanded());
@@ -170,6 +172,8 @@ public class PhoneStatusBarView extends PanelBar {
         mBar.makeExpandedInvisibleSoon();
         mFadingPanel = null;
         mLastFullyOpenedPanel = null;
+        Settings.System.putInt(mContext.getContentResolver(), Settings.System.FORCE_SHOW_STATUS_BAR, 0);
+        Settings.System.putInt(mContext.getContentResolver(), Settings.System.NOTIFICATION_SHADE_ACTIVE, 0);
     }
 
     @Override
