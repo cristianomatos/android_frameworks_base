@@ -1706,6 +1706,10 @@ protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutP
         mClearButton.setVisibility(View.GONE);
     }
 
+    public boolean isShowingSettings() {
+        return mHasFlipSettings && mFlipSettingsView.getVisibility() == View.VISIBLE;
+    }
+
     public void flipToSettings() {
         // Settings are not available in setup
         if (!mUserSetup) return;
