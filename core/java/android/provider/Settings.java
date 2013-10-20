@@ -2337,6 +2337,13 @@ public final class Settings {
         public static final String NOTIFICATION_LIGHT_PULSE_CUSTOM_VALUES = "notification_light_pulse_custom_values";
 
         /**
+         * How long to wait between playing notification sounds from a package
+         * Should be in milliseconds. 0 to disable
+         * @hide
+         */
+        public static final String MUTE_ANNOYING_NOTIFICATIONS_THRESHOLD = "mute_annoying_notifications_threshold"; 
+
+        /**
          * Whether the battery light should be enabled (if hardware supports it)
          * The value is boolean (1 or 0).
          * @hide
