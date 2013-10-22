@@ -5,4 +5,7 @@
     <!-- Long-press back kill application -->
     <string name="app_killed_message">App killed</string>
 
+    <!-- Description of the Random button in a KeyboardView. [CHAR LIMIT=NONE] -->
+    <string name="keyboardview_keycode_random">Reload random buttons</string> 
+
 </resources>
