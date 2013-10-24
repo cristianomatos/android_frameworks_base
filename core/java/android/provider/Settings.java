@@ -2814,6 +2814,16 @@ public final class Settings {
          * HALO Notification Description Color
          **/
         public static final String HALO_NOTIFICATION_DESC_COLOR = "halo_notification_desc_color";
+        
+        /**
+         * HALO Speech Bubble Color
+         **/
+        public static final String HALO_SPEECH_BUBBLE_COLOR = "halo_speech_bubble_color";
+        
+        /**
+         * HALO Text Color
+         **/
+        public static final String HALO_TEXT_COLOR = "halo_text_color";
 
         /**
          * Pie menu, should default to 1 (yes, show)

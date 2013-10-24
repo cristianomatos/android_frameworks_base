@@ -231,6 +231,10 @@ public class Halo extends FrameLayout implements Ticker.TickerCallback, TabletTi
             		Settings.System.HALO_NOTIFICATION_TITLE_COLOR), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
             		Settings.System.HALO_NOTIFICATION_DESC_COLOR), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+            		Settings.System.HALO_SPEECH_BUBBLE_COLOR), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+            		Settings.System.HALO_TEXT_COLOR), false, this);
         }
 
         @Override
@@ -446,6 +450,12 @@ public class Halo extends FrameLayout implements Ticker.TickerCallback, TabletTi
         	mEffect.setHaloCircleColor(
         			Settings.System.getInt(mContext.getContentResolver(), Settings.System.HALO_CIRCLE_COLOR, 0xFF33B5E5)
         			);
+        	mEffect.setHaloSpeechColor(
+        			Settings.System.getInt(mContext.getContentResolver(), Settings.System.HALO_SPEECH_BUBBLE_COLOR, 0xff086a99)
+        			);
+        	mEffect.setHaloTextColor(
+        			Settings.System.getInt(mContext.getContentResolver(), Settings.System.HALO_TEXT_COLOR, 0xffffffff)
+        			);
         	mPaintHolo.setColor(
         			Settings.System.getInt(mContext.getContentResolver(), Settings.System.HALO_EFFECT_COLOR, 0xff33b5e5)
         			);
@@ -454,7 +464,8 @@ public class Halo extends FrameLayout implements Ticker.TickerCallback, TabletTi
         	mNotifDescColor = 
         			Settings.System.getInt(mContext.getContentResolver(), Settings.System.HALO_NOTIFICATION_DESC_COLOR, 0xff999999);
         } else {
-        	mEffect.mHaloBg.setImageResource(R.drawable.halo_bg);
+        	mEffect.mHaloBg.clearColorFilter();
+        	mEffect.clearColorFilters();
         	mPaintHolo.setColor(0xFF33B5E5);
         }
     }
@@ -1199,7 +1210,7 @@ public class Halo extends FrameLayout implements Ticker.TickerCallback, TabletTi
             			vg = (ViewGroup)vg.getChildAt(3);
             			if(vg.getChildAt(0) instanceof TextView){
             				tv = (TextView)vg.getChildAt(0);
-                    		tv.setTextColor(mNotifDescColor);
+            				tv.setTextColor(mNotifDescColor);
             			}
             		}
             	}

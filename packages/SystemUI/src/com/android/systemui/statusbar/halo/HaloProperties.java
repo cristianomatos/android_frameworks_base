@@ -20,6 +20,8 @@ import android.os.Handler;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.graphics.Bitmap;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.PorterDuff;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -161,11 +163,41 @@ public class HaloProperties extends FrameLayout {
         mHaloOverlayAnimator = new CustomObjectAnimator(this);
     }
     
+    private ColorMatrix createColorMatrix(int color){
+    	float r = Math.abs((color & 0x00ff0000) >> 16);
+    	float g = Math.abs((color & 0x0000ff00) >> 8);
+    	float b = Math.abs(color & 0x000000ff);
+    	//This filter changes the color depending on the pixel's alpha value. Lower alpha -> darker color.
+    	return new ColorMatrix(new float[]{
+    		0f, 0f, 0f, 1f, r-255,
+    		0f, 0f, 0f, 1f, g-255,
+    		0f, 0f, 0f, 1f, b-255,
+    		0f, 0f, 0f, 1f, 0f
+    	});
+    }
+    
     public void setHaloCircleColor(int color){
-    	mHaloBg.setImageResource(R.drawable.halo_bg_custom);
-        mHaloBg.setBackgroundResource(R.drawable.halo_bg_custom);
-        mHaloBg.getBackground().setAlpha(215);
-        mHaloBg.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY); 
+        mHaloBg.setColorFilter(color, PorterDuff.Mode.SRC_IN); 
+    }
+    
+    public void setHaloSpeechColor(int color){
+    	ColorMatrixColorFilter filter = new ColorMatrixColorFilter(createColorMatrix(color));
+    	mHaloSpeechL.setColorFilter(filter);
+    	mHaloSpeechR.setColorFilter(filter);
+    	mHaloSpeechLD.setColorFilter(filter);
+    	mHaloSpeechRD.setColorFilter(filter);
+    }
+    
+    public void clearColorFilters(){
+    	mHaloSpeechL.clearColorFilter();
+    	mHaloSpeechR.clearColorFilter();
+    	mHaloSpeechLD.clearColorFilter();
+    	mHaloSpeechRD.clearColorFilter();
+    	mHaloBg.clearColorFilter();
+    }
+    
+    public void setHaloTextColor(int color){
+    	mHaloTextView.setTextColor(color);
     }
     
     int newPaddingHShort;

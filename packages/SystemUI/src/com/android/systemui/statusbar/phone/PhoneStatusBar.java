@@ -962,7 +962,7 @@ protected WindowManager.LayoutParams getRecentsLayoutParams(LayoutParams layoutP
     }
 
     public void addIcon(String slot, int index, int viewIndex, StatusBarIcon icon) {
-        if (SPEW) Slog.d(TAG, "addIcon slot=" + slot + " index=" + index + " viewIndex=" + viewIndex
+        Log.e(TAG, "addIcon slot=" + slot + " index=" + index + " viewIndex=" + viewIndex
                 + " icon=" + icon);
 
         Drawable iconDrawable = StatusBarIconView.getIcon(mContext, icon);
