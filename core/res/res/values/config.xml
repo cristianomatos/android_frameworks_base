@@ -521,12 +521,6 @@
     <!-- Is the notification LED intrusive? Used to decide if there should be a disable option -->
     <bool name="config_intrusiveNotificationLed">false</bool>
 
-    <!-- Is the battery LED intrusive? Used to decide if there should be a disable option -->
-    <bool name="config_intrusiveBatteryLed">false</bool>
-
-    <!-- Does the battery LED support multiple colors? Used to decide if the user can change the colors -->
-    <bool name="config_multiColorBatteryLed">false</bool>
-
     <!-- Default value for LED off time when the battery is low on charge in miliseconds -->
     <integer name="config_notificationsBatteryLedOff">2875</integer>
 
@@ -725,9 +719,6 @@
         <!-- The Google Network Location Services location provider -->
         <item>com.google.android.location</item>
     </string-array>
-
-    <!-- Component name of the service providing geofence API support. -->
-    <string name="config_geofenceProvider" translatable="false">com.qualcomm.services.location</string>
 
     <!-- Boolean indicating if current platform supports bluetooth SCO for off call
     use cases -->
@@ -1198,17 +1189,4 @@
         <item>com.android.inputmethod.latin</item>
     </string-array>
 
-    <!-- Timeout in MS for how long you have to long-press the back key to
-         kill the foreground app. -->
-    <integer name="config_backKillTimeout">2000</integer>
-
-    <!-- Device supports LED flashlight -->
-    <bool name="config_enableTorch">false</bool>
-
-    <!-- Flag indicating whether the RIL_REQUEST_SEND_SMS_EXPECT_MORE
-         API should be used or not. The usage of the API is added
-         by CodeAurora and may not be supported by certain RIL.
-
-         The default value is false which represents AOSP behavior. -->
-    <bool name="config_smsUseExpectMore">false</bool>
 </resources>
