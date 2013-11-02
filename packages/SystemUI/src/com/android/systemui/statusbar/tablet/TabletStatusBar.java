@@ -1,6 +1,9 @@
 /*
  * Copyright (C) 2010 The Android Open Source Project
  * This code has been modified. Portions copyright (C) 2012, ParanoidAndroid Project.
+ * Copyright (c) 2012-2013 The Linux Foundation. All rights reserved.
+ *
+ * Not a Contribution.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +49,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.provider.Settings;
+import android.telephony.MSimTelephonyManager;
 import android.text.TextUtils;
 import java.util.Calendar;
 import android.util.Pair;
@@ -83,6 +87,8 @@ import com.android.systemui.recent.RecentsActivity.NavigationCallback;
 import com.android.systemui.statusbar.BaseStatusBar;
 import com.android.systemui.statusbar.CommandQueue;
 import com.android.systemui.statusbar.DoNotDisturb;
+import com.android.systemui.statusbar.MSimSignalClusterView;
+import com.android.systemui.statusbar.NavigationBarView;
 import com.android.systemui.statusbar.NotificationData;
 import com.android.systemui.statusbar.NotificationData.Entry;
 import com.android.systemui.statusbar.SignalClusterView;
@@ -97,6 +103,7 @@ import com.android.systemui.statusbar.policy.KeyButtonView;
 import com.android.systemui.statusbar.policy.LocationController;
 import com.android.systemui.statusbar.policy.NetworkController;
 import com.android.systemui.statusbar.policy.NotificationRowLayout;
+import com.android.systemui.statusbar.policy.MSimNetworkController;
 import com.android.systemui.statusbar.policy.Prefs;
 
 import java.io.FileDescriptor;
@@ -183,6 +190,7 @@ public class TabletStatusBar extends BaseStatusBar implements
     DockBatteryController mDockBatteryController;
     LocationController mLocationController;
     DoNotDisturb mDoNotDisturb;
+    MSimNetworkController mMSimNetworkController;
 
     ViewGroup mBarContents;
 
@@ -644,11 +652,21 @@ public class TabletStatusBar extends BaseStatusBar implements
         mBluetoothController = new BluetoothController(mContext);
         mBluetoothController.addIconView((ImageView)sb.findViewById(R.id.bluetooth));
 
-        mNetworkController = new NetworkController(mContext);
-        mSignalCluster =
-                (SignalClusterView)sb.findViewById(R.id.signal_cluster);
-        mNetworkController.addSignalCluster(mSignalCluster);
-        mSignalCluster.setNetworkController(mNetworkController);
+        if (MSimTelephonyManager.getDefault().isMultiSimEnabled()) {
+            final MSimSignalClusterView mSimSignalCluster =
+                    (MSimSignalClusterView)mStatusBarView.findViewById(R.id.msim_signal_cluster);
+
+            mMSimNetworkController = new MSimNetworkController(mContext);
+            for(int i=0; i < MSimTelephonyManager.getDefault().getPhoneCount(); i++) {
+                mMSimNetworkController.addSignalCluster(mSimSignalCluster, i);
+            }
+        } else {
+            final SignalClusterView signalCluster =
+                    (SignalClusterView)mStatusBarView.findViewById(R.id.signal_cluster);
+
+            mNetworkController = new NetworkController(mContext);
+            mNetworkController.addSignalCluster(signalCluster);
+        }
 
         mBarView = (ViewGroup) mStatusBarView;
 

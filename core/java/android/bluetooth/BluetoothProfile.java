@@ -98,6 +98,24 @@ public interface BluetoothProfile {
     static public final int GATT_SERVER = 8;
 
     /**
+     * SAP
+     * @hide
+     */
+    public static final int SAP = 20;
+
+     /**
+     * Handsfree Client - HFP HF Role
+     * @hide
+     */
+    public static final int HANDSFREE_CLIENT = 9;
+
+    /**
+     * DUN
+     * @hide
+     */
+    public static final int DUN = 21;
+
+    /**
      * Default priority for devices that we try to auto-connect to and
      * and allow incoming connections for the profile
      * @hide

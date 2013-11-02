@@ -329,7 +329,7 @@ public class MediaRecorder
              profile.quality <= CamcorderProfile.QUALITY_TIME_LAPSE_QVGA) {
             // Nothing needs to be done. Call to setCaptureRate() enables
             // time lapse video recording.
-        } else {
+        } else if (profile.audioCodec >= 0) {
             setAudioEncodingBitRate(profile.audioBitRate);
             setAudioChannels(profile.audioChannels);
             setAudioSamplingRate(profile.audioSampleRate);
@@ -683,6 +683,11 @@ public class MediaRecorder
      * prepare().
      */
     public native void start() throws IllegalStateException;
+
+    /** @hide
+    */
+    public native void pause() throws IllegalStateException;
+
 
     /**
      * Stops recording. Call this after start(). Once recording is stopped,

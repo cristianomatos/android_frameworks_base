@@ -1,5 +1,8 @@
 /*
  * Copyright (C) 2006 The Android Open Source Project
+ * Copyright (c) 2012-2013 The Linux Foundation. All rights reserved.
+ *
+ * Not a Contribution.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1769,6 +1772,9 @@ public abstract class Context {
      *  <dt> {@link #ALARM_SERVICE} ("alarm")
      *  <dd> A {@link android.app.AlarmManager} for receiving intents at the
      *  time of your choosing.
+     *  <dt> {@link #IRDA_SERVICE} ("irda")
+     *  <dd> A {@link android.hardware.IrdaManager} for sending IR codes
+     *  with the IR emitter
      *  <dt> {@link #NOTIFICATION_SERVICE} ("notification")
      *  <dd> A {@link android.app.NotificationManager} for informing the user
      *   of background events.
@@ -1816,6 +1822,8 @@ public abstract class Context {
      * @see android.os.PowerManager
      * @see #ALARM_SERVICE
      * @see android.app.AlarmManager
+     * @see #IRDA_SERVICE
+     * @see android.hardware.IrdaManager
      * @see #NOTIFICATION_SERVICE
      * @see android.app.NotificationManager
      * @see #KEYGUARD_SERVICE
@@ -1906,6 +1914,16 @@ public abstract class Context {
      * @see android.app.AlarmManager
      */
     public static final String ALARM_SERVICE = "alarm";
+
+    /**
+     * Use with {@link #getSystemService} to retrieve a
+     * {@link android.hardware.IrdaManager} for sending IR codes
+     * with the IR emitter
+     *
+     * @see #getSystemService
+     * @see android.hardware.IrdaManager
+     */
+    public static final String IRDA_SERVICE = "irda";
 
     /**
      * Use with {@link #getSystemService} to retrieve a
@@ -2106,6 +2124,17 @@ public abstract class Context {
      * @see android.telephony.TelephonyManager
      */
     public static final String TELEPHONY_SERVICE = "phone";
+
+    /**
+     * Use with {@link #getSystemService} to retrieve a
+     * {android.telephony.MSimTelephonyManager} for handling the management
+     * of the telephony features of the multi sim device.
+     *
+     * @see #getSystemService
+     * @see android.telephony.MSimTelephonyManager
+     * @hide
+     */
+    public static final String MSIM_TELEPHONY_SERVICE = "phone_msim";
 
     /**
      * Use with {@link #getSystemService} to retrieve a

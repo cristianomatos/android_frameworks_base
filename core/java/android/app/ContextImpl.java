@@ -2,6 +2,8 @@
  * Copyright (C) 2006 The Android Open Source Project
  * This code has been modified.  Portions copyright (C) 2012, ParanoidAndroid Project.
  * This code has been modified.  Portions copyright (C) 2010, T-Mobile USA, Inc.
+ * Copyright (c) 2012-2013 The Linux Foundation. All rights reserved.
+ *
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,6 +86,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.IPowerManager;
 import android.os.IUserManager;
+import android.hardware.IIrdaManager;
+import android.hardware.IrdaManager;
 import android.os.Looper;
 import android.os.PowerManager;
 import android.os.Process;
@@ -94,6 +98,7 @@ import android.os.SystemVibrator;
 import android.os.SystemProperties;
 import android.os.UserManager;
 import android.os.storage.StorageManager;
+import android.telephony.MSimTelephonyManager;
 import android.telephony.TelephonyManager;
 import android.content.ClipboardManager;
 import android.util.*;
@@ -120,6 +125,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import com.stericsson.hardware.fm.IFmReceiver;
+import com.stericsson.hardware.fm.IFmTransmitter;
+import com.stericsson.hardware.fm.FmReceiver;
+import com.stericsson.hardware.fm.FmTransmitter;
+import com.stericsson.hardware.fm.FmReceiverImpl;
+import com.stericsson.hardware.fm.FmTransmitterImpl;
 
 class ReceiverRestrictedContext extends ContextWrapper {
     ReceiverRestrictedContext(Context base) {
@@ -477,6 +489,13 @@ class ContextImpl extends Context {
                     return new TelephonyManager(ctx.getOuterContext());
                 }});
 
+        if (MSimTelephonyManager.getDefault().isMultiSimEnabled()) {
+            registerService(MSIM_TELEPHONY_SERVICE, new ServiceFetcher() {
+                    public Object createService(ContextImpl ctx) {
+                        return new MSimTelephonyManager(ctx.getOuterContext());
+                    }});
+        }
+
         registerService(UI_MODE_SERVICE, new ServiceFetcher() {
                 public Object createService(ContextImpl ctx) {
                     return new UiModeManager();
@@ -539,6 +558,38 @@ class ContextImpl extends Context {
                 IAppOpsService service = IAppOpsService.Stub.asInterface(b);
                 return new AppOpsManager(ctx, service);
             }});
+
+        registerService(PROFILE_SERVICE, new ServiceFetcher() {
+                public Object createService(ContextImpl ctx) {
+                    final Context outerContext = ctx.getOuterContext();
+                    return new ProfileManager (outerContext, ctx.mMainThread.getHandler());
+                }});
+
+        registerService(WimaxManagerConstants.WIMAX_SERVICE, new ServiceFetcher() {
+                public Object createService(ContextImpl ctx) {
+                    return WimaxHelper.createWimaxService(ctx, ctx.mMainThread.getHandler());
+                }});
+
+        registerService("fm_receiver", new ServiceFetcher() {
+                public Object createService(ContextImpl ctx) {
+                    IBinder b = ServiceManager.getService("fm_receiver");
+                    IFmReceiver service = IFmReceiver.Stub.asInterface(b);
+                    return new FmReceiverImpl(service);
+                }});
+
+        registerService("fm_transmitter", new ServiceFetcher() {
+                public Object createService(ContextImpl ctx) {
+                    IBinder b = ServiceManager.getService("fm_transmitter");
+                    IFmTransmitter service = IFmTransmitter.Stub.asInterface(b);
+                    return new FmTransmitterImpl(service);
+                }});
+
+        registerService(IRDA_SERVICE, new StaticServiceFetcher() {
+                public Object createStaticService() {
+                    IBinder b = ServiceManager.getService(IRDA_SERVICE);
+                    IIrdaManager service = IIrdaManager.Stub.asInterface(b);
+                    return new IrdaManager(service);
+                }});
     }
 
     static ContextImpl getImpl(Context context) {
