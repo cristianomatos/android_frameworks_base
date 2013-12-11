@@ -5,5 +5,8 @@
   <!-- Halo -->
   <java-symbol type="style" name="Theme.DeviceDefault.FloatingWindow" />
   <java-symbol type="style" name="Theme.DeviceDefault.FloatingWindowLight" />
+
+  <!-- Navigation ring power menu -->
+  <java-symbol type="drawable" name="ic_navigation_ring_power_menu" />
   
 </resources>
