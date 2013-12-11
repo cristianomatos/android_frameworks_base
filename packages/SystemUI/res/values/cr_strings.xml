@@ -2,7 +2,8 @@
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-    <!-- Content description of the halo button in the notification panel for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <!-- Content description of the halo button in the notification panel for accessibility (not sho
+         wn on the screen). [CHAR LIMIT=NONE] -->  
     <string name="accessibility_halo">Create notification halo.</string>
 
     <!-- HALO -->
@@ -13,5 +14,8 @@
     <string name="halo_tutorial1">This is HALO</string>
     <string name="halo_tutorial2">Move me: 2x-tap &amp; drag</string>
     <string name="halo_tutorial3">Browse tasks: Horizontal drag</string>
+
+    <!-- Power menu -->
+    <string name="quick_settings_powermenu_label">Power Menu</string> 
 
 </resources>
