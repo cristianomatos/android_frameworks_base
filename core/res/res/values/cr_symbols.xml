@@ -87,4 +87,9 @@
   <java-symbol type="anim" name="slide_in_left_no_fade" />
   <java-symbol type="anim" name="slide_out_right_no_fade" />
 
+  <!-- Config Power Menu -->
+  <java-symbol type="drawable" name="ic_lock_screen_record" />
+  <java-symbol type="string" name="global_action_screen_record" />
+  <java-symbol type="bool" name="config_enableScreenrecordChord" />
+
 </resources>
