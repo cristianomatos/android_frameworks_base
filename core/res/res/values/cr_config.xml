@@ -14,5 +14,8 @@
 
     <!-- The duration (in milliseconds) of recent app screen exit animation. -->
     <integer name="config_recentExitDur">450</integer>
+
+    <!-- Enable or disable hardware keys when nav bar is up -->
+    <bool name="config_hwKeysOnNavBar">false</bool>
   
 </resources>
