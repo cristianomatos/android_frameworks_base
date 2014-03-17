@@ -3010,6 +3010,12 @@ public final class Settings {
         public static final String NAVIGATION_BAR_WIDTH = "navigation_bar_width";
 
         /**
+         * Navigation recents long press
+         * @hide
+         */
+        public static final String NAVBAR_RECENTS_LONG_PRESS = "navbar_recents_long_press";
+
+        /**
          * Enable Menu key
          *
          * @hide
