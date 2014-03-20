@@ -19,16 +19,16 @@
 
 <resources>
 
-    <!-- Network traffic monitor single-line text size -->
-    <dimen name="net_traffic_single_text_size">12dp</dimen>
-
-    <!-- Network traffic monitor multi-line text size -->
-    <dimen name="net_traffic_multi_text_size">8dp</dimen>
-
-    <!-- App circle sidebar -->
-    <dimen name="app_sidebar_trigger_width">12dip</dimen>
-    <dimen name="app_sidebar_listview_width">160dp</dimen>
-    <dimen name="app_sidebar_icon_width">72dp</dimen>
-    <dimen name="app_sidebar_icon_height">72dp</dimen>
+    <!-- App Circle sidebar -->
+    <style name="ListTheme" parent="@*android:style/Theme.Holo">
+        <item name="android:windowBackground">@*android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:listSelector">@*android:color/transparent</item>
+        <item name="android:scrollbars">none</item>
+        <item name="android:clipChildren">false</item>
+        <item name="android:overScrollMode">never</item>
+        <item name="android:divider">@null</item>
+    </style>
 
 </resources>
