@@ -3339,6 +3339,11 @@ public final class Settings {
         public static final String CALL_UI_IN_BACKGROUND = "call_ui_in_background";
 
         /**
+         * @hide
+         */
+        public static final String SMART_PHONE_CALLER = "smart_phone_caller";
+
+        /**
          * Boolean value whether to link ringtone and notification volumes
          *
          * @hide
