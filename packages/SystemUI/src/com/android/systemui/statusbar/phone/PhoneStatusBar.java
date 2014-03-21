@@ -470,7 +470,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.REMINDER_ALERT_INTERVAL), false, this,
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.NAVBAR_RECENTS_LONG_PRESS), false, this,
+                    Settings.System.NAVBAR_RECENT_LONG_PRESS), false, this,
                     UserHandle.USER_ALL);
             updateSettings();
             update();
@@ -3742,7 +3742,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private void recentsLongPress() {
         int navbarRecentsLongPress = Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.NAVBAR_RECENTS_LONG_PRESS, 0, mCurrentUserId);
+                Settings.System.NAVBAR_RECENT_LONG_PRESS, 0, mCurrentUserId);
         switch(navbarRecentsLongPress) {
         case 0:
             break;
