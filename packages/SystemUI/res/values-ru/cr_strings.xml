@@ -4,77 +4,77 @@
 
     <!-- Content description of the halo button in the notification panel for accessibility (not sho
          wn on the screen). [CHAR LIMIT=NONE] -->  
-    <string name="accessibility_halo">Create notification halo.</string>
+    <string name="accessibility_halo">Создать уведомление Halo</string>
 
     <!-- HALO -->
-    <string name="halo_dismiss">Dismiss notification</string>
-    <string name="halo_hide">Hide</string>
-    <string name="halo_clear_all">Dismiss all notifications</string>
-    <string name="halo_silence">Hide &amp; silence until woken</string>
-    <string name="halo_tutorial1">This is HALO</string>
-    <string name="halo_tutorial2">Move me: 2x-tap &amp; drag</string>
-    <string name="halo_tutorial3">Browse tasks: Horizontal drag</string>
+    <string name="halo_dismiss">Отклонять уведомления</string>
+    <string name="halo_hide">Скрыть</string>
+    <string name="halo_clear_all">Отклонять все уведомления</string>
+    <string name="halo_silence">Скрыть &amp; тихий до пробуждения</string>
+    <string name="halo_tutorial1">Это HALO</string>
+    <string name="halo_tutorial2">Передвинь меня: 2-ое нажатие &amp; перемещение</string>
+    <string name="halo_tutorial3">Обзор задач: Горизонтальное перемещение</string>
 
     <!-- Power menu -->
-    <string name="quick_settings_powermenu_label">Power Menu</string>
+    <string name="quick_settings_powermenu_label">Меню питания</string>
 
     <!-- Recents Ram Bar -->
     <string name="memory">RAM</string>
     <!-- [CHAR LIMIT=10] Running services, summary of background processes -->
-    <string name="service_free_mem"><xliff:g id="memory">%1$s</xliff:g> free</string>
+    <string name="service_free_mem"><xliff:g id="memory">%1$s</xliff:g> свободно</string>
     <!-- [CHAR LIMIT=10] Running services, summary of foreground processes -->
-    <string name="service_used_mem"><xliff:g id="memory">%1$s</xliff:g> used</string>
+    <string name="service_used_mem"><xliff:g id="memory">%1$s</xliff:g> занято</string>
 
-    <string name="status_bar_notification_hide_icon_packages">Hide status bar app\'s notification icon(s)</string>
+    <string name="status_bar_notification_hide_icon_packages">Скрыть иконку(и) уведомления у приложения(ий)</string>
 
     <!-- TRDS -->
-    <string name="quick_settings_theme_switch_dark">Dark theme</string>
-    <string name="quick_settings_theme_switch_light">Light theme</string>
+    <string name="quick_settings_theme_switch_dark">Тёмная тема</string>
+    <string name="quick_settings_theme_switch_light">Светлая тема</string>
 
     <!-- Dialog Cancel/OK -->
-    <string name="cancel">Cancel</string>
-    <string name="dlg_ok">Ok</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
+    <string name="cancel">Отмена</string>
+    <string name="dlg_ok">Ок</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
 
     <!-- Notifications reminders -->
-    <string name="quick_settings_reminder">Reminder</string>
-    <string name="quick_settings_reminder_title">Title:</string>
-    <string name="quick_settings_reminder_message">Message:</string>
-    <string name="quick_settings_reminder_time">Reminder Time</string>
-    <string name="quick_settings_reminder_set">Set Time</string>
-    <string name="quick_settings_reminder_update">Update Time</string>
-    <string name="quick_settings_reminder_no_expire">No notification</string>
-    <string name="quick_settings_reminder_dismiss">Clear Reminder</string>
-    <string name="quick_settings_reminder_dismiss_message">Clear current reminder?</string>
-    <string name="quick_settings_reminder_help_title">Touch</string>
-    <string name="quick_settings_reminder_noti_dismiss">Dismiss</string>
-    <string name="quick_settings_reminder_help_message">Touch the empty space above to set or change the reminder. Long-press to clear the current reminder.</string>
+    <string name="quick_settings_reminder">Напоминание</string>
+    <string name="quick_settings_reminder_title">Заголовок:</string>
+    <string name="quick_settings_reminder_message">Сообщение:</string>
+    <string name="quick_settings_reminder_time">Время напоминания</string>
+    <string name="quick_settings_reminder_set">Установить время</string>
+    <string name="quick_settings_reminder_update">Обновить время</string>
+    <string name="quick_settings_reminder_no_expire">Нет уведомления</string>
+    <string name="quick_settings_reminder_dismiss">Очистить напоминание</string>
+    <string name="quick_settings_reminder_dismiss_message">Очистить текущее напоминание?</string>
+    <string name="quick_settings_reminder_help_title">Нажмите</string>
+    <string name="quick_settings_reminder_noti_dismiss">Отклонить</string>
+    <string name="quick_settings_reminder_help_message">Нажмите здесь, чтобы установить напоминание. Нажмите и удерживайте, чтобы очистить текущее напоминание</string>
 
     <!-- Long-press back kill application -->
-    <string name="app_killed_message">App killed</string>
+    <string name="app_killed_message">Приложение закрыто</string>
  
     <!-- On-the-go -->
-    <string name="onthego_notif_ticker">On-The-Go activated</string>
-    <string name="onthego_notif_title">On-The-Go is active</string>
-    <string name="onthego_notif_stop">Stop</string>
-    <string name="onthego_notif_options">Options</string>
-    <string name="onthego_notif_error">Unable to start On-The-Go</string>
-    <string name="onthego_notif_restart">Restart On-The-Go</string>
-    <string name="onthego_notif_camera_changed">Camera mode changed</string>
-    <string name="onthego_transparency">Transparency</string>
-    <string name="onthego_front_camera">Use front camera</string>
-    <string name="onthego_service_toggle">Automatically restart service</string>
-    <string name="quick_settings_onthego_back">Rear Camera</string>
-    <string name="quick_settings_onthego_front">Front Camera</string>
+    <string name="onthego_notif_ticker">Режим \"На ходу\" активирован</string>
+    <string name="onthego_notif_title">Режим \"На ходу\" активен</string>
+    <string name="onthego_notif_stop">Остановить</string>
+    <string name="onthego_notif_options">Параметры</string>
+    <string name="onthego_notif_error">Не удалось запустить режим \"На ходу\"</string>
+    <string name="onthego_notif_restart">Перезагрузить режим \"На ходу\"</string>
+    <string name="onthego_notif_camera_changed">Режим камеры изменён</string>
+    <string name="onthego_transparency">Прозрачность</string>
+    <string name="onthego_front_camera">Использовать фронтальную камеру</string>
+    <string name="onthego_service_toggle">Автоматический перезапуск службы</string>
+    <string name="quick_settings_onthego_back">Основная камера</string>
+    <string name="quick_settings_onthego_front">Фронтальная камера</string>
 
     <!-- [CHAR LIMIT=30] Location settings screen, high accuracy location mode -->
-    <string name="location_mode_high_accuracy_title">High accuracy</string>
+    <string name="location_mode_high_accuracy_title">Высокая точность</string>
     <!-- [CHAR LIMIT=30] Location settings screen, battery saving location mode -->
-    <string name="location_mode_battery_saving_title">Battery saving</string>
+    <string name="location_mode_battery_saving_title">Экономия батареи</string>
     <!-- [CHAR LIMIT=30] Location settings screen, device only location mode -->
-    <string name="location_mode_sensors_only_title">Device only</string>
+    <string name="location_mode_sensors_only_title">Датчики устройства</string>
     <!-- [CHAR LIMIT=30] Location settings screen, location off mode -->
-    <string name="location_mode_location_off_title">Location off</string>
+    <string name="location_mode_location_off_title">Отключено</string>
 
 </resources>
