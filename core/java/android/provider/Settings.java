@@ -2722,6 +2722,12 @@ public final class Settings {
         public static final String LOCKSCREEN_LID_WAKE = "lockscreen_lid_wake";
 
         /**
+         * Whether to hide the frame behind lockscreen widgets
+         * @hide
+         */
+        public static final String LOCKSCREEN_WIDGET_FRAME_ENABLED = "lockscreen_widget_frame_enabled";
+
+        /**
          * @deprecated Use {@link android.provider.Settings.Global#LOW_BATTERY_SOUND}
          * instead
          * @hide

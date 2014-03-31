@@ -19,7 +19,10 @@ package com.android.keyguard;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.view.View;
 
 /**
@@ -90,5 +93,12 @@ public class KeyguardSecurityViewHelper {
                 bouncerFrame.setAlpha(0);
             }
         }
+    }
+
+    public static boolean hideWidgetFrame(Context context) {
+        return Settings.System.getIntForUser(
+                context.getContentResolver(),
+                Settings.System.LOCKSCREEN_WIDGET_FRAME_ENABLED, 0,
+                UserHandle.USER_CURRENT) == 1;
     }
 }
