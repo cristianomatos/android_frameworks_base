@@ -51,4 +51,7 @@
     <string name="status_bar_recent_playstore_item_title">Play Store</string>
     <string name="status_bar_recent_amazon_item_title">Amazon Store</string>
 
+    <!-- Long-press back kill application -->
+    <string name="app_killed_message">App killed</string>
+
 </resources>
