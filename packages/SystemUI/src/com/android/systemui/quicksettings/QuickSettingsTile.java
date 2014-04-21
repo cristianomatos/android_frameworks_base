@@ -27,7 +27,7 @@ import com.android.systemui.statusbar.phone.QuickSettingsTileView;
 
 public class QuickSettingsTile implements OnClickListener {
 
-    private static final int BASE_SMALL_ICONS_MARGIN_OFFSET = 24;
+    private static final int BASE_SMALL_ICONS_MARGIN_OFFSET = 26;
 
     protected final Context mContext;
     protected QuickSettingsContainerView mContainer;
