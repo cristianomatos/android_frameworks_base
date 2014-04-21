@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.RemoteException;
 import android.os.UserHandle;
 import android.provider.Settings;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -25,6 +26,8 @@ import com.android.systemui.statusbar.phone.QuickSettingsContainerView;
 import com.android.systemui.statusbar.phone.QuickSettingsTileView;
 
 public class QuickSettingsTile implements OnClickListener {
+
+    private static final int BASE_SMALL_ICONS_MARGIN_OFFSET = 24;
 
     protected final Context mContext;
     protected QuickSettingsContainerView mContainer;
@@ -87,11 +90,14 @@ public class QuickSettingsTile implements OnClickListener {
         }
         View image = mTile.findViewById(R.id.image);
         if (image != null) {
+            int offset = BASE_SMALL_ICONS_MARGIN_OFFSET;
+            float density = mContext.getResources().getDisplayMetrics().density;
+            offset *= density;
             MarginLayoutParams params = (MarginLayoutParams) image.getLayoutParams();
             int margin = mContext.getResources().getDimensionPixelSize(
                     R.dimen.qs_tile_ribbon_icon_margin);
             params.topMargin = margin + 50;
-            params.bottomMargin = margin;
+            params.bottomMargin = margin + offset;
             image.setLayoutParams(params);
         }
     }
