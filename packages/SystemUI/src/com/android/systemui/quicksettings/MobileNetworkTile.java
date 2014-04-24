@@ -127,7 +127,7 @@ public class MobileNetworkTile extends NetworkTile {
         ImageView iv = (ImageView) mTile.findViewById(R.id.rssi_image);
         if (tv != null) {
             tv.setText(mLabel);
-            tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTileTextSize);
+            tv.setTextSize(mTileTextSize);
             tv.setPadding(0, mTileTextPadding, 0, 0);
         }
         iv.setImageResource(mDrawable);

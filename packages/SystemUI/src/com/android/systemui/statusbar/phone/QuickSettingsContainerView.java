@@ -43,11 +43,20 @@ public class QuickSettingsContainerView extends FrameLayout {
     private boolean mDuplicateColumnsLandscape; 
     private boolean mHasFlipSettingsPanel;
 
+    private float mPadding5Tiles = 17.0f;
+    private float mPadding4Tiles = 23.0f;
+    private float mPadding3Tiles = 30.0f;
+    private float mSize5Tiles = 9.0f;
+    private float mSize4Tiles = 10.0f;
+    private float mSize3Tiles = 12.0f;
+
+    private int mTextSize;
+    private int mTextPadding;
+
     // The gap between tiles in the QuickSettings grid
     private float mCellGap;
 
     private Context mContext;
-    private Resources mResources; 
 
     private boolean mSingleRow;
 
@@ -57,7 +66,6 @@ public class QuickSettingsContainerView extends FrameLayout {
         mSingleRow = a.getBoolean(R.styleable.QuickSettingsContainer_singleRow, false);
         a.recycle();
         mContext = context;
-        mResources = getContext().getResources(); 
         updateResources();
     }
 
@@ -70,12 +78,13 @@ public class QuickSettingsContainerView extends FrameLayout {
     }
 
     public void updateResources() {
-        mCellGap = mResources.getDimension(R.dimen.quick_settings_cell_gap);
+        Resources r = getContext().getResources();
+        mCellGap = r.getDimension(R.dimen.quick_settings_cell_gap);
         mNumColumns = Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.QUICK_TILES_PER_ROW, 3, UserHandle.USER_CURRENT);
         // do not allow duplication on tablets or any device which do not have
         // flipsettings
-        mHasFlipSettingsPanel = mResources.getBoolean(R.bool.config_hasFlipSettingsPanel);
+        mHasFlipSettingsPanel = r.getBoolean(R.bool.config_hasFlipSettingsPanel);
         mDuplicateColumnsLandscape = Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.QUICK_TILES_PER_ROW_DUPLICATE_LANDSCAPE,
                 1, UserHandle.USER_CURRENT) == 1
@@ -220,12 +229,12 @@ public class QuickSettingsContainerView extends FrameLayout {
         // get tile text size based on column count
         switch (mNumColumns) {
             case 5:
-                return mResources.getDimensionPixelSize(R.dimen.qs_5_column_text_size);
+                return mTextSize = (int) mSize5Tiles;
             case 4:
-                return mResources.getDimensionPixelSize(R.dimen.qs_4_column_text_size);
+                return mTextSize = (int) mSize4Tiles;
             case 3:
             default:
-                return mResources.getDimensionPixelSize(R.dimen.qs_3_column_text_size);
+                return mTextSize = (int) mSize3Tiles;
         }
     }
 
@@ -233,12 +242,12 @@ public class QuickSettingsContainerView extends FrameLayout {
         // get tile text padding based on column count
         switch (mNumColumns) {
             case 5:
-                return mResources.getDimensionPixelSize(R.dimen.qs_5_column_text_padding);
+                return mTextPadding = (int) mPadding5Tiles;
             case 4:
-                return mResources.getDimensionPixelSize(R.dimen.qs_4_column_text_padding);
+                return mTextPadding = (int) mPadding4Tiles;
             case 3:
             default:
-                return mResources.getDimensionPixelSize(R.dimen.qs_tile_margin_below_icon);
+                return mTextPadding = (int) mPadding3Tiles;
         }
     }
 }

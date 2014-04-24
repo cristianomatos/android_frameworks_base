@@ -111,7 +111,7 @@ public class BatteryTile extends QuickSettingsTile implements BatteryStateChange
         TextView tv = (TextView) mTile.findViewById(R.id.text);
         if (tv != null) {
             tv.setText(mLabel);
-            tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTileTextSize);
+            tv.setTextSize(mTileTextSize);
             tv.setPadding(0, mTileTextPadding, 0, 0);
         }
     }
