@@ -2901,6 +2901,20 @@ public final class Settings {
         public static final String DIALER_OPENCNAM_AUTH_TOKEN = "dialer_opencnam_auth_token";
 
         /**
+         * number of tiles per row in quick settings
+         *
+         * @hide
+         */
+        public static final String QUICK_TILES_PER_ROW = "quick_tiles_per_row";
+
+        /**
+         * number of tiles per row in quick settings
+         *
+         * @hide
+         */
+        public static final String QUICK_TILES_PER_ROW_DUPLICATE_LANDSCAPE = "quick_tiles_per_row_duplicate_landscape";
+
+        /**
          * Quick Settings Panel Dynamic Tiles
          *
          * @hide
