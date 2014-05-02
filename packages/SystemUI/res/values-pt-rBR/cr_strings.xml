@@ -54,4 +54,13 @@
     <!-- Long-press back kill application -->
     <string name="app_killed_message">Aplicativo matado</string>
 
+    <!-- App sidebar -->
+    <string name="default_folder_text">Pasta</string>
+    <string name="title_activity_sidebar_configuration">Configuração de conteúdo do appbar</string>
+    <string name="action_save">Salvar</string>
+    <string name="toast_items_saved">Itens do appbar foram salvos</string>
+    <string name="content_setup_instructions">Adicionar itens ao appbar precionando longamente qualquer item ao lado direito e arrastando-o para o appbar.\n\nCombine itens em pastas colocando-os sobre qualquer item já existente no appbar.\n\nPara remover um item, simplesmente arraste-o para fora do appbar.</string>
+    <string name="content_setup_dismiss">Continue</string>
+    <string name="toast_not_installed">Aplicativo não instalado</string>
+
 </resources>
