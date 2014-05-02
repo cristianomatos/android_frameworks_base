@@ -54,15 +54,6 @@
     <!-- Long-press back kill application -->
     <string name="app_killed_message">App killed</string>
 
-    <!-- [CHAR LIMIT=30] Location settings screen, high accuracy location mode -->
-    <string name="location_mode_high_accuracy_title">High accuracy</string>
-    <!-- [CHAR LIMIT=30] Location settings screen, battery saving location mode -->
-    <string name="location_mode_battery_saving_title">Battery saving</string>
-    <!-- [CHAR LIMIT=30] Location settings screen, device only location mode -->
-    <string name="location_mode_sensors_only_title">Device only</string>
-    <!-- [CHAR LIMIT=30] Location settings screen, location off mode -->
-    <string name="location_mode_location_off_title">Location off</string>
-
     <!-- App sidebar -->
     <string name="default_folder_text">Folder</string>
     <string name="title_activity_sidebar_configuration">Appbar content setup</string>
