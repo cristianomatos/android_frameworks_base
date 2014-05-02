@@ -3872,6 +3872,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         updateExpandedViewPos(EXPANDED_LEAVE_ALONE);
         mRecreating = false;
+
+        updateHalo();
     }
 
     /**
