@@ -63,4 +63,7 @@
     <string name="content_setup_dismiss">Continue</string>
     <string name="toast_not_installed">App is not installed</string>
 
+    <!-- Title shown in notification popup for launching notification in floating mode -->
+    <string name="status_bar_notification_floating_item_title">Floating mode</string>
+
 </resources>
