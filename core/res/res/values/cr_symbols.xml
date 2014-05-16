@@ -8,6 +8,8 @@
 
   <!-- Navigation ring power menu -->
   <java-symbol type="drawable" name="ic_navigation_ring_power_menu" />
+  <!-- Last app on navring -->
+  <java-symbol type="drawable" name="ic_navigation_ring_lastapp" />
 
   <!-- Screen recorder -->
   <java-symbol type="string" name="global_action_screen_record" />
