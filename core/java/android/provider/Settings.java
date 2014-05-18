@@ -3383,6 +3383,14 @@ public final class Settings {
         public static final String SMART_PHONE_CALLER = "smart_phone_caller";
 
         /**
+         * Whether flip action during incomming call should mute or dismiss
+         * the call (mute = 0, dismiss = 1, nothing = 2 (default))
+         *
+         * @hide
+         */
+        public static final String CALL_FLIP_ACTION_KEY = "call_flip_action_key";
+
+        /**
          * Boolean value whether to link ringtone and notification volumes
          *
          * @hide
