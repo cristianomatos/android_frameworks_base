@@ -7,13 +7,13 @@
     <string name="accessibility_halo">Создать уведомление HALO</string>
 
     <!-- HALO -->
-    <string name="halo_dismiss">Отклонить уведомление</string>
+    <string name="halo_dismiss">Отклонять уведомления</string>
     <string name="halo_hide">Скрыть</string>
-    <string name="halo_clear_all">Отклонить все уведомления</string>
-    <string name="halo_silence">Скрытый и бесшумный пока не проснулся</string>
+    <string name="halo_clear_all">Отклонять все уведомления</string>
+    <string name="halo_silence">Скрыть &amp; тихий до пробуждения</string>
     <string name="halo_tutorial1">Это HALO</string>
-    <string name="halo_tutorial2">Перемести меня: 2-е нажатие и перемещение</string>
-    <string name="halo_tutorial3">Просмотр задач: Горизонтальное перемещение</string>
+    <string name="halo_tutorial2">Передвинь меня: 2-ое нажатие &amp; перемещение</string>
+    <string name="halo_tutorial3">Обзор задач: Горизонтальное перемещение</string>
 
     <!-- Power menu -->
     <string name="quick_settings_powermenu_label">Меню кнопки питания</string>
@@ -62,5 +62,10 @@
     <string name="content_setup_instructions">Добавление элементов на  \"Панель приложений\" осуществляется долгим нажатием на любой элемент справа и перетаскиванием его на панель\n\nГруппируйте элементы в папки простым перемещением.\n\nЧтобы удалить элемент, просто перетащите его из \"Панели приложений\" в любое место.</string>
     <string name="content_setup_dismiss">Продолжить</string>
     <string name="toast_not_installed">Приложение не установлено</string>
+	
+	<!-- Title shown in notification popup for launching notification in floating mode -->
+    <string name="status_bar_notification_floating_item_title">Плавающий режим</string>
+    <!-- Title shown in recents popup for showing app in floating mode -->
+    <string name="status_bar_recent_floating_item_title">Плавающий режим</string>
 
 </resources>

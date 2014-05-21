@@ -154,4 +154,17 @@
     <string name="keyguard_transport_play_description" msgid="2924628863741150956">"Кнопка воспроизведения"</string>
     <string name="keyguard_transport_stop_description" msgid="3084179324810575787">"Кнопка выключения"</string>
     <string name="keyguard_carrier_default" msgid="8700650403054042153">"Нет сигнала."</string>
+    <string name="lockscreen_gesture_instructions">Нарисуйте жест для разблокировки</string>
+    <string name="lockscreen_gesture_correct">Правильно!</string>
+    <string name="lockscreen_gesture_wrong">Попробуйте снова</string>
+    <string name="keyguard_accessibility_gesture_unlock">Жест разблокировки.</string>
+    <string name="keyguard_accessibility_gesture_area">Область для жеста</string>
+    <string name="kg_forgot_gesture_button_text">Забыли жест</string>
+    <string name="kg_wrong_gesture">Неправильный жест</string>
+    <string name="kg_gesture_instructions">Нарисуйте ваш жест</string>
+    <string name="kg_too_many_failed_gesture_attempts_dialog_message">
+        Вы неправильно нарисовали жест разблокировки <xliff:g id="number">%d</xliff:g> раз(а).
+        \n\nПовторите попытку через <xliff:g id="number">%d</xliff:g> секунд.
+    </string>
+    
 </resources>
