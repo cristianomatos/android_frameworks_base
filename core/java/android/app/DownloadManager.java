@@ -266,13 +266,6 @@ public class DownloadManager {
      */
     public final static int PAUSED_UNKNOWN = 4;
 
-   /**
-    * Value of {@link #COLUMN_REASON} when the download is paused by manual.
-    *
-    * @hide
-    */
-    public final static int PAUSED_BY_MANUAL = 5;
-
     /**
      * Value of {@link #COLUMN_REASON} when the download is paused by manual.
      *
@@ -1185,34 +1178,6 @@ public class DownloadManager {
         values.put(Downloads.Impl.COLUMN_STATUS, Downloads.Impl.STATUS_PENDING);
         values.put(Downloads.Impl.COLUMN_FAILED_CONNECTIONS, 0);
         mResolver.update(mBaseUri, values, getWhereClauseForIds(ids), getWhereArgsForIds(ids));
-    }
-
-    /**
-     * Pause the given running download by manual.
-     *
-     * @param id the ID of the download to be paused
-     * @return the number of downloads actually updated
-     * @hide
-     */
-    public int pauseDownload(long id) {
-        ContentValues values = new ContentValues();
-        values.put(Downloads.Impl.COLUMN_STATUS, Downloads.Impl.STATUS_PAUSED_BY_MANUAL);
-
-        return mResolver.update(ContentUris.withAppendedId(mBaseUri, id), values, null, null);
-    }
-
-    /**
-     * Resume the given paused download by manual.
-     *
-     * @param id the ID of the download to be resumed
-     * @return the number of downloads actually updated
-     * @hide
-     */
-    public int resumeDownload(long id) {
-       ContentValues values = new ContentValues();
-       values.put(Downloads.Impl.COLUMN_STATUS, Downloads.Impl.STATUS_RUNNING);
-
-       return mResolver.update(ContentUris.withAppendedId(mBaseUri, id), values, null, null);
     }
 
     /**
