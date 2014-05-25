@@ -118,6 +118,7 @@ import com.android.internal.statusbar.IStatusBarService;
 import com.android.internal.telephony.ITelephony;
 import com.android.internal.util.gesture.EdgeGesturePosition;
 import com.android.internal.util.gesture.EdgeServiceConstants;
+import com.android.internal.util.slim.Converter;
 import com.android.internal.widget.PointerLocationView;
 
 import java.io.File;
@@ -1722,21 +1723,29 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     Settings.System.NAVIGATION_BAR_SHOW, showByDefault,
                     UserHandle.USER_CURRENT) == 1;
 
-            mNavigationBarHeight = Settings.System.getIntForUser(
-                        mContext.getContentResolver(),
-                        Settings.System.NAVIGATION_BAR_HEIGHT,
-                        mContext.getResources()
-                                .getDimensionPixelSize(
-                                    com.android.internal.R.dimen.navigation_bar_height),
-                        UserHandle.USER_CURRENT);
+            mNavigationBarHeight =
+                    Settings.System.getIntForUser(mContext.getContentResolver(),
+                            Settings.System.NAVIGATION_BAR_HEIGHT, -2,
+                            UserHandle.USER_CURRENT);
+            if (mNavigationBarHeight == -2) {
+                mNavigationBarHeight = mContext.getResources().getDimensionPixelSize(
+                        com.android.internal.R.dimen.navigation_bar_height);
+            } else {
+                mNavigationBarHeight =
+                        Converter.dpToPx(mContext, mNavigationBarHeight);
+            }
 
-            mNavigationBarWidth = Settings.System.getIntForUser(
-                        mContext.getContentResolver(),
-                        Settings.System.NAVIGATION_BAR_WIDTH,
-                        mContext.getResources()
-                                .getDimensionPixelSize(
-                                    com.android.internal.R.dimen.navigation_bar_width),
-                        UserHandle.USER_CURRENT);
+            mNavigationBarWidth =
+                    Settings.System.getIntForUser(mContext.getContentResolver(),
+                            Settings.System.NAVIGATION_BAR_WIDTH, -2,
+                            UserHandle.USER_CURRENT);
+            if (mNavigationBarWidth == -2) {
+                mNavigationBarWidth = mContext.getResources().getDimensionPixelSize(
+                        com.android.internal.R.dimen.navigation_bar_width);
+            } else {
+                mNavigationBarWidth =
+                        Converter.dpToPx(mContext, mNavigationBarWidth);
+            }
 
             if (!mHasNavigationBar) {
                 // Set the navigation bar's dimensions to 0
