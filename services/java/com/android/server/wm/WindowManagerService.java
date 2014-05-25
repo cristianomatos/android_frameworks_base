@@ -11058,6 +11058,12 @@ public class WindowManagerService extends IWindowManager.Stub
         mPolicy.toggleGlobalMenu();
     }
 
+    /* @hide */
+    @Override
+    public void toggleStatusBar() {
+        mPolicy.toggleStatusBar();
+    }
+
     @Override
     public void addSystemUIVisibilityFlag(int flag) {
         mLastStatusBarVisibility |= flag;
