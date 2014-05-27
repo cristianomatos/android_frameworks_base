@@ -294,7 +294,7 @@ public class QuickSettingsController {
                 if (QSUtils.adbEnabled(resolver)) {
                     qs = new NetworkAdbTile(mContext, this);
                 }
-	    } else if (tile.equals(TILE_POWER)) {
+            } else if (tile.equals(TILE_POWER)) {
                 qs = new PowerMenuTile(mContext, this);     
             }
 

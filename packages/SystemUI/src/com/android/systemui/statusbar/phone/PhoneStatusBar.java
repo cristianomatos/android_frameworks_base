@@ -85,6 +85,7 @@ import android.view.Display;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.HapticFeedbackConstants;
+import android.view.IWindowManager;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -3775,7 +3776,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             toggleQSShade();
             break;
         case 6:
-            togglePowerMenu();
+            try {
+                IWindowManager windowManagerService = IWindowManager.Stub.asInterface(
+                    ServiceManager.getService(Context.WINDOW_SERVICE));
+                windowManagerService.toggleGlobalMenu();
+            } catch (RemoteException e) {
+            }
             break;
         }
     }
