@@ -2602,6 +2602,23 @@
         android:description="@string/permdesc_accessThemeService"
         android:protectionLevel="signature" />
 
+    <!-- Allows an application to read the current theme configuration and
+         get information about the various themes currently installed
+         @hide -->
+    <permission android:name="android.permission.READ_THEMES"
+        android:label="@string/permlab_readThemes"
+        android:description="@string/permdesc_readThemesDesc"
+        android:protectionLevel="normal" />
+
+    <!-- Allows an application to write the current theme configuration and
+         write information about the various themes currently installed.
+         Changing themes should be done through the service ACCESS_THEME_MANAGER
+         @hide -->
+    <permission android:name="android.permission.WRITE_THEMES"
+        android:label="@string/permlab_writeThemes"
+        android:description="@string/permdesc_writeThemesDesc"
+        android:protectionLevel="signature" />
+
     <!-- Allows an application to record the screen.
          @hide This is not a third-party API (intended for system apps). -->
     <permission android:name="android.permission.RECORD_SCREEN"
