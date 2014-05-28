@@ -512,6 +512,12 @@ public class IWindowManagerImpl implements IWindowManager {
 
     /* @hide */
     @Override
+    public void showCustomIntentOnKeyguard(Intent intent) {
+
+    }
+
+    /* @hide */
+    @Override
     public void toggleGlobalMenu() {
     }
 }
