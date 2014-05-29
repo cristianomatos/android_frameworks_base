@@ -13,4 +13,11 @@
   <!-- label for screen record item in phone options dialog -->
   <string name="global_action_screen_record">Gravador de tela</string>
 
+  <!-- label for nav bar item in phone options dialog -->
+  <string name="global_actions_nav_bar_mode">Barra de navegação</string>
+  <!-- status message in phone options dialog for when navigation bar is on -->
+  <string name="global_actions_nav_bar_mode_on_status">Barra de navegação habilitada</string>
+  <!-- status message in phone options dialog for when navigation bar is off -->
+  <string name="global_actions_nav_bar_mode_off_status">Barra de navegação desabilitada</string>
+
 </resources>

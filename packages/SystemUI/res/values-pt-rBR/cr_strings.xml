@@ -63,4 +63,19 @@
     <string name="content_setup_dismiss">Continue</string>
     <string name="toast_not_installed">Aplicativo não instalado</string>
 
+    <!-- Title shown in notification popup for launching notification in floating mode -->
+    <string name="status_bar_notification_floating_item_title">Modo flutuante</string>
+    <!-- Title shown in recents popup for showing app in floating mode -->
+    <string name="status_bar_recent_floating_item_title">Modo flutuante</string>
+
+    <!-- Battery status in pie controls -->
+    <string name="pie_battery_status_charging">Carregando (<xliff:g id="percent">%d</xliff:g>%%)</string>
+    <string name="pie_battery_status_full">Carregado</string>
+    <string name="pie_battery_status_discharging"><xliff:g id="percent">%d</xliff:g>%% restando</string>
+
+    <!-- Phone status in pie controls -->
+    <string name="pie_phone_status_no_service">Sem serviço</string>
+    <string name="pie_phone_status_airplane_mode">Modo avião ligado</string>
+    <string name="pie_phone_status_emergency_only">Apenas chamadas de emergência</string>
+
 </resources>
