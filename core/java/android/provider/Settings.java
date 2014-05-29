@@ -3286,6 +3286,12 @@ public final class Settings {
          */
         public static final String NAVIGATION_BAR_SHOW = "navigation_bar_show";
 
+        /**
+         * Wether navigation bar in power menu is enabled or not
+         * @hide
+         */
+        public static final String POWER_MENU_NAV_BAR_ENABLED = "power_menu_nav_bar_enabled";
+
 	/**
          * Navigation bar height when it is on protrait
          * @hide
