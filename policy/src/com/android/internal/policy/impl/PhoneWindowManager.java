@@ -6018,7 +6018,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private void applyLidSwitchState() {
         mPowerManager.setKeyboardVisibility(isBuiltInKeyboardVisible());
 
-        if (mLidState == LID_CLOSED && mLidControlsSleep) {
+        if (mLidState == LID_CLOSED && mLidControlsSleep
+           && Settings.System.getIntForUser(mContext.getContentResolver(),
+            Settings.System.LOCKSCREEN_LID_WAKE, 1, UserHandle.USER_CURRENT) == 1) {
             ITelephony telephonyService = getTelephonyService();
             try {
                 if(telephonyService != null && telephonyService.isIdle()) {
@@ -6029,11 +6031,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
         }
 
-        if (mLidState == LID_CLOSED && mLidControlsSleep
+        /*if (mLidState == LID_CLOSED && mLidControlsSleep
             && Settings.System.getIntForUser(mContext.getContentResolver(),
             Settings.System.LOCKSCREEN_LID_WAKE, 1, UserHandle.USER_CURRENT) == 1) {
             mPowerManager.goToSleep(SystemClock.uptimeMillis());
-        }
+        }*/
     }
 
     void updateRotation(boolean alwaysSendConfiguration) {
