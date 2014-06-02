@@ -19,5 +19,7 @@
   <string name="global_actions_nav_bar_mode_on_status">Navigation bar is ON</string>
   <!-- status message in phone options dialog for when navigation bar is off -->
   <string name="global_actions_nav_bar_mode_off_status">Navigation bar is OFF</string>
+  <!-- Error message if user want to try to disable all navigation options -->
+  <string name="disable_navigation_pie_error">You cannot disable the navigation bar. No other navigation is enabled. Enable first pie controls to turn off the navigation bar.</string>
 
 </resources>

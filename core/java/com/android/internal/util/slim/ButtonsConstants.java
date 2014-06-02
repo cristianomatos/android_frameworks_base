@@ -41,6 +41,7 @@ public class ButtonsConstants {
     public static final String ACTION_TORCH                = "**torch**";
     public static final String ACTION_POWER_MENU           = "**power_menu**";
     public static final String ACTION_KEYGUARD_SEARCH      = "**keyguard_search**";
+    public static final String ACTION_NAVBAR               = "**nav_bar**";
 
     // no action
     public static final String ACTION_NULL            = "**null**";

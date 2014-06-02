@@ -128,6 +128,19 @@ public class SlimActions {
                         new Intent("android.settings.SHOW_INPUT_METHOD_PICKER"),
                         new UserHandle(UserHandle.USER_CURRENT));
                 return;
+            } else if (action.equals(ButtonsConstants.ACTION_NAVBAR)) {
+                boolean navBarState = isNavBarEnabled(context);
+                if (navBarState && !isPieEnabled(context) && isNavBarDefault(context)) {
+                    Toast.makeText(context,
+                            com.android.internal.R.string.disable_navigation_pie_error,
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
+                Settings.System.putIntForUser(
+                        context.getContentResolver(),
+                        Settings.System.NAVIGATION_BAR_SHOW,
+                        navBarState ? 0 : 1, UserHandle.USER_CURRENT);
+                return;
             } else if (action.equals(ButtonsConstants.ACTION_KILL)) {
                 if (isKeyguardShowing) {
                     return;
@@ -275,6 +288,18 @@ public class SlimActions {
                 return;
             }
 
+    }
+
+    public static boolean isPieEnabled(Context context) {
+        return Settings.System.getIntForUser(context.getContentResolver(),
+                Settings.System.PIE_CONTROLS,
+                0, UserHandle.USER_CURRENT) == 1;
+    }
+
+    public static boolean isNavBarEnabled(Context context) {
+        return Settings.System.getIntForUser(context.getContentResolver(),
+                Settings.System.NAVIGATION_BAR_SHOW,
+                isNavBarDefault(context) ? 1 : 0, UserHandle.USER_CURRENT) == 1;
     }
 
     public static boolean isNavBarDefault(Context context) {
