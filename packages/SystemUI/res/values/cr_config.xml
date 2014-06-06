@@ -28,8 +28,8 @@
     <dimen name="config_app_sidebar_trigger_width">8dip</dimen>
 
     <!-- Sensivity of pie gestures controlls.
-        Must be minimum 1 and maximum 10 (See @EdgeServiceConstants.java).
+        Must be minimum 1 and maximum 4 (See @EdgeServiceConstants.java).
         Default for pie is high sensivity -->
-    <integer name="pie_gesture_sensivity">10</integer>
+    <integer name="pie_gesture_sensivity">4</integer>
 
 </resources>
