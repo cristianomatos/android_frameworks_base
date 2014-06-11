@@ -403,10 +403,7 @@ public class QuickSettingsController {
         loadTiles();
         setupBroadcastReceiver();
         setupContentObserver();
-        //ContentResolver resolver = mContext.getContentResolver();
-        //boolean tilesPerRow = Settings.System.getIntForUser(resolver,
-        //        Settings.System.QUICK_TILES_PER_ROW, 0, UserHandle.USER_CURRENT) == 0;
-        if (mRibbonMode/* || !tilesPerRow*/) {
+        if (mRibbonMode) {
             for (QuickSettingsTile t : mQuickSettingsTiles) {
                 t.switchToRibbonMode();
             }
