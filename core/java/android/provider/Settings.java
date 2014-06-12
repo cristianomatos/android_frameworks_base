@@ -4435,6 +4435,14 @@ public final class Settings {
         public static final String APP_SIDEBAR_SHOW_TRIGGER = "app_sidebar_show_trigger";
 
         /**
+         * Hover, default is 0 (off).
+         * 0 = disabled
+         * 1 = enabled
+         * @hide
+         */
+        public static final String HOVER_STATE = "hover_state";
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
@@ -6555,6 +6563,9 @@ public final class Settings {
 
         /** @hide */
         public static final String IMMERSIVE_MODE_CONFIRMATIONS = "immersive_mode_confirmations";
+
+        /** @hide */
+        public static final String HOVER_FIRST_TIME = "hover_first_time";
 
         /**
          * This is the query URI for finding a print service to install.

@@ -87,4 +87,7 @@
     <!-- Title shown in recents popup for showing app in floating mode -->
     <string name="status_bar_recent_floating_item_title">Floating mode</string>
 
+    <!-- First time run hover -->
+    <string name="hover_cling_text">Hover is now enabled.\n\nWhen a new notification arrives, an overlay will show allowing you to respond to it without leaving current app.</string>
+
 </resources>

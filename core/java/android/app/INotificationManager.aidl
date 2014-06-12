@@ -57,9 +57,11 @@ interface INotificationManager
     boolean isHaloPolicyBlack();
     boolean isPackageAllowedForHalo(String pkg);
 
-    // Peek and floating window
+    // Hover, Peek and floating window
     void setPeekBlacklistStatus(String pkg, boolean status);
     void setFloatingModeBlacklistStatus(String pkg, boolean status);
+    void setHoverBlacklistStatus(String pkg, boolean status);
     boolean isPackageAllowedForPeek(String pkg);
     boolean isPackageAllowedForFloatingMode(String pkg);
+    boolean isPackageAllowedForHover(String pkg);
 }

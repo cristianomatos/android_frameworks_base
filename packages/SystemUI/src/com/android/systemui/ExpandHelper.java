@@ -274,7 +274,7 @@ public class ExpandHelper implements Gefingerpoken, OnClickListener {
 
         if (v == null) {
             if (DEBUG) Log.d(TAG, "isinside null subject");
-            return false;
+            return true;
         }
         if (mEventSource != null) {
             int[] location = new int[2];
@@ -524,7 +524,9 @@ public class ExpandHelper implements Gefingerpoken, OnClickListener {
         }
         if (DEBUG) Log.d(TAG, "got mOldHeight: " + mOldHeight +
                     " mNaturalHeight: " + mNaturalHeight);
-        v.getParent().requestDisallowInterceptTouchEvent(true);
+        if (v != null && v.getParent() != null) {
+            v.getParent().requestDisallowInterceptTouchEvent(true);
+        }
     }
 
     private void finishExpanding(boolean force) {

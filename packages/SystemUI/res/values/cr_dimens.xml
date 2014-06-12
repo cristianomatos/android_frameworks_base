@@ -86,4 +86,8 @@
     <dimen name="pie_sysinfo_second_layer_radius">255dp</dimen>
     <dimen name="pie_sysinfo_height">85sp</dimen>
 
+    <!-- Hover dimens -->
+    <dimen name="hover_height">64dp</dimen>
+    <dimen name="hover_cling_width">-1px</dimen>
+
 </resources>
