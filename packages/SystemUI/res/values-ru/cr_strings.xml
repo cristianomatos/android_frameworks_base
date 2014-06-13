@@ -2,19 +2,6 @@
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-    <!-- Content description of the halo button in the notification panel for accessibility (not sho
-         wn on the screen). [CHAR LIMIT=NONE] -->  
-    <string name="accessibility_halo">Создать уведомление HALO</string>
-
-    <!-- HALO -->
-    <string name="halo_dismiss">Отклонять уведомления</string>
-    <string name="halo_hide">Скрыть</string>
-    <string name="halo_clear_all">Отклонять все уведомления</string>
-    <string name="halo_silence">Скрыть &amp; тихий до пробуждения</string>
-    <string name="halo_tutorial1">Это HALO</string>
-    <string name="halo_tutorial2">Передвинь меня: 2-ое нажатие &amp; перемещение</string>
-    <string name="halo_tutorial3">Обзор задач: Горизонтальное перемещение</string>
-
     <!-- Power menu -->
     <string name="quick_settings_powermenu_label">Меню кнопки питания</string>
 
@@ -77,5 +64,14 @@
     <string name="pie_phone_status_no_service">Вне зоны обслуживания</string>
     <string name="pie_phone_status_airplane_mode">Включен режим полета</string>
     <string name="pie_phone_status_emergency_only">Только экстренные вызовы</string>
+    
+    <!-- Blacklisted app for floating mode -->
+    <string name="floating_mode_blacklisted_app">Текущее приложение занесено в чёрный список, так оно не может работать должным образом в \"Плавающем режиме\"</string>
+
+    <!-- First time run hover -->
+    <string name="hover_cling_text">Hover теперь включен.\n\nПри поступлении нового уведомления, всплывающий верхний слой позволяет ответить на него, не выходя из текущего приложения.</string>
+
+    <!-- Title shown when app provides no interface -->
+    <string name="status_bar_floating_no_interface">Приложение не предоставляет интерфейс</string>
 
 </resources>
