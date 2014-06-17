@@ -66,7 +66,7 @@ public class Hover {
     private static final int INDEX_NEXT = 1; // second array object
     private static final int INSTANT_FADE_OUT_DELAY = 0; // 0 seconds
     private static final int MICRO_FADE_OUT_DELAY = 1250; // 1.25 seconds, enough
-    private static final int LONG_FADE_OUT_DELAY = 5000; // 5 seconds, default show time
+    //private static final int LONG_FADE_OUT_DELAY = 5000; // 5 seconds, default show time
     private static final int SHORT_FADE_OUT_DELAY = 2500; // 2.5 seconds to show next one
 
     private static final int OVERLAY_NOTIFICATION_OFFSET = 125; // special purpose
@@ -355,6 +355,11 @@ public class Hover {
                 Settings.System.HOVER_EXCLUDE_LOW_PRIORITY, 0) != 0;
     }
 
+    public int longFadeOutDelay() {
+        return Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.HOVER_LONG_FADE_OUT_DELAY, 5000);
+    }
+
     public boolean isInCallUINotification(Entry entry) {
         if (entry != null) return entry.notification.getPackageName().equals(IN_CALL_UI)
                 | entry.notification.getPackageName().equals(DIALER);
@@ -585,7 +590,7 @@ public class Hover {
 
     // callbacks to handle the queue
     public void startLongHideCountdown() {
-        startHideCountdown(LONG_FADE_OUT_DELAY);
+        startHideCountdown(longFadeOutDelay());
     }
 
     public void startShortHideCountdown() {
@@ -597,7 +602,7 @@ public class Hover {
     }
 
     public void startLongOverrideCountdown() {
-        startOverrideCountdown(LONG_FADE_OUT_DELAY);
+        startOverrideCountdown(longFadeOutDelay());
     }
 
     public void startShortOverrideCountdown() {
@@ -745,7 +750,7 @@ public class Hover {
         if (!mShowing) {
             showCurrentNotification();
         } else if (hasMultipleNotifications()) { // proced
-            startOverrideCountdown(expanded ? LONG_FADE_OUT_DELAY : SHORT_FADE_OUT_DELAY);
+            startOverrideCountdown(expanded ? longFadeOutDelay() : SHORT_FADE_OUT_DELAY);
         } else if (!mHiding) {
             startLongHideCountdown();
         }
