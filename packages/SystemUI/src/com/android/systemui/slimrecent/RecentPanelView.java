@@ -20,6 +20,7 @@ package com.android.systemui.slimrecent;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityOptions;
+import android.app.INotificationManager;
 import android.app.TaskStackBuilder;
 import android.app.admin.DevicePolicyManager;
 import android.content.ActivityNotFoundException;
@@ -37,6 +38,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Process;
+import android.os.ServiceManager;
 import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.Log;
@@ -48,6 +50,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import com.android.cards.internal.Card;
 import com.android.cards.internal.CardArrayAdapter;
@@ -103,6 +106,7 @@ public class RecentPanelView {
     private final ImageView mEmptyRecentView;
 
     private final RecentController mController;
+    private INotificationManager mNotificationManager;
 
     // Our array adapter holding all cards
     private CardArrayAdapter mCardArrayAdapter;
@@ -293,6 +297,12 @@ public class RecentPanelView {
         final PopupMenu popup = new PopupMenu(layoutContext, selectedView, Gravity.RIGHT);
         mPopup = popup;
 
+        // initialize if null
+        if (mNotificationManager == null) {
+            mNotificationManager = INotificationManager.Stub.asInterface(
+                    ServiceManager.getService(Context.NOTIFICATION_SERVICE));
+        }
+
         // If recent panel is drawn on the right edge we allow the menu
         // if needed to draw over the left container edge.
         popup.setAllowLeftOverdraw(mMainGravity == Gravity.RIGHT);
@@ -341,7 +351,23 @@ public class RecentPanelView {
                 if (item.getItemId() == MENU_APP_DETAILS_ID) {
                     startApplicationDetailsActivity(td.packageName, null, null);
                 } else if (item.getItemId() == MENU_APP_FLOATING_ID) {
-                    exit();
+                    String currentViewPackage = td.packageName;
+                    boolean allowed = true; // default on
+                    try {
+                        // preloaded apps are added to the blacklist array when is recreated, handled in the notification manager
+                        allowed = mNotificationManager.isPackageAllowedForFloatingMode(currentViewPackage);
+                    } catch (android.os.RemoteException ex) {
+                        // System is dead
+                    }
+                    if (!allowed) {
+                        exit();
+                        String text = mContext.getResources().getString(R.string.floating_mode_blacklisted_app);
+                        int duration = Toast.LENGTH_LONG;
+                        Toast.makeText(mContext, text, duration).show();
+                        return true;
+                    } else {
+                        exit();
+                    }
                     selectedView.post(new Runnable() {
                         @Override
                         public void run() {
