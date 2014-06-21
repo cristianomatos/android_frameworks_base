@@ -2975,6 +2975,20 @@ public final class Settings {
         public static final String DIALER_OPENCNAM_AUTH_TOKEN = "dialer_opencnam_auth_token";
 
         /**
+         * Heads Up Notifications
+         *
+         * @hide
+         */
+        public static final String HEADS_UP_NOTIFICATION = "heads_up_enabled";
+
+        /**
+         * Which applications to disable heads up notifications for
+         *
+         * @hide
+         */
+        public static final String HEADS_UP_CUSTOM_VALUES = "heads_up_custom_values";
+
+        /**
          * Whether pie controls are enabled
          * @hide
          */
@@ -3528,27 +3542,6 @@ public final class Settings {
         public static final int STATUS_BAR_COLLAPSE_IF_EMPTIED = 1;
         /** @hide */
         public static final int STATUS_BAR_COLLAPSE_IF_NO_CLEARABLE = 2;
-
-        /**
-         * Whether to use a separate delay for "slide to unlock" and security
-         * lock
-         * @hide
-         */
-        public static final String SCREEN_LOCK_SLIDE_DELAY_TOGGLE = "screen_lock_slide_delay_toggle";
-
-        /**
-         * How many ms to delay before enabling the "slide to unlock" screen
-         * lock when the screen goes off due to timeout
-         * @hide
-         */
-        public static final String SCREEN_LOCK_SLIDE_TIMEOUT_DELAY = "screen_lock_slide_timeout_delay";
-
-        /**
-         * How many ms to delay before enabling the "slide to unlock" screen
-         * lock when the screen is turned off by the user
-         * @hide
-         */
-        public static final String SCREEN_LOCK_SLIDE_SCREENOFF_DELAY = "screen_lock_slide_screenoff_delay";
 
         /**
          * Whether to use the custom quick unlock screen control
@@ -6617,13 +6610,6 @@ public final class Settings {
          * @hide
          */
         public static final String DEFAULT_THEME_COMPONENTS = "default_theme_components";
-
-        /**
-         * Whether the default theme was applied on the first boot.
-         * @hide
-         */
-        public static final String DEFAULT_THEME_APPLIED_ON_FIRST_BOOT =
-                "default_theme_applied_on_first_boot";
 
         /**
          * Performance profile
