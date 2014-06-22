@@ -19,5 +19,7 @@
   <string name="global_actions_nav_bar_mode_on_status">Barra de navegação habilitada</string>
   <!-- status message in phone options dialog for when navigation bar is off -->
   <string name="global_actions_nav_bar_mode_off_status">Barra de navegação desabilitada</string>
+  <!-- Error message if user want to try to disable all navigation options -->
+  <string name="disable_navigation_pie_error">Você não pode desabilitar a barra de navegação. Nenhum outro modo de navegação está habilitado. Primeiro habilite o controle pie para desabilitar a barra de navegação.</string>
 
 </resources>

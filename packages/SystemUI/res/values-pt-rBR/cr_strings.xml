@@ -78,4 +78,16 @@
     <string name="pie_phone_status_airplane_mode">Modo avião ligado</string>
     <string name="pie_phone_status_emergency_only">Apenas chamadas de emergência</string>
 
+    <!-- Blacklisted app for floating mode -->
+    <string name="floating_mode_blacklisted_app">O aplicativo corrente está na lista negra e pode não funcionar como esperado em modo flutuante</string>
+
+    <!-- First time run hover -->
+    <string name="hover_cling_text">Hover está agora habilitado.\n\nQuando uma nova notificação chegar, uma sobreposição na barra de status vai mostrar-se permitindo responder a ela sem deixar aplicativo atual.</string>
+
+    <!-- Title shown when app provides no interface -->
+    <string name="status_bar_floating_no_interface">Aplicativo não fornece interface</string>
+
+    <!-- Title shown in recents popup for showing app in floating mode -->
+    <string name="status_bar_recent_floating_item_title">Modo flutuante</string>
+
 </resources>
