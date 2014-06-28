@@ -3281,7 +3281,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     foreground = n.getPackageName().equals(
                            getNotificationHelperInstance().getForegroundPackageName());
                 }
-                if (!blacklisted | foreground && mHover.excludeTopmost()) mTicker.addEntry(n);
+                if (!blacklisted | foreground | mHover.excludeTopmost()) mTicker.addEntry(n);
             }
         }
     }
