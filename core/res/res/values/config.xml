@@ -481,8 +481,8 @@
             Bottom   Top + 400
             Right    Display Width - 100
     -->
-    <integer-array name="config_smartCoverWindowCoords">
-    </integer-array>
+    <!--<integer-array name="config_smartCoverWindowCoords">
+    </integer-array>-->
 
     <!-- Indicate whether to allow the device to suspend when the screen is off
          due to the proximity sensor.  This resource should only be set to true

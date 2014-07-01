@@ -4579,9 +4579,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
         mLidState = newLidState;
 
-        Intent intent = new Intent(ACTION_LID_STATE_CHANGED);
-        intent.putExtra(EXTRA_LID_STATE, mLidState);
-        mContext.sendStickyBroadcastAsUser(intent, UserHandle.ALL);
+        //Intent intent = new Intent(ACTION_LID_STATE_CHANGED);
+        //intent.putExtra(EXTRA_LID_STATE, mLidState);
+        //mContext.sendStickyBroadcastAsUser(intent, UserHandle.ALL);
 
         applyLidSwitchState();
         updateRotation(true);
@@ -6076,7 +6076,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private void applyLidSwitchState() {
         mPowerManager.setKeyboardVisibility(isBuiltInKeyboardVisible());
 
-        if (mLidState == LID_CLOSED && mLidControlsSleep
+        /*if (mLidState == LID_CLOSED && mLidControlsSleep
            && Settings.System.getIntForUser(mContext.getContentResolver(),
             Settings.System.LOCKSCREEN_LID_WAKE, 1, UserHandle.USER_CURRENT) == 1) {
             ITelephony telephonyService = getTelephonyService();
@@ -6087,13 +6087,13 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
 
-        /*if (mLidState == LID_CLOSED && mLidControlsSleep
+        if (mLidState == LID_CLOSED && mLidControlsSleep
             && Settings.System.getIntForUser(mContext.getContentResolver(),
             Settings.System.LOCKSCREEN_LID_WAKE, 1, UserHandle.USER_CURRENT) == 1) {
             mPowerManager.goToSleep(SystemClock.uptimeMillis());
-        }*/
+        }
     }
 
     void updateRotation(boolean alwaysSendConfiguration) {
