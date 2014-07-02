@@ -1024,16 +1024,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (mNavigationBarView == null) {
             mNavigationBarView =
                 (NavigationBarView) View.inflate(context, R.layout.navigation_bar, null);
+            mNavigationBarView.updateResources(getNavbarThemedResources());
         }
-
-        if (mRecreating) {
-            removeSidebarView();
-        } else {
-            /* ChaosLab: GestureAnywhere - BEGIN */
-            addGestureAnywhereView();
-            /* ChaosLab: GestureAnywhere - END */
-        }
-        addSidebarView();
 
         mNavigationBarView.setDisabledFlags(mDisabled);
         mNavigationBarView.setBar(this);
@@ -1045,6 +1037,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 return false;
             }
         });
+
+        if (mRecreating) {
+            removeSidebarView();
+        } else {
+            /* ChaosLab: GestureAnywhere - BEGIN */
+            addGestureAnywhereView();
+            /* ChaosLab: GestureAnywhere - END */
+        }
+        addSidebarView();
 
         // Setup pie container if enabled
         attachPieContainer(isPieEnabled());
