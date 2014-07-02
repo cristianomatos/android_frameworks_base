@@ -106,6 +106,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
     private Drawable mBackIcon, mBackLandIcon, mBackAltIcon, mBackAltLandIcon;
     private Drawable mRecentIcon;
     private Drawable mRecentLandIcon;
+    private Drawable mHomeIcon, mHomeLandIcon;
     // Used in Lockscreen notifications navbar clear all notifs.
     private Drawable mRecentAltIcon, mRecentAltLandIcon;
 
@@ -127,6 +128,8 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
 
     // performs manual animation in sync with layout transitions
     private final NavTransitionListener mTransitionListener = new NavTransitionListener();
+
+    private Resources mThemedResources;
 
     private class NavTransitionListener implements TransitionListener {
         private boolean mBackTransitioning;
@@ -384,12 +387,15 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         mBackAltLandIcon = res.getDrawable(R.drawable.ic_sysbar_back_ime_land);
         mRecentIcon = res.getDrawable(R.drawable.ic_sysbar_recent);
         mRecentLandIcon = res.getDrawable(R.drawable.ic_sysbar_recent_land);
+        mHomeIcon = res.getDrawable(R.drawable.ic_sysbar_home);
+        mHomeLandIcon = res.getDrawable(R.drawable.ic_sysbar_home_land);
         mRecentAltIcon = res.getDrawable(R.drawable.ic_sysbar_recent_clear);
         mRecentAltLandIcon = res.getDrawable(R.drawable.ic_sysbar_recent_clear_land);
     }
 
-    public void updateResources() {
-        getIcons(mContext.getResources());
+    public void updateResources(Resources res) {
+        mThemedResources = res;
+        getIcons(mThemedResources);
         for (int i = 0; i < mRotatedViews.length; i++) {
             ViewGroup container = (ViewGroup) mRotatedViews[i];
             if (container != null) {
@@ -406,17 +412,17 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
             for (int i = 0; i < nChildren; i++) {
                 final View child = midNavButtons.getChildAt(i);
                 if (child instanceof KeyButtonView) {
-                    ((KeyButtonView) child).updateResources();
+                    ((KeyButtonView) child).updateResources(mThemedResources);
                 }
             }
         }
         KeyButtonView kbv = (KeyButtonView) findViewById(R.id.one);
         if (kbv != null) {
-            kbv.updateResources();
+            kbv.updateResources(mThemedResources);
         }
         kbv = (KeyButtonView) findViewById(R.id.six);
         if (kbv != null) {
-            kbv.updateResources();
+            kbv.updateResources(mThemedResources);
         }
     }
 
@@ -432,7 +438,8 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
                     // ImageView keeps track of the resource ID and if it is the same
                     // it will not update the drawable.
                     iv.setImageDrawable(null);
-                    iv.setImageResource(R.drawable.ic_sysbar_lights_out_dot_large);
+                    iv.setImageDrawable(mThemedResources.getDrawable(
+                            R.drawable.ic_sysbar_lights_out_dot_large));
                 }
             }
         }
@@ -440,7 +447,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
 
     @Override
     public void setLayoutDirection(int layoutDirection) {
-        getIcons(mContext.getResources());
+        if (mThemedResources != null) getIcons(mThemedResources);
 
         super.setLayoutDirection(layoutDirection);
     }
@@ -499,6 +506,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
 
         ImageView backView = (ImageView) findButton(NavbarEditor.NAVBAR_BACK);
         ImageView recentView = (ImageView) findButton(NavbarEditor.NAVBAR_RECENT);
+        ImageView homeView = (ImageView) findButton(NavbarEditor.NAVBAR_HOME);
 
         if (backView != null) {
             backView.setImageDrawable(backAlt
@@ -508,6 +516,10 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
 
         if (recentView != null) {
             recentView.setImageDrawable(mVertical ? mRecentLandIcon : mRecentIcon);
+        }
+
+        if (homeView != null) {
+            homeView.setImageDrawable(mVertical ? mHomeLandIcon : mHomeIcon);
         }
 
         setDisabledFlags(mDisabledFlags, true);
