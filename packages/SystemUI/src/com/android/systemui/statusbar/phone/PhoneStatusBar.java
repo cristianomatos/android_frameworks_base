@@ -3378,7 +3378,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
             mTickerView.setVisibility(View.GONE);
             // we do not animate the ticker away at this point, just get rid of it (b/6992707)
-	    if (!mHaloActive) {
+            if (!mHaloActive) {
                 mStatusBarContents.setVisibility(View.VISIBLE);
                 mCenterClockLayout.setVisibility(View.VISIBLE);
                 mTickerView.setVisibility(View.GONE);
