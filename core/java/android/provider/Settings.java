@@ -4471,6 +4471,13 @@ public final class Settings {
         public static final String HOVER_LONG_FADE_OUT_DELAY = "hover_long_fade_out_delay";
 
         /**
+         * Hover: micro fade out delay, default is 1250ms (1,25s).
+         *
+         * @hide
+         */
+        public static final String HOVER_MICRO_FADE_OUT_DELAY = "hover_micro_fade_out_delay";
+
+        /**
          * Hover: Exclude non-clearable notifications, default is 0 (off).
          *
          * @hide
