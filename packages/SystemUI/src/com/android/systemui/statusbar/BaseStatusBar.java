@@ -27,6 +27,7 @@ import android.app.admin.DevicePolicyManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -94,13 +95,18 @@ import android.widget.Toast;
 import com.android.internal.statusbar.IStatusBarService;
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.statusbar.StatusBarIconList;
+import com.android.internal.util.cm.SpamFilter;
+import com.android.internal.util.cm.SpamFilter.SpamContract.NotificationTable;
+import com.android.internal.util.cm.SpamFilter.SpamContract.PackageTable;
 import com.android.systemui.statusbar.phone.Ticker;
 import com.android.internal.widget.SizeAdaptiveLayout;
 import com.android.systemui.R;
 import com.android.systemui.RecentsComponent;
 import com.android.systemui.SearchPanelView;
 import com.android.systemui.SystemUI;
+import com.android.systemui.cm.SpamMessageProvider;
 import com.android.systemui.slimrecent.RecentController;
+import com.android.systemui.statusbar.NotificationData.Entry;
 import com.android.systemui.statusbar.halo.Halo;
 import com.android.systemui.statusbar.notification.Hover;
 import com.android.systemui.statusbar.notification.HoverCling;
@@ -156,6 +162,12 @@ public abstract class BaseStatusBar extends SystemUI implements
 
     public static final int HOVER_DISABLED = 0;
     public static final int HOVER_ENABLED = 1;
+
+    private static final Uri SPAM_MESSAGE_URI = new Uri.Builder()
+            .scheme(ContentResolver.SCHEME_CONTENT)
+            .authority(SpamMessageProvider.AUTHORITY)
+            .appendPath("message")
+            .build();
 
     protected CommandQueue mCommandQueue;
     protected INotificationManager mNotificationManager;
@@ -795,11 +807,10 @@ public abstract class BaseStatusBar extends SystemUI implements
         return new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                NotificationData.Entry  entry = (NotificationData.Entry) v.getTag();
-                StatusBarNotification sbn = entry.notification;
-
-                final String packageNameF = sbn.getPackageName();
-                final PendingIntent contentIntent = sbn.getNotification().contentIntent;
+                final NotificationData.Entry entry = (Entry) v.getTag();
+                final StatusBarNotification sbNotification = entry.notification;
+                final String packageNameF = sbNotification.getPackageName();
+                final PendingIntent contentIntent = sbNotification.getNotification().contentIntent;
 
                 if (packageNameF == null) return false;
                 if (v.getWindowToken() == null) return false;
@@ -858,6 +869,14 @@ public abstract class BaseStatusBar extends SystemUI implements
                                     .getSystemService(Context.ACTIVITY_SERVICE);
                             am.clearApplicationUserData(packageNameF,
                                     new FakeClearUserDataObserver());
+                        } else if (item.getItemId() == R.id.notification_spam_item) {
+                            ContentValues values = new ContentValues();
+                            String message = SpamFilter.getNotificationContent(
+                                    sbNotification.getNotification());
+                            values.put(NotificationTable.MESSAGE_TEXT, message);
+                            values.put(PackageTable.PACKAGE_NAME, packageNameF);
+                            mContext.getContentResolver().insert(SPAM_MESSAGE_URI, values);
+                            removeNotification(entry.key);
                         } else if (item.getItemId() == R.id.notification_hide_icon_packages) {
                             item.setChecked(!item.isChecked());
                             setIconHiddenByUser(packageNameF, item.isChecked());
