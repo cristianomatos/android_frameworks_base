@@ -478,6 +478,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_SHOW), false, this,
                     UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.HEADS_UP_NOTIFCATION_DECAY),
+                    false, this, UserHandle.USER_ALL);
             updateSettings();
             update();
         }
@@ -517,6 +520,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_SHOW))) {
                 mNavigationBarOverlay.setIsExpanded(noNavBar());
+            } else if (uri.equals(Settings.System.getUriFor(
+                Settings.System.HEADS_UP_NOTIFCATION_DECAY))) {
+                mHeadsUpNotificationDecay = Settings.System.getIntForUser(
+                        mContext.getContentResolver(),
+                        Settings.System.HEADS_UP_NOTIFCATION_DECAY,
+                        mContext.getResources().getInteger(
+                        R.integer.heads_up_notification_decay),
+                        UserHandle.USER_CURRENT);
             }
             updateSettings();
             update();
@@ -1014,6 +1025,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mHeadsUpNotificationView.setVisibility(View.GONE);
             mHeadsUpNotificationView.setBar(this);
             mHeadsUpNotificationView.setNotificationHelper(mNotificationHelper);
+            mHeadsUpNotificationDecay = Settings.System.getIntForUser(
+                    mContext.getContentResolver(),
+                    Settings.System.HEADS_UP_NOTIFCATION_DECAY,
+                    res.getInteger(R.integer.heads_up_notification_decay),
+                    UserHandle.USER_CURRENT);
         }
         if (MULTIUSER_DEBUG) {
             mNotificationPanelDebugText = (TextView) mNotificationPanel.findViewById(R.id.header_debug_info);
@@ -1744,7 +1760,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     @Override
     public void resetHeadsUpDecayTimer() {
-        if (mUseHeadsUp && mHeadsUpNotificationDecay > 0
+        if (mHeadsUpNotificationDecay > 0
                 && mHeadsUpNotificationView.isClearable()) {
 
             final boolean sbVisible = (mSystemUiVisibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0
@@ -4205,7 +4221,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mNotificationPanelMinHeightFrac = 0f;
         }
 
-        mHeadsUpNotificationDecay = res.getInteger(R.integer.heads_up_notification_decay);
         mRowHeight =  res.getDimensionPixelSize(R.dimen.default_notification_row_min_height);
 
         if (false) Log.v(TAG, "updateResources");
