@@ -55,6 +55,7 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
     private ViewGroup mContentSlider;
 
     private NotificationData.Entry mHeadsUp;
+    private boolean mHeadsUpIsExpanded;
 
     // Notification helper
     protected NotificationHelper mNotificationHelper;
@@ -81,10 +82,11 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
         return mContentHolder;
     }
 
-    public boolean setNotification(NotificationData.Entry headsUp) {
+    public boolean setNotification(NotificationData.Entry headsUp, boolean isExpanded) {
         mHeadsUp = headsUp;
         mHeadsUp.content.setOnClickListener(mNotificationHelper.getNotificationClickListener(headsUp, true, false));
-        mHeadsUp.row.setExpanded(false);
+        mHeadsUpIsExpanded = isExpanded;
+        mHeadsUp.row.setExpanded(isExpanded && mHeadsUp.row.isExpandable());
         if (mContentHolder == null) {
             // too soon!
             return false;
@@ -146,7 +148,7 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
 
         if (mHeadsUp != null) {
             // whoops, we're on already!
-            setNotification(mHeadsUp);
+            setNotification(mHeadsUp, mHeadsUpIsExpanded);
         }
     }
 

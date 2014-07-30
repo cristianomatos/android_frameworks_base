@@ -579,12 +579,29 @@ public class Notification implements Parcelable
      */
     public static final int HEADS_UP_ALLOWED = 1;
 
-
     /**
      * Value for {@link #EXTRA_AS_HEADS_UP}.
      * @hide
      */
     public static final int HEADS_UP_REQUESTED = 2;
+
+    /**
+     * Not used.
+     * @hide
+     */
+    public static final String EXTRA_HEADS_UP_EXPANDED = "headsupExpanded";
+
+    /**
+     * Value for {@link #EXTRA_HEADS_UP_EXPANDED}.
+     * @hide
+     */
+    public static final int HEADS_UP_EXPANDED = 0;
+
+    /**
+     * Default value for {@link #EXTRA_HEADS_UP_EXPANDED}.
+     * @hide
+     */
+    public static final int HEADS_UP_NOT_EXPANDED = 1;
 
     /**
      * Structure to encapsulate a named action that can be shown as part of this notification.

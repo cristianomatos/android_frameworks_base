@@ -3018,6 +3018,13 @@ public final class Settings {
         public static final String HEADS_UP_NOTIFCATION_DECAY = "heads_up_notifcation_decay";
 
         /**
+         * Whether heads up notification is expanded by default (default = disabled)
+         *
+         * @hide
+         */
+        public static final String HEADS_UP_EXPANDED = "heads_up_expanded";
+
+        /**
          * Whether pie controls are enabled
          * @hide
          */
