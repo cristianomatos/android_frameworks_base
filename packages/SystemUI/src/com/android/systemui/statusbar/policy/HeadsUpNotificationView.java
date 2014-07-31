@@ -22,7 +22,6 @@ import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -33,7 +32,6 @@ import android.widget.LinearLayout;
 import com.android.systemui.ExpandHelper;
 import com.android.systemui.R;
 import com.android.systemui.SwipeHelper;
-import com.android.systemui.statusbar.notification.NotificationHelper;
 import com.android.systemui.statusbar.BaseStatusBar;
 import com.android.systemui.statusbar.NotificationData;
 
@@ -55,10 +53,6 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
     private ViewGroup mContentSlider;
 
     private NotificationData.Entry mHeadsUp;
-    private boolean mHeadsUpIsExpanded;
-
-    // Notification helper
-    protected NotificationHelper mNotificationHelper;
 
     public HeadsUpNotificationView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -74,19 +68,13 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
         mBar = bar;
     }
 
-    public void setNotificationHelper(NotificationHelper notificationHelper) {
-        mNotificationHelper = notificationHelper;
-    }
-
     public ViewGroup getHolder() {
         return mContentHolder;
     }
 
-    public boolean setNotification(NotificationData.Entry headsUp, boolean isExpanded) {
+    public boolean setNotification(NotificationData.Entry headsUp) {
         mHeadsUp = headsUp;
-        mHeadsUp.content.setOnClickListener(mNotificationHelper.getNotificationClickListener(headsUp, true, false));
-        mHeadsUpIsExpanded = isExpanded;
-        mHeadsUp.row.setExpanded(isExpanded && mHeadsUp.row.isExpandable());
+        mHeadsUp.row.setExpanded(false);
         if (mContentHolder == null) {
             // too soon!
             return false;
@@ -141,14 +129,13 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
         int minHeight = getResources().getDimensionPixelSize(R.dimen.default_notification_row_min_height);
         int maxHeight = getResources().getDimensionPixelSize(R.dimen.default_notification_row_max_height);
         mExpandHelper = new ExpandHelper(mContext, this, minHeight, maxHeight);
-        mExpandHelper.setForceOneFinger(true);
 
         mContentHolder = (ViewGroup) findViewById(R.id.content_holder);
         mContentSlider = (ViewGroup) findViewById(R.id.content_slider);
 
         if (mHeadsUp != null) {
             // whoops, we're on already!
-            setNotification(mHeadsUp, mHeadsUpIsExpanded);
+            setNotification(mHeadsUp);
         }
     }
 
@@ -170,16 +157,10 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
         if (System.currentTimeMillis() < mStartTouchTime) {
             return false;
         }
-        switch (ev.getAction()) {
-            case MotionEvent.ACTION_OUTSIDE:
-                mBar.hideHeadsUp();
-                return true;
-            default:
-                mBar.resetHeadsUpDecayTimer();
-                return mSwipeHelper.onTouchEvent(ev)
-                        || mExpandHelper.onTouchEvent(ev)
-                        || super.onTouchEvent(ev);
-        }
+        mBar.resetHeadsUpDecayTimer();
+        return mSwipeHelper.onTouchEvent(ev)
+                || mExpandHelper.onTouchEvent(ev)
+                || super.onTouchEvent(ev);
     }
 
     @Override
@@ -219,11 +200,6 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
     public void setUserLockedChild(View v, boolean userLocked) {
         if (mHeadsUp != null && mHeadsUp.row == v) {
             mHeadsUp.row.setUserLocked(userLocked);
-
-            setMinimumHeight(userLocked
-                    ? (int) mExpandHelper.getNaturalHeight() + mContentHolder.getPaddingTop()
-                            + mContentHolder.getPaddingBottom()
-                    : 0);
         }
     }
 
@@ -241,22 +217,7 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
     }
 
     @Override
-    public boolean dispatchKeyEvent(KeyEvent event) {
-        boolean down = event.getAction() == KeyEvent.ACTION_DOWN;
-        switch (event.getKeyCode()) {
-            case KeyEvent.KEYCODE_BACK:
-                if (!down && !event.isCanceled()) {
-                    mBar.hideHeadsUp();
-                }
-                return true;
-        }
-        return super.dispatchKeyEvent(event);
-    }
-
-    @Override
     public void onBeginDrag(View v) {
-        // We need to prevent any surrounding View from intercepting us now.
-        requestDisallowInterceptTouchEvent(true);
     }
 
     @Override
