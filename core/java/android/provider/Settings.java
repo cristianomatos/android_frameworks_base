@@ -4497,6 +4497,13 @@ public final class Settings {
         public static final String HEADS_UP_FLOATING_WINDOW = "heads_up_floating_window";
 
         /**
+         * Heads up: Option to exclude from lockscreen, default is 0 (off).
+         *
+         * @hide
+         */
+        public static final String HEADS_UP_EXCLUDE_FROM_LOCK_SCREEN = "heads_up_exclude_from_lock_screen";
+
+        /**
          * Hover, default is 0 (off).
          * 0 = disabled
          * 1 = enabled
