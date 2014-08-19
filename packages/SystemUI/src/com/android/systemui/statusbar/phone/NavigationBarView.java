@@ -355,6 +355,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
             if (button instanceof KeyButtonView) {
                 button.setOnClickListener(null);
                 button.setOnTouchListener(null);
+                button.setOnLongClickListener(null);
             }
         }
     }

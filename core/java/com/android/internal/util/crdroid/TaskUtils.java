@@ -1,48 +1,51 @@
 /*
- *  Copyright (C) 2013 The OmniROM Project
+ * Copyright (c) 2012-2013 The Linux Foundation. All rights reserved.
+ * Not a Contribution.
+ * Copyright (C) 2010 The Android Open Source Project
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.android.internal.util.crdroid;
 
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityOptions;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.os.UserHandle;
-import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.content.ActivityNotFoundException;
-import android.app.ActivityManager;
+import android.os.UserHandle;
 import android.util.Log;
+
+import com.android.internal.R;
 
 import java.util.List;
 
 public class TaskUtils {
 
-    public static void toggleLastAppImpl(final Context context){
+    public static void toggleLastAppImpl(final Context context) {
         final Intent intent = new Intent(Intent.ACTION_MAIN);
-        final ActivityManager am = (ActivityManager) context
-                .getSystemService(Activity.ACTIVITY_SERVICE);
+        final ActivityManager am = (ActivityManager) context.getSystemService(Activity.ACTIVITY_SERVICE);
         String defaultHomePackage = "com.android.launcher";
         intent.addCategory(Intent.CATEGORY_HOME);
         final ResolveInfo res = context.getPackageManager().resolveActivity(intent, 0);
         if (res.activityInfo != null && !res.activityInfo.packageName.equals("android")) {
             defaultHomePackage = res.activityInfo.packageName;
         }
+
         final List<ActivityManager.RecentTaskInfo> tasks =
                 am.getRecentTasks(5, ActivityManager.RECENT_IGNORE_UNAVAILABLE);
         // lets get enough tasks to find something to switch to
@@ -57,8 +60,12 @@ public class TaskUtils {
                 lastAppIntent = info.baseIntent;
             }
         }
+
         if (lastAppId > 0) {
-            am.moveTaskToFront(lastAppId, am.MOVE_TASK_NO_USER_ACTION);
+            // Provide some animation on last app switch
+            final ActivityOptions opts = ActivityOptions.makeCustomAnimation(context,
+                        R.anim.last_app_in, R.anim.last_app_out);
+            am.moveTaskToFront(lastAppId, am.MOVE_TASK_NO_USER_ACTION, opts.toBundle());
         } else if (lastAppIntent != null) {
             // last task is dead, restart it.
             lastAppIntent.addFlags(Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY);

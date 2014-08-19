@@ -1253,13 +1253,14 @@ public abstract class BaseStatusBar extends SystemUI implements
                  closeRecents();
                  break;
              case MSG_PRELOAD_RECENT_APPS:
-                  preloadRecentTasksList();
-                  break;
+                 preloadRecentTasksList();
+                 break;
              case MSG_CANCEL_PRELOAD_RECENT_APPS:
-                  cancelPreloadingRecentTasksList();
-                  break;
+                 cancelPreloadingRecentTasksList();
+                 break;
              case MSG_TOGGLE_LAST_APP:
                  if (DEBUG) Log.d(TAG, "toggle last app");
+                 cancelPreloadingRecentTasksList();
                  TaskUtils.toggleLastAppImpl(mContext);
                  break;
              case MSG_TOGGLE_SCREENSHOT:
