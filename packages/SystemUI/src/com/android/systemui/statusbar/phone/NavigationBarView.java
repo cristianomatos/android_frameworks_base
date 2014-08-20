@@ -58,6 +58,9 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.android.internal.util.cm.LockscreenTargetUtils;
+import com.android.internal.util.cm.NavigationRingConstants;
+import com.android.internal.util.cm.NavigationRingHelpers;
 import com.android.internal.widget.LockPatternUtils;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.BaseStatusBar;
@@ -644,7 +647,8 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
                         Settings.System.LOCKSCREEN_NOTIFICATIONS, 1) == 1 &&
                 Settings.System.getInt(mContext.getContentResolver(),
                         Settings.System.LOCKSCREEN_NOTIFICATIONS_PRIVACY_MODE, 0) == 0;
-        setVisibleOrGone(getSearchLight(), showSearch && mModLockDisabled);
+        setVisibleOrGone(getSearchLight(), showSearch && mModLockDisabled
+                && NavigationRingHelpers.hasLockscreenTargets(mContext));
         setVisibleOrGone(getCameraButton(), showCamera);
         setVisibleOrGone(getNotifsButton(), showNotifs && mWasNotifsButtonVisible);
 
