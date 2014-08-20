@@ -4897,6 +4897,14 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         final boolean isWakeKey = (policyFlags
                 & (WindowManagerPolicy.FLAG_WAKE | WindowManagerPolicy.FLAG_WAKE_DROPPED)) != 0;
 
+        //Ignore Home key if it is disabled in Settings
+        if (scanCode != 0 && keyCode == KeyEvent.KEYCODE_HOME) {
+            if (Settings.System.getInt(mContext.getContentResolver(), Settings.System.KEY_HOME_ENABLED, 1) == 0) {
+                Log.i(TAG, "Ignoring Home Key: Disabled via Settings");
+                return 0;
+            }
+        }
+
         //Ignore Menu key if it is disabled in Settings
         if (scanCode != 0 && keyCode == KeyEvent.KEYCODE_MENU) {
             if (Settings.System.getInt(mContext.getContentResolver(), Settings.System.KEY_MENU_ENABLED, 1) == 0) {
@@ -4908,7 +4916,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         //Ignore Back key if it is disabled in Settings
         if (scanCode != 0 && keyCode == KeyEvent.KEYCODE_BACK) {
             if (Settings.System.getInt(mContext.getContentResolver(), Settings.System.KEY_BACK_ENABLED, 1) == 0) {
-                Log.i(TAG, "Ignoring Menu Key: Disabled via Settings");
+                Log.i(TAG, "Ignoring Back Key: Disabled via Settings");
                 return 0;
             }
         }
