@@ -1075,7 +1075,7 @@ public abstract class BaseStatusBar extends SystemUI implements
 
     Runnable mKillTask = new Runnable() {
         public void run() {
-            if (DevUtils.killForegroundApplication(mContext)) {
+            if (ActionUtils.killForegroundApp(mContext, mCurrentUserId)) {
                 Toast.makeText(mContext, R.string.app_killed_message, Toast.LENGTH_SHORT).show();
             }
         }
