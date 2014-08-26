@@ -4597,20 +4597,17 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
         mLidState = newLidState;
 
-        //Intent intent = new Intent(ACTION_LID_STATE_CHANGED);
-        //intent.putExtra(EXTRA_LID_STATE, mLidState);
-        //mContext.sendStickyBroadcastAsUser(intent, UserHandle.ALL);
+        Intent intent = new Intent(ACTION_LID_STATE_CHANGED);
+        intent.putExtra(EXTRA_LID_STATE, mLidState);
+        mContext.sendStickyBroadcastAsUser(intent, UserHandle.ALL);
 
         applyLidSwitchState();
         updateRotation(true);
 
         if (lidOpen) {
-            if (Settings.System.getIntForUser(mContext.getContentResolver(),
-                    Settings.System.LOCKSCREEN_LID_WAKE, 1, UserHandle.USER_CURRENT) == 1) {
-                mPowerManager.wakeUp(SystemClock.uptimeMillis());
-            } else if (!mLidControlsSleep) {
-                mPowerManager.userActivity(SystemClock.uptimeMillis(), false);
-            }
+            mPowerManager.wakeUp(SystemClock.uptimeMillis());
+        } else if (!mLidControlsSleep) {
+            mPowerManager.userActivity(SystemClock.uptimeMillis(), false);
         }
     }
 
@@ -6100,11 +6097,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     }
 
     private void applyLidSwitchState() {
-        mPowerManager.setKeyboardVisibility(isBuiltInKeyboardVisible());
 
-        /*if (mLidState == LID_CLOSED && mLidControlsSleep
-           && Settings.System.getIntForUser(mContext.getContentResolver(),
-            Settings.System.LOCKSCREEN_LID_WAKE, 1, UserHandle.USER_CURRENT) == 1) {
+        mPowerManager.setKeyboardVisibility(isBuiltInKeyboardVisible());
+        if (mLidState == LID_CLOSED && mLidControlsSleep) {
             ITelephony telephonyService = getTelephonyService();
             try {
                 if(telephonyService != null && telephonyService.isIdle()) {
@@ -6113,12 +6108,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
-        }*/
-
-        if (mLidState == LID_CLOSED && mLidControlsSleep
-            && Settings.System.getIntForUser(mContext.getContentResolver(),
-            Settings.System.LOCKSCREEN_LID_WAKE, 1, UserHandle.USER_CURRENT) == 1) {
-            mPowerManager.goToSleep(SystemClock.uptimeMillis());
         }
     }
 

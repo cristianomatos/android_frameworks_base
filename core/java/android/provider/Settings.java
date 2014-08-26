@@ -2724,12 +2724,6 @@ public final class Settings {
         public static final String LOCKSCREEN_MODLOCK_ENABLED = "lockscreen_modlock_enabled";
 
         /**
-         * Whether lid wakes the device
-         * @hide
-         */
-        public static final String LOCKSCREEN_LID_WAKE = "lockscreen_lid_wake";
-
-        /**
          * Whether to hide the frame behind lockscreen widgets
          * @hide
          */
