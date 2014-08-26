@@ -119,8 +119,8 @@ import com.android.systemui.statusbar.phone.Ticker;
 import com.android.systemui.statusbar.policy.NotificationRowLayout;
 import com.android.systemui.statusbar.policy.PieController;
 
-import com.android.internal.util.crdroid.TaskUtils;
-import com.android.internal.util.cm.DevUtils;
+import com.android.internal.util.cm.ActionUtils;
+//import com.android.internal.util.crdroid.TaskUtils;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -1261,7 +1261,7 @@ public abstract class BaseStatusBar extends SystemUI implements
              case MSG_TOGGLE_LAST_APP:
                  if (DEBUG) Log.d(TAG, "toggle last app");
                  cancelPreloadingRecentTasksList();
-                 TaskUtils.toggleLastAppImpl(mContext);
+                 ActionUtils.switchToLastApp(mContext, mCurrentUserId);
                  break;
              case MSG_TOGGLE_SCREENSHOT:
                  if (DEBUG) Slog.d(TAG, "toggle screenshot");
