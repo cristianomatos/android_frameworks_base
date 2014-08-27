@@ -1562,6 +1562,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private View.OnLongClickListener mRecentsLongClickListener = new View.OnLongClickListener() {
         public boolean onLongClick(View v) {
+            cancelPreloadingRecentTasksList();
             awakenDreams();
             recentsLongPress();
             return true;
