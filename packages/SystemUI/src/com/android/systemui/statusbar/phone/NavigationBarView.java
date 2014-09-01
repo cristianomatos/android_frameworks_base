@@ -116,6 +116,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
     private DelegateViewHelper mDelegateHelper;
     private DeadZone mDeadZone;
     private final NavigationBarTransitions mBarTransitions;
+    private StatusBarBlockerTransitions mStatusBarBlockerTransitions;
 
     private boolean mHasCmKeyguard = false;
     private boolean mModLockDisabled = true;
@@ -306,6 +307,10 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         return mBarTransitions;
     }
 
+    public BarTransitions getStatusBarBlockerTransitions() {
+        return mStatusBarBlockerTransitions;
+    }
+
     public void setDelegateView(View view) {
         mDelegateHelper.setDelegateView(view);
     }
@@ -423,6 +428,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         mThemedResources = res;
         getIcons(mThemedResources);
         mBarTransitions.updateResources(res);
+        mStatusBarBlockerTransitions.updateResources(res);
         for (int i = 0; i < mRotatedViews.length; i++) {
             ViewGroup container = (ViewGroup) mRotatedViews[i];
             if (container != null) {
@@ -714,6 +720,9 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         mRotatedViews[Configuration.ORIENTATION_LANDSCAPE] = findViewById(R.id.rot90);
         mCurrentView = mRotatedViews[mContext.getResources().getConfiguration().orientation];
 
+        mStatusBarBlockerTransitions = new StatusBarBlockerTransitions(
+                findViewById(R.id.status_bar_blocker));
+
         watchForAccessibilityChanges();
     }
 
@@ -811,6 +820,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
 
         // force the low profile & disabled states into compliance
         mBarTransitions.init(mVertical);
+        mStatusBarBlockerTransitions.init();
         setDisabledFlags(mDisabledFlags, true /* force */);
         setMenuVisibility(mShowMenu, true /* force */);
 
@@ -1040,6 +1050,23 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
 
             // propogate settings
             setNavigationIconHints(mNavigationIconHints, true);
+        }
+    }
+
+    private static class StatusBarBlockerTransitions extends BarTransitions {
+        public StatusBarBlockerTransitions(View statusBarBlocker) {
+            super(statusBarBlocker, R.drawable.status_background,
+                    R.color.status_bar_background_opaque,
+                    R.color.status_bar_background_semi_transparent);
+        }
+
+        public void init() {
+            applyModeBackground(-1, getMode(), false /*animate*/);
+        }
+
+        @Override
+        protected void onTransition(int oldMode, int newMode, boolean animate) {
+            super.onTransition(oldMode, newMode, animate);
         }
     }
 }
