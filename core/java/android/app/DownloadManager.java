@@ -1181,6 +1181,34 @@ public class DownloadManager {
     }
 
     /**
+     * Pause the given running download by manual.
+     *
+     * @param id the ID of the download to be paused
+     * @return the number of downloads actually updated
+     * @hide
+     */
+    public int pauseDownload(long id) {
+        ContentValues values = new ContentValues();
+        values.put(Downloads.Impl.COLUMN_STATUS, Downloads.Impl.STATUS_PAUSED_BY_MANUAL);
+
+        return mResolver.update(ContentUris.withAppendedId(mBaseUri, id), values, null, null);
+    }
+
+    /**
+     * Resume the given paused download by manual.
+     *
+     * @param id the ID of the download to be resumed
+     * @return the number of downloads actually updated
+     * @hide
+     */
+    public int resumeDownload(long id) {
+       ContentValues values = new ContentValues();
+       values.put(Downloads.Impl.COLUMN_STATUS, Downloads.Impl.STATUS_RUNNING);
+
+       return mResolver.update(ContentUris.withAppendedId(mBaseUri, id), values, null, null);
+    }
+
+    /**
      * Returns maximum size, in bytes, of downloads that may go over a mobile connection; or null if
      * there's no limit
      *
