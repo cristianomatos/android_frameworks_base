@@ -1063,10 +1063,5 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         public void init() {
             applyModeBackground(-1, getMode(), false /*animate*/);
         }
-
-        @Override
-        protected void onTransition(int oldMode, int newMode, boolean animate) {
-            super.onTransition(oldMode, newMode, animate);
-        }
     }
 }
