@@ -38,14 +38,12 @@ public class IconMerger extends LinearLayout {
     private int mIconSize;
     private View mMoreView;
     private ClockCenter mClockCenter;
-    private Clock mDate;
     private View mCenterSpacer;
     private int mTotalWidth;
     private SettingsObserver mSettingsObserver;
     private boolean mAttached;   
     private int mAvailWidth;
     private boolean mShowCenterClock;
-    private boolean mShowDate;
     private int mIconHPadding;
     
     public IconMerger(Context context, AttributeSet attrs) {
@@ -106,10 +104,6 @@ public class IconMerger extends LinearLayout {
         mClockCenter = clockCenter;
     }
 
-    public void setDate(Clock date) {
-        mDate = date;
-    }
-
     public void setCenterSpacer(View centerSpacer) {
         mCenterSpacer = centerSpacer;
     }
@@ -117,8 +111,6 @@ public class IconMerger extends LinearLayout {
     private void recalcSize() {
         if (mShowCenterClock){
             mAvailWidth = mTotalWidth/2 - mClockCenter.getMeasuredWidth()/2 - mIconSize/2;
-        } else if (mShowCenterClock && mShowDate) {
-            mAvailWidth = mTotalWidth/2 - mClockCenter.getMeasuredWidth()/2 - mDate.getMeasuredWidth()/2 - mIconSize/2;
         } else {
             mAvailWidth = getMeasuredWidth();
         }
