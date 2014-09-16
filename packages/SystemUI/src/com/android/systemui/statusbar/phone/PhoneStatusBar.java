@@ -500,6 +500,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.RECENT_CARD_TEXT_COLOR), false, this,
                     UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUSBAR_CLOCK_STYLE), false, this,
+                    UserHandle.USER_ALL);
 
             updateSettings();
             update();
@@ -584,6 +587,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.RECENT_CARD_TEXT_COLOR))) {
                 rebuildRecentsScreen();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUSBAR_CLOCK_STYLE))) {
+                updateClockVisibility();
             }
             updateSettings();
             update();
@@ -2159,6 +2165,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         int clockLocation = Settings.System.getIntForUser(
             resolver, Settings.System.STATUSBAR_CLOCK_STYLE, 0,
             UserHandle.USER_CURRENT);
+
+        updateNotificationIcons();
+
+        mNotificationIcons.setCenteredClock(clockLocation == 1);
+
         if (clockLocation == 0 && clock != null) {
             clock.setVisibility(mClockEnabled && mShowClock ? View.VISIBLE : View.GONE);
         }
