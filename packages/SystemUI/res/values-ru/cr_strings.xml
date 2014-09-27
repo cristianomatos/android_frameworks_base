@@ -32,6 +32,7 @@
     <string name="quick_settings_reminder_dismiss_message">Удалить текущее напоминание?</string>
     <string name="quick_settings_reminder_help_title">Касание</string>
     <string name="quick_settings_reminder_noti_dismiss">Очистить</string>
+    <string name="quick_settings_reminder_noti_later">Изменить время</string>
     <string name="quick_settings_reminder_help_message">Коснитесь пустого места сверху, чтобы установить/изменить напоминание. Долгое нажатие удалит текущее напоминание.</string>
 
     <!-- Slim recents -->
@@ -51,9 +52,9 @@
     <string name="toast_not_installed">Приложение не установлено</string>
 	
     <!-- Title shown in notification popup for launching notification in floating mode -->
-    <string name="status_bar_notification_floating_item_title">Плавающий режим</string>
+    <string name="status_bar_notification_floating_item_title">Оконный режим</string>
     <!-- Title shown in recents popup for showing app in floating mode -->
-    <string name="status_bar_recent_floating_item_title">Плавающий режим</string>
+    <string name="status_bar_recent_floating_item_title">Оконный режим</string>
     
     <!-- Battery status in pie controls -->
     <string name="pie_battery_status_charging">Заряжается (<xliff:g id="percent">%d</xliff:g>%%)</string>
@@ -66,12 +67,15 @@
     <string name="pie_phone_status_emergency_only">Только экстренные вызовы</string>
     
     <!-- Blacklisted app for floating mode -->
-    <string name="floating_mode_blacklisted_app">Текущее приложение занесено в чёрный список, так оно не может работать должным образом в \"Плавающем режиме\"</string>
+    <string name="floating_mode_blacklisted_app">Текущее приложение занесено в чёрный список, так оно не может работать должным образом в \"Оконном режиме\"</string>
 
     <!-- First time run hover -->
     <string name="hover_cling_text">Hover теперь включен.\n\nПри поступлении нового уведомления, всплывающий верхний слой позволяет ответить на него, не выходя из текущего приложения.</string>
 
     <!-- Title shown when app provides no interface -->
     <string name="status_bar_floating_no_interface">Приложение не предоставляет интерфейс</string>
-
+    
+    <!-- Heads up -->
+    <string name="permlab_changeHeadsUpState">включить или отключить всплывающие уведомления</string>
+    
 </resources>
