@@ -41,6 +41,7 @@ import android.os.ServiceManager;
 import android.os.SystemClock;
 import android.os.UserHandle;
 import android.os.Vibrator;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.InputDevice;
@@ -114,9 +115,17 @@ public class ActionTarget {
             injectKeyDelayed(KeyEvent.KEYCODE_POWER);
             return true;
         } else if (action.equals(ACTION_POWER_MENU)) {
-            try {
-                windowManagerService.toggleGlobalMenu();
-            } catch (RemoteException e) {
+            KeyguardManager km = (KeyguardManager) mContext.getSystemService(Context.KEYGUARD_SERVICE);
+            boolean locked = km.inKeyguardRestrictedInputMode() && mKeyguardManager.isKeyguardSecure();
+            boolean globalActionsOnLockScreen = Settings.System.getInt(
+                    mContext.getContentResolver(), Settings.System.LOCKSCREEN_ENABLE_POWER_MENU, 0) == 1;
+            if (locked && !globalActionsOnLockScreen) {
+                return false;
+            } else {
+                try {
+                    windowManagerService.toggleGlobalMenu();
+                } catch (RemoteException e) {
+                }
             }
             return true;
         } else if (action.equals(ACTION_LAST_APP)) {
