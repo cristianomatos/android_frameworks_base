@@ -3376,29 +3376,35 @@ public final class Settings {
          */
         public static final String KEY_HOME_ENABLED = "key_home_enabled";
 
-       /**
-        * Sets the portrait background of notification drawer
-        * @hide
-        */
+        /**
+         * Sets the portrait background of notification drawer
+         * @hide
+         */
         public static final String NOTIFICATION_BACKGROUND = "notification_background";
 
-       /**
-        * Sets the landscape background of notification drawer
-        * @hide
-        */
+        /**
+         * Sets the landscape background of notification drawer
+         * @hide
+         */
         public static final String NOTIFICATION_BACKGROUND_LANDSCAPE = "notification_background_landscape";
 
-       /**
-        * Sets the alpha (transparency) of notification wallpaper
-        * @hide
-        */
+        /**
+         * Sets the alpha (transparency) of notification wallpaper
+         * @hide
+         */
         public static final String NOTIFICATION_BACKGROUND_ALPHA = "notification_background_alpha";
 
-       /**
-        * Sets the alpha (transparency) of the notification
-        * @hide
-        */
+        /**
+         * Sets the alpha (transparency) of the notification
+         * @hide
+         */
         public static final String NOTIFICATION_ALPHA = "notification_alpha";
+
+        /**
+         * Force expanded notifications on all apps that support it.
+         * @hide
+         */
+        public static final String FORCE_EXPANDED_NOTIFICATIONS = "force_expanded_notifications";
 
         /**
          * Whether navigation bar is placed on the left side in landscape mode
