@@ -1582,6 +1582,19 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             mHasMenuKeyEnabled |= mPressOnAppSwitchBehavior == KEY_ACTION_MENU
                     || mLongPressOnAppSwitchBehavior == KEY_ACTION_MENU;
         }
+
+        // Set all HW keys actions to none if we have navbar on
+        if (mHasNavigationBar) {
+            mLongPressOnHomeBehavior = KEY_ACTION_NOTHING;
+            mLongPressOnHomeBehavior = KEY_ACTION_NOTHING;
+            mDoubleTapOnHomeBehavior = KEY_ACTION_NOTHING;
+            mPressOnMenuBehavior = KEY_ACTION_NOTHING;
+            mLongPressOnMenuBehavior = KEY_ACTION_NOTHING;
+            mPressOnAssistBehavior = KEY_ACTION_NOTHING;
+            mLongPressOnAssistBehavior = KEY_ACTION_NOTHING;
+            mPressOnAppSwitchBehavior = KEY_ACTION_NOTHING;
+            mLongPressOnAppSwitchBehavior = KEY_ACTION_NOTHING;
+        }
     }
 
     @Override
@@ -2730,10 +2743,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         // it handle it, because that gives us the correct 5 second
         // timeout.
         if (keyCode == KeyEvent.KEYCODE_HOME) {
-            //Ignore the Home key if we disabled it
-            if (scanCode != 0 && Settings.System.getInt(mContext.getContentResolver(), Settings.System.KEY_HOME_ENABLED, 1) == 0) {
-                Log.i(TAG, "Ignoring HOME; Disabled via Settings");
-                return -1;
+            // Disable home key if navbar is set to on
+            if (scanCode != 0 && mHasNavigationBar) {
+                Log.i(TAG, "Ignoring Home Key: we have navbar on");
+                return 0;
             }
 
             // If we have released the home key, and didn't do anything else
@@ -2844,6 +2857,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
             return -1;
         } else if (keyCode == KeyEvent.KEYCODE_MENU) {
+            // Disable menu key if navbar is set to on
+            if (scanCode != 0 && mHasNavigationBar) {
+                Log.i(TAG, "Ignoring Menu Key: we have navbar on");
+                return 0;
+            }
+
             // Hijack modified menu keys for debugging features
             final int chordBug = KeyEvent.META_SHIFT_ON;
 
@@ -2902,6 +2921,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
             return -1;
         } else if (keyCode == KeyEvent.KEYCODE_SEARCH) {
+            // Disable search key if navbar is set to on
+            if (scanCode != 0 && mHasNavigationBar) {
+                Log.i(TAG, "Ignoring Search Key: we have navbar on");
+                return 0;
+            }
+
             if (down) {
                 if (repeatCount == 0) {
                     mSearchKeyShortcutPending = true;
@@ -2916,6 +2941,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
             return 0;
         } else if (keyCode == KeyEvent.KEYCODE_APP_SWITCH) {
+            // Disable app switch key if navbar is set to on
+            if (scanCode != 0 && mHasNavigationBar) {
+                Log.i(TAG, "Ignoring App Switch Key: we have navbar on");
+                return 0;
+            }
+
             if (down) {
                 if (!mPreloadedRecentApps && (mPressOnAppSwitchBehavior == KEY_ACTION_APP_SWITCH ||
                         mLongPressOnAppSwitchBehavior == KEY_ACTION_APP_SWITCH)) {
@@ -2947,6 +2978,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
             return -1;
         } else if (keyCode == KeyEvent.KEYCODE_ASSIST) {
+            // Disable assist key if navbar is set to on
+            if (scanCode != 0 && mHasNavigationBar) {
+                Log.i(TAG, "Ignoring Assist Key: we have navbar on");
+                return 0;
+            }
+
             if (down) {
                 if (!mPreloadedRecentApps && (mPressOnAssistBehavior == KEY_ACTION_APP_SWITCH ||
                         mLongPressOnAssistBehavior == KEY_ACTION_APP_SWITCH)) {
@@ -2978,6 +3015,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
             return -1;
         } else if (keyCode == KeyEvent.KEYCODE_BACK) {
+            // Disable back key if navbar is set to on
+            if (scanCode != 0 && mHasNavigationBar) {
+                Log.i(TAG, "Ignoring Back Key: we have navbar on");
+                return 0;
+            }
+
             if (Settings.Secure.getIntForUser(mContext.getContentResolver(),
                     Settings.Secure.KILL_APP_LONGPRESS_BACK, 0, UserHandle.USER_CURRENT) == 1) {
                 if (down && repeatCount == 0) {
@@ -4913,26 +4956,30 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         final boolean isWakeKey = (policyFlags
                 & (WindowManagerPolicy.FLAG_WAKE | WindowManagerPolicy.FLAG_WAKE_DROPPED)) != 0;
 
-        //Ignore Home key if it is disabled in Settings
-        if (scanCode != 0 && keyCode == KeyEvent.KEYCODE_HOME) {
-            if (Settings.System.getInt(mContext.getContentResolver(), Settings.System.KEY_HOME_ENABLED, 1) == 0) {
-                Log.i(TAG, "Ignoring Home Key: Disabled via Settings");
+
+        if (mHasNavigationBar) {
+            if (scanCode != 0 && keyCode == KeyEvent.KEYCODE_HOME) {
+                Log.i(TAG, "Ignoring Home Key: we have navbar on");
                 return 0;
             }
-        }
-
-        //Ignore Menu key if it is disabled in Settings
-        if (scanCode != 0 && keyCode == KeyEvent.KEYCODE_MENU) {
-            if (Settings.System.getInt(mContext.getContentResolver(), Settings.System.KEY_MENU_ENABLED, 1) == 0) {
-                Log.i(TAG, "Ignoring Menu Key: Disabled via Settings");
+            if (scanCode != 0 && keyCode == KeyEvent.KEYCODE_MENU) {
+                Log.i(TAG, "Ignoring Menu Key: we have navbar on");
                 return 0;
             }
-        }
-
-        //Ignore Back key if it is disabled in Settings
-        if (scanCode != 0 && keyCode == KeyEvent.KEYCODE_BACK) {
-            if (Settings.System.getInt(mContext.getContentResolver(), Settings.System.KEY_BACK_ENABLED, 1) == 0) {
-                Log.i(TAG, "Ignoring Back Key: Disabled via Settings");
+            if (scanCode != 0 && keyCode == KeyEvent.KEYCODE_BACK) {
+                Log.i(TAG, "Ignoring Back Key: we have navbar on");
+                return 0;
+            }
+            if (scanCode != 0 && keyCode == KeyEvent.KEYCODE_SEARCH) {
+                Log.i(TAG, "Ignoring Search Key: we have navbar on");
+                return 0;
+            }
+            if (scanCode != 0 && keyCode == KeyEvent.KEYCODE_APP_SWITCH) {
+                Log.i(TAG, "Ignoring App Switch Key: we have navbar on");
+                return 0;
+            }
+            if (scanCode != 0 && keyCode == KeyEvent.KEYCODE_ASSIST) {
+                Log.i(TAG, "Ignoring Assist Key: we have navbar on");
                 return 0;
             }
         }

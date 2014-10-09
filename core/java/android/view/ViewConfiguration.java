@@ -213,6 +213,7 @@ public class ViewConfiguration {
      */
     private static final int OVERFLING_DISTANCE = 6;
 
+    private Context mContext;
     private final int mEdgeSlop;
     private final int mFadingEdgeLength;
     private final int mMinimumFlingVelocity;
@@ -264,6 +265,7 @@ public class ViewConfiguration {
      * @see android.util.DisplayMetrics
      */
     private ViewConfiguration(Context context) {
+        mContext = context;
         final Resources res = context.getResources();
         final DisplayMetrics metrics = res.getDisplayMetrics();
         final Configuration config = res.getConfiguration();
@@ -684,10 +686,14 @@ public class ViewConfiguration {
      * @return true if a permanent menu key is present, false otherwise.
      */
     public boolean hasPermanentMenuKey() {
+        // Check if navbar is on to set overflow menu button
+        boolean mHasNavigationBar = Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.System.NAVIGATION_BAR_SHOW, 0) == 1;
+
         IWindowManager wm = WindowManagerGlobal.getWindowManagerService();
         // Report no menu key if device has soft buttons
         try {
-            if (wm.hasNavigationBar()) {
+            if (wm.hasNavigationBar() || mHasNavigationBar) {
                 return false;
             }
         } catch (RemoteException ex) {
