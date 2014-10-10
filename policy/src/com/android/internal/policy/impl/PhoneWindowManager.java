@@ -1582,19 +1582,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             mHasMenuKeyEnabled |= mPressOnAppSwitchBehavior == KEY_ACTION_MENU
                     || mLongPressOnAppSwitchBehavior == KEY_ACTION_MENU;
         }
-
-        // Set all HW keys actions to none if we have navbar on
-        if (mHasNavigationBar) {
-            mLongPressOnHomeBehavior = KEY_ACTION_NOTHING;
-            mLongPressOnHomeBehavior = KEY_ACTION_NOTHING;
-            mDoubleTapOnHomeBehavior = KEY_ACTION_NOTHING;
-            mPressOnMenuBehavior = KEY_ACTION_NOTHING;
-            mLongPressOnMenuBehavior = KEY_ACTION_NOTHING;
-            mPressOnAssistBehavior = KEY_ACTION_NOTHING;
-            mLongPressOnAssistBehavior = KEY_ACTION_NOTHING;
-            mPressOnAppSwitchBehavior = KEY_ACTION_NOTHING;
-            mLongPressOnAppSwitchBehavior = KEY_ACTION_NOTHING;
-        }
     }
 
     @Override
