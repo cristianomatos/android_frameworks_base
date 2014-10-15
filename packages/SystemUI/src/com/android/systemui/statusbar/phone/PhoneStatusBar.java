@@ -1922,7 +1922,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 lp.gravity = mHeadsUpGravityBottom && !mImeIsShowing ? Gravity.BOTTOM : Gravity.TOP;
                 lp.y = mHeadsUpGravityBottom && !mImeIsShowing
                         ? getBottomGap() : (mStatusBarShows ? getStatusBarHeight() : 0);
-                mWindowManager.updateViewLayout(mHeadsUpNotificationView, lp);
+                try {
+                    mWindowManager.updateViewLayout(mHeadsUpNotificationView, lp);
+                } catch (Exception e) {
+                }
             }
         }
     }
