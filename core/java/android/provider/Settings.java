@@ -3365,6 +3365,13 @@ public final class Settings {
         public static final String NAVBAR_RECENT_LONG_PRESS = "navbar_recent_long_press";
 
         /**
+         * Enable HW keys
+         *
+         * @hide
+         */
+        public static final String HW_KEYS_ENABLED = "hw_keys_enabled";
+
+        /**
          * Sets the portrait background of notification drawer
          * @hide
          */

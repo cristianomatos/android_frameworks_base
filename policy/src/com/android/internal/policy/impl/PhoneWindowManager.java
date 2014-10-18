@@ -281,6 +281,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     int mStatusBarHeight;
     WindowState mNavigationBar = null;
     boolean mHasNavigationBar = false;
+    boolean mHasHwKeysEnabled;
     boolean mOverWriteHasNavigationBar = false;
     boolean mCanHideNavigationBar = false;
     boolean mNavigationBarCanMove = false; // can the navigation bar ever move to the side?
@@ -2731,7 +2732,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         // timeout.
         if (keyCode == KeyEvent.KEYCODE_HOME) {
             // Disable home key if navbar is set to on
-            if (scanCode != 0 && mHasNavigationBar) {
+            if (scanCode != 0 && !hasHwKeysEnabled()) {
                 Log.i(TAG, "Ignoring Home Key: we have navbar on");
                 return 0;
             }
@@ -2845,7 +2846,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             return -1;
         } else if (keyCode == KeyEvent.KEYCODE_MENU) {
             // Disable menu key if navbar is set to on
-            if (scanCode != 0 && mHasNavigationBar) {
+            if (scanCode != 0 && !hasHwKeysEnabled()) {
                 Log.i(TAG, "Ignoring Menu Key: we have navbar on");
                 return 0;
             }
@@ -2909,7 +2910,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             return -1;
         } else if (keyCode == KeyEvent.KEYCODE_SEARCH) {
             // Disable search key if navbar is set to on
-            if (scanCode != 0 && mHasNavigationBar) {
+            if (scanCode != 0 && !hasHwKeysEnabled()) {
                 Log.i(TAG, "Ignoring Search Key: we have navbar on");
                 return 0;
             }
@@ -2929,7 +2930,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             return 0;
         } else if (keyCode == KeyEvent.KEYCODE_APP_SWITCH) {
             // Disable app switch key if navbar is set to on
-            if (scanCode != 0 && mHasNavigationBar) {
+            if (scanCode != 0 && !hasHwKeysEnabled()) {
                 Log.i(TAG, "Ignoring App Switch Key: we have navbar on");
                 return 0;
             }
@@ -2966,7 +2967,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             return -1;
         } else if (keyCode == KeyEvent.KEYCODE_ASSIST) {
             // Disable assist key if navbar is set to on
-            if (scanCode != 0 && mHasNavigationBar) {
+            if (scanCode != 0 && !hasHwKeysEnabled()) {
                 Log.i(TAG, "Ignoring Assist Key: we have navbar on");
                 return 0;
             }
@@ -3003,7 +3004,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             return -1;
         } else if (keyCode == KeyEvent.KEYCODE_BACK) {
             // Disable back key if navbar is set to on
-            if (scanCode != 0 && mHasNavigationBar) {
+            if (scanCode != 0 && !hasHwKeysEnabled()) {
                 Log.i(TAG, "Ignoring Back Key: we have navbar on");
                 return 0;
             }
@@ -4944,7 +4945,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 & (WindowManagerPolicy.FLAG_WAKE | WindowManagerPolicy.FLAG_WAKE_DROPPED)) != 0;
 
 
-        if (mHasNavigationBar) {
+        if (!hasHwKeysEnabled()) {
             if (scanCode != 0 && keyCode == KeyEvent.KEYCODE_HOME) {
                 Log.i(TAG, "Ignoring Home Key: we have navbar on");
                 return 0;
@@ -6610,6 +6611,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
      */
     private boolean areTranslucentBarsAllowed() {
         return mTranslucentDecorEnabled && !mTouchExplorationEnabled;
+    }
+
+    public boolean hasHwKeysEnabled() {
+        return mHasHwKeysEnabled = Settings.System.getInt(
+                mContext.getContentResolver(),
+                    Settings.System.HW_KEYS_ENABLED, 0) == 1;
     }
 
     // Use this instead of checking config_showNavigationBar so that it can be consistently

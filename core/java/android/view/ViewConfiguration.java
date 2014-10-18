@@ -689,11 +689,14 @@ public class ViewConfiguration {
         // Check if navbar is on to set overflow menu button
         boolean mHasNavigationBar = Settings.System.getInt(mContext.getContentResolver(),
                     Settings.System.NAVIGATION_BAR_SHOW, 0) == 1;
+        // Check if hw keys are on to set overflow menu button
+        boolean mHasHwKeysEnabled = Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.System.HW_KEYS_ENABLED, 0) == 1;
 
         IWindowManager wm = WindowManagerGlobal.getWindowManagerService();
         // Report no menu key if device has soft buttons
         try {
-            if (wm.hasNavigationBar() || mHasNavigationBar) {
+            if (wm.hasNavigationBar() || mHasNavigationBar || !mHasHwKeysEnabled) {
                 return false;
             }
         } catch (RemoteException ex) {
