@@ -16,6 +16,9 @@
 
 package com.android.systemui.statusbar.phone;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ArgbEvaluator;
 import android.animation.LayoutTransition;
 import android.animation.LayoutTransition.TransitionListener;
 import android.animation.ObjectAnimator;
@@ -39,6 +42,7 @@ import android.database.ContentObserver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -74,6 +78,7 @@ import com.android.systemui.statusbar.policy.KeyButtonView;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 public class NavigationBarView extends LinearLayout implements BaseStatusBar.NavigationBarCallback {
     final static boolean DEBUG = false;
@@ -110,6 +115,8 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
 
     boolean mWasNotifsButtonVisible = false;
 
+    private int mPreviousOverrideIconColor = 0;
+    private int mOverrideIconColor = 0;
     private Drawable mBackIcon, mBackLandIcon, mBackAltIcon, mBackAltLandIcon;
     private Drawable mRecentIcon;
     private Drawable mRecentLandIcon;
@@ -149,6 +156,8 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
 
     private String mApplicationWidgetPackageName;
     private byte[] mApplicationWidgetIcon;
+
+    private final int mDSBDuration;
 
     private class NavTransitionListener implements TransitionListener {
         private boolean mBackTransitioning;
@@ -311,6 +320,63 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         final Bundle keyguardMetadata = getApplicationMetadata(mContext, keyguardPackage);
         mHasCmKeyguard = keyguardMetadata != null &&
                 keyguardMetadata.getBoolean("com.cyanogenmod.keyguard", false);
+
+        mDSBDuration = context.getResources().getInteger(R.integer.dsb_transition_duration);
+        BarBackgroundUpdater.addListener(new BarBackgroundUpdater.UpdateListener(this) {
+
+            @Override
+            public Animator onUpdateNavigationBarIconColor(final int previousIconColor,
+                    final int iconColor) {
+                mPreviousOverrideIconColor = previousIconColor;
+                mOverrideIconColor = iconColor;
+
+                return generateButtonColorsAnimatorSet();
+            }
+
+        });
+    }
+
+    private AnimatorSet generateButtonColorsAnimatorSet() {
+        final ImageView[] buttons = new ImageView[] {
+            (ImageView) (mCurrentView == null ? null : mCurrentView.findViewWithTag(NavbarEditor.NAVBAR_RECENT)),
+            (ImageView) (mCurrentView == null ? null : mCurrentView.findViewWithTag(NavbarEditor.NAVBAR_BACK)),
+            (ImageView) (mCurrentView == null ? null : mCurrentView.findViewWithTag(NavbarEditor.NAVBAR_HOME)),
+            (ImageView) (mCurrentView == null ? null : mCurrentView.findViewWithTag(NavbarEditor.NAVBAR_CONDITIONAL_MENU)),
+            (ImageView) (mCurrentView == null ? null : mCurrentView.findViewWithTag(NavbarEditor.NAVBAR_ALWAYS_MENU)),
+            (ImageView) (mCurrentView == null ? null : mCurrentView.findViewWithTag(NavbarEditor.NAVBAR_MENU_BIG)),
+            (ImageView) getSearchLight(),
+            (ImageView) getCameraButton(),
+            (ImageView) getNotifsButton()
+        };
+
+        final ArrayList<Animator> anims = new ArrayList<Animator>();
+
+        for (final ImageView button : buttons) {
+            if (button != null) {
+                if (mOverrideIconColor == 0) {
+                    mHandler.post(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            button.setColorFilter(null);
+                        }
+
+                    });
+                } else {
+                    anims.add(ObjectAnimator.ofObject(button, "colorFilter",
+                            new ArgbEvaluator(), mPreviousOverrideIconColor,
+                            mOverrideIconColor).setDuration(mDSBDuration));
+                }
+            }
+        }
+
+        if (anims.isEmpty()) {
+            return null;
+        } else {
+            final AnimatorSet animSet = new AnimatorSet();
+            animSet.playTogether(anims);
+            return animSet;
+        }
      }
 
     private void watchForDevicePolicyChanges() {
@@ -423,17 +489,17 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
 
     // for when home is disabled, but search isn't
     public View getSearchLight() {
-        return mCurrentView.findViewById(R.id.search_light);
+        return mCurrentView == null ? null : mCurrentView.findViewById(R.id.search_light);
     }
 
     // shown when keyguard is visible and camera is available
     public View getCameraButton() {
-        return mCurrentView.findViewById(R.id.camera_button);
+        return mCurrentView == null ? null : mCurrentView.findViewById(R.id.camera_button);
     }
 
     // used for lockscreen notifications
     public View getNotifsButton() {
-        return mCurrentView.findViewById(R.id.show_notifs);
+        return mCurrentView == null ? null : mCurrentView.findViewById(R.id.show_notifs);
     }
 
     // shown when keyguard is visible and application widget button is available
@@ -797,6 +863,16 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         mStatusBarBlockerTransitions = new StatusBarBlockerTransitions(
                 findViewById(R.id.status_bar_blocker));
 
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                final AnimatorSet animSet = generateButtonColorsAnimatorSet();
+                if (animSet != null) {
+                    animSet.start();
+                }
+            }
+        });
+
         watchForAccessibilityChanges();
     }
 
@@ -911,6 +987,16 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         }
 
         setNavigationIconHints(mNavigationIconHints, true);
+
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                final AnimatorSet animSet = generateButtonColorsAnimatorSet();
+                if (animSet != null) {
+                    animSet.start();
+                }
+            }
+        });
     }
 
     View findButton(NavbarEditor.ButtonInfo info) {
@@ -1157,9 +1243,11 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
 
     private static class StatusBarBlockerTransitions extends BarTransitions {
         public StatusBarBlockerTransitions(View statusBarBlocker) {
-            super(statusBarBlocker, R.drawable.status_background,
+            super(statusBarBlocker, new BarTransitions.BarBackgroundDrawable(
+                    statusBarBlocker.getContext(),
                     R.color.status_bar_background_opaque,
-                    R.color.status_bar_background_semi_transparent);
+                    R.color.status_bar_background_semi_transparent,
+                    R.drawable.status_background));
         }
 
         public void init() {
