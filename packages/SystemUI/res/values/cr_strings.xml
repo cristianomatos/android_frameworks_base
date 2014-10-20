@@ -96,4 +96,7 @@
     <string name="status_bar_notification_heads_up_disable_title">Disable heads up</string>
     <string name="heads_up_snooze_message">Heads up is disabled for <xliff:g id="number">%d</xliff:g> minutes.</string>
 
+    <!-- Content description for the add notification services button. [CHAR LIMIT=NONE] -->
+    <string name="accessibility_desc_notif_services">Notification services.</string>
+
 </resources>

@@ -690,16 +690,19 @@ public abstract class BaseStatusBar extends SystemUI implements
     }
 
     protected void updateHoverState() {
-        if (mHoverCling != null) {
-            boolean firstRun = mHoverCling.loadSetting();
-            // we're pushing the button, so use inverse logic
-            mHoverCling.hoverChanged(mHoverState == HOVER_DISABLED);
-            if (firstRun) {
-                animateCollapsePanels(CommandQueue.FLAG_EXCLUDE_NONE);
-            }
-        }
         mHoverState = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.HOVER_STATE, HOVER_DISABLED);
+
+        if (mHoverState == HOVER_ENABLED) {
+            if (mHoverCling != null) {
+                boolean firstRun = mHoverCling.loadSetting();
+                // we're pushing the button, so use inverse logic
+                mHoverCling.hoverChanged(mHoverState == HOVER_DISABLED);
+                if (firstRun) {
+                    animateCollapsePanels(CommandQueue.FLAG_EXCLUDE_NONE);
+                }
+            }
+        }
 
         mHover.setHoverActive(mHoverState == HOVER_ENABLED);
     }

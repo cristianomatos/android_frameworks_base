@@ -297,6 +297,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     View mDateTimeView;
     View mClearButton;
     ImageView mAddTileButton;
+    ImageView mNotifServicesButton;
     ImageView mSettingsButton, mNotificationButton;
 
     // carrier/wifi label
@@ -849,6 +850,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             if (mSettingsPanel != null) {
                 mSettingsPanel.setEnabled(userSetup);
             }
+            if (mNotifServicesButton != null && mHasFlipSettings) {
+                mNotifServicesButton.setEnabled(userSetup);
+            }
             if (userSetup != mUserSetup) {
                 mUserSetup = userSetup;
                 if (!mUserSetup && mStatusBarView != null)
@@ -1252,6 +1256,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 mSettingsButton.setVisibility(View.VISIBLE);
                 mSettingsButton.setImageResource(R.drawable.ic_notify_settings);
             }
+        }
+
+        mNotifServicesButton = (ImageView) mStatusBarWindow.findViewById(R.id.notif_services_button);
+        if (mNotifServicesButton != null) {
+            mNotifServicesButton.setOnClickListener(mNotifServicesButtonListener);
+            mNotifServicesButton.setVisibility(View.VISIBLE);
         }
 
         if (mHasFlipSettings) {
@@ -1963,6 +1973,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mAddTileButton.setImageDrawable(null);
             mAddTileButton.setImageResource(R.drawable.ic_menu_add);
         }
+        if (mNotifServicesButton != null) {
+            // Force asset reloading
+            mNotifServicesButton.setImageDrawable(null);
+            mNotifServicesButton.setImageResource(R.drawable.ic_notif_services);
+        }
 
         refreshAllStatusBarIcons();
     }
@@ -2006,6 +2021,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             if (v.getParent() == null) {
                 mPile.addView(v, i);
             }
+        }
+
+        if (mNotifServicesButton != null) {
+            mNotifServicesButton.setEnabled(isDeviceProvisioned());
         }
 
         if (mSettingsButton != null) {
@@ -2537,7 +2556,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     final int FLIP_DURATION = (FLIP_DURATION_IN + FLIP_DURATION_OUT);
 
     Animator mScrollViewAnim, mFlipSettingsViewAnim, mNotificationButtonAnim, mSettingsButtonAnim, 
-            mClearButtonAnim, mRibbonViewAnim, mAddTileButtonAnim, mBrightnessViewAnim;
+            mClearButtonAnim, mRibbonViewAnim, mAddTileButtonAnim, mBrightnessViewAnim, mNotifServicesButtonAnim;
 
     @Override
     public void animateExpandNotificationsPanel() {
@@ -2566,6 +2585,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (mNotificationButtonAnim != null) mNotificationButtonAnim.cancel();
         if (mClearButtonAnim != null) mClearButtonAnim.cancel();
         if (mAddTileButtonAnim != null) mAddTileButtonAnim.cancel();
+        if (mNotifServicesButtonAnim != null) mNotifServicesButtonAnim.cancel();
 
         final boolean halfWayDone = mScrollView.getVisibility() == View.VISIBLE;
         final int zeroOutDelays = halfWayDone ? 0 : 1;
@@ -2618,6 +2638,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 ObjectAnimator.ofFloat(mAddTileButton, View.ALPHA, 0f)
                     .setDuration(FLIP_DURATION),
                 mAddTileButton, View.INVISIBLE));
+        mNotifServicesButton.setVisibility(View.VISIBLE);
+        mNotifServicesButtonAnim = start(
+            ObjectAnimator.ofFloat(mNotifServicesButton, View.ALPHA, 1f)
+                .setDuration(FLIP_DURATION));
         mSettingsButton.setVisibility(View.VISIBLE);
         mSettingsButtonAnim = start(
             ObjectAnimator.ofFloat(mSettingsButton, View.ALPHA, 1f)
@@ -2671,6 +2695,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mFlipSettingsView.setScaleX(1f);
         mFlipSettingsView.setVisibility(View.VISIBLE);
         mSettingsButton.setVisibility(View.GONE);
+        mNotifServicesButton.setVisibility(View.GONE);
+        mNotifServicesButton.setAlpha(1f);
         mScrollView.setVisibility(View.GONE);
         mScrollView.setScaleX(0f);
         if (mRibbonView != null) {
@@ -2709,6 +2735,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (mNotificationButtonAnim != null) mNotificationButtonAnim.cancel();
         if (mClearButtonAnim != null) mClearButtonAnim.cancel();
         if (mAddTileButtonAnim != null) mAddTileButtonAnim.cancel();
+        if (mNotifServicesButtonAnim != null) mNotifServicesButtonAnim.cancel();
 
         progress = Math.min(Math.max(progress, -1f), 1f);
         if (progress < 0f) { // notifications side
@@ -2728,6 +2755,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
             mNotificationButton.setVisibility(View.GONE);
             mAddTileButton.setVisibility(View.GONE);
+            mNotifServicesButton.setVisibility(View.VISIBLE);
         } else { // settings side
             mFlipSettingsView.setScaleX(progress);
             mFlipSettingsView.setVisibility(View.VISIBLE);
@@ -2746,6 +2774,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mNotificationButton.setAlpha(progress);
             mAddTileButton.setVisibility(View.VISIBLE);
             mAddTileButton.setAlpha(progress);
+            mNotifServicesButton.setVisibility(View.GONE);
+            mNotifServicesButton.setAlpha(progress);
         }
         mClearButton.setVisibility(View.GONE);
 
@@ -2765,6 +2795,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (mNotificationButtonAnim != null) mNotificationButtonAnim.cancel();
         if (mClearButtonAnim != null) mClearButtonAnim.cancel();
         if (mAddTileButtonAnim != null) mAddTileButtonAnim.cancel();
+        if (mNotifServicesButtonAnim != null) mNotifServicesButtonAnim.cancel();
 
         final boolean halfWayDone = mFlipSettingsView.getVisibility() == View.VISIBLE;
         final int zeroOutDelays = halfWayDone ? 0 : 1;
@@ -2826,6 +2857,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mAddTileButtonAnim = start(
             ObjectAnimator.ofFloat(mAddTileButton, View.ALPHA, 1f)
                 .setDuration(FLIP_DURATION));
+        mNotifServicesButtonAnim = start(
+            setVisibilityWhenDone(
+                ObjectAnimator.ofFloat(mNotifServicesButton, View.ALPHA, 0f)
+                .setDuration(FLIP_DURATION),
+                mNotifServicesButton, View.INVISIBLE));
         mClearButtonAnim = start(
             setVisibilityWhenDone(
                 ObjectAnimator.ofFloat(mClearButton, View.ALPHA, 0f)
@@ -2880,6 +2916,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             if (mNotificationButtonAnim != null) mNotificationButtonAnim.cancel();
             if (mClearButtonAnim != null) mClearButtonAnim.cancel();
             if (mAddTileButtonAnim != null) mAddTileButtonAnim.cancel();
+            if (mNotifServicesButtonAnim != null) mNotifServicesButtonAnim.cancel();
 
             mScrollView.setScaleX(1f);
             mScrollView.setVisibility(View.VISIBLE);
@@ -2897,6 +2934,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mFlipSettingsView.setVisibility(View.GONE);
             mNotificationButton.setVisibility(View.GONE);
             mAddTileButton.setVisibility(View.GONE);
+            mNotifServicesButton.setAlpha(1f);
+            mNotifServicesButton.setVisibility(View.VISIBLE);
             setAreThereNotifications(); // show the clear button
         }
 
@@ -3867,6 +3906,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             Intent intent = new Intent();
             intent.setClassName("com.android.settings",
                     "com.android.settings.Settings$QuickSettingsConfigActivity");
+            startActivityDismissingKeyguard(intent, true);
+        }
+    };
+
+    private View.OnClickListener mNotifServicesButtonListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            Intent intent = new Intent();
+            intent.setClassName("com.android.settings",
+                    "com.android.settings.Settings$crDroidNotificationServicesActivity");
             startActivityDismissingKeyguard(intent, true);
         }
     };
