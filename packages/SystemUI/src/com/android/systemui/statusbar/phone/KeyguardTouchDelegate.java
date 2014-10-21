@@ -104,10 +104,7 @@ public class KeyguardTouchDelegate {
         final IKeyguardService service = mService;
         if (service != null) {
             try {
-<<<<<<< HEAD
                 Slog.e(TAG, "dispatch!");
-                service.dispatch(event);
-=======
                 service.dispatchCameraEvent(event);
                 return true;
             } catch (RemoteException e) {
@@ -125,7 +122,6 @@ public class KeyguardTouchDelegate {
         if (service != null) {
             try {
                 service.dispatchApplicationWidgetEvent(event);
->>>>>>> c27950d... Keyguard: Allow applications to customize left-corner widget
                 return true;
             } catch (RemoteException e) {
                 // What to do?

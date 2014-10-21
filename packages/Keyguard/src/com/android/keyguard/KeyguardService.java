@@ -133,15 +133,11 @@ public class KeyguardService extends Service {
             checkPermission();
             mKeyguardViewMediator.showAssistant();
         }
-<<<<<<< HEAD
         public void showCustomIntent(Intent intent) {
             checkPermission();
             mKeyguardViewMediator.showCustomIntent(intent);
         }
-        public void dispatch(MotionEvent event) {
-=======
         public void dispatchCameraEvent(MotionEvent event) {
->>>>>>> c27950d... Keyguard: Allow applications to customize left-corner widget
             checkPermission();
             mKeyguardViewMediator.dispatchCameraEvent(event);
         }

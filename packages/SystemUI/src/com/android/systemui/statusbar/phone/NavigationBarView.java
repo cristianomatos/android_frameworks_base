@@ -477,7 +477,6 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         }
         CharSequence seq = packageInfo.applicationInfo.loadLabel(mContext.getPackageManager());
         return seq;
->>>>>>> c27950d... Keyguard: Allow applications to customize left-corner widget
     }
 
     private void getIcons(Resources res) {
