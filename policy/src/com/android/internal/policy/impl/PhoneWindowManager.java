@@ -1653,9 +1653,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 updateWakeGestureListenerLp();
             }
 
-            hasHwKeysEnabled();
-            updateKeyAssignments();
-
             final boolean useEdgeService = Settings.System.getIntForUser(resolver,
                     Settings.System.USE_EDGE_SERVICE_FOR_GESTURES, 1, UserHandle.USER_CURRENT) == 1;
             if (useEdgeService ^ mUsingEdgeGestureServiceForGestures && mSystemReady) {
@@ -1737,6 +1734,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 mNavigationBarWidthForRotation[mLandscapeRotation] =
                 mNavigationBarWidthForRotation[mSeascapeRotation] = mNavigationBarWidth;
             }
+
+            hasHwKeysEnabled();
+            updateKeyAssignments();
 
             mUserRotationAngles = Settings.System.getInt(resolver,
                     Settings.System.ACCELEROMETER_ROTATION_ANGLES, -1);
