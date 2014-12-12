@@ -10761,8 +10761,8 @@ public class WindowManagerService extends IWindowManager.Stub
     }
 
     @Override
-    public boolean hasMenuKeyEnabled() {
-        return mPolicy.hasMenuKeyEnabled();
+    public boolean hasPermanentMenuKey() {
+        return mPolicy.hasPermanentMenuKey();
     }
 
     @Override
