@@ -126,7 +126,6 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
     private boolean mHasVibrator;
     private final boolean mShowSilentToggle;
     private Profile mChosenProfile;
-    private final boolean mShowScreenRecord;
 
     // Power menu customizations
     String mActions;
@@ -166,9 +165,6 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
 
         mShowSilentToggle = SHOW_SILENT_TOGGLE && !mContext.getResources().getBoolean(
                 com.android.internal.R.bool.config_useFixedVolume);
-
-        mShowScreenRecord = mContext.getResources().getBoolean(
-                com.android.internal.R.bool.config_enableScreenrecordChord);
 
         updatePowerMenuActions();
     }
@@ -276,34 +272,6 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
         };
         onAirplaneModeChanged();
 
-        // next: screen record, if enabled
-        if (mShowScreenRecord) {
-            if (Settings.System.getInt(mContext.getContentResolver(),
-                    Settings.System.POWER_MENU_SCREENRECORD_ENABLED, 0) != 0) {
-                mItems.add(
-                    new SinglePressAction(com.android.internal.R.drawable.ic_lock_screen_record,
-                            R.string.global_action_screen_record) {
-
-                        public void onPress() {
-                            toggleScreenRecord();
-                        }
-
-                        public boolean onLongPress() {
-                            return false;
-                        }
-
-                        public boolean showDuringKeyguard() {
-                            return true;
-                        }
-
-                        public boolean showBeforeProvisioning() {
-                            return true;
-                        }
-                    });
-            }
-        }
-
-
         mItems = new ArrayList<Action>();
 
         String[] actionsArray;
@@ -327,6 +295,8 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                 mItems.add(new RebootAction());
             } else if (GLOBAL_ACTION_KEY_SCREENSHOT.equals(actionKey)) {
                 mItems.add(getScreenshotAction());
+            } else if (GLOBAL_ACTION_KEY_SCREENRECORDER.equals(actionKey)) {
+                mItems.add(getScreenRecorderAction());
             } else if (GLOBAL_ACTION_KEY_AIRPLANE.equals(actionKey)) {
                 mItems.add(mAirplaneModeOn);
             } else if (GLOBAL_ACTION_KEY_BUGREPORT.equals(actionKey)) {
@@ -409,6 +379,29 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
         dialog.setOnDismissListener(this);
 
         return dialog;
+    }
+
+    private Action getScreenRecorderAction() {
+        return new SinglePressAction(com.android.internal.R.drawable.ic_lock_screen_record,
+                R.string.global_action_screen_record) {
+
+            public void onPress() {
+                toggleScreenRecord();
+            }
+
+            public boolean onLongPress() {
+                //TODO: add a screen recorder settings shortcut on long press
+                return false;
+            }
+
+            public boolean showDuringKeyguard() {
+                return true;
+            }
+
+            public boolean showBeforeProvisioning() {
+                return true;
+            }
+        };
     }
 
     private void createProfileDialog() {
