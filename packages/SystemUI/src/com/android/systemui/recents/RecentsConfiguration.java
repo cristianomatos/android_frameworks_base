@@ -28,6 +28,7 @@ import android.util.TypedValue;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 import com.android.systemui.R;
+import com.android.systemui.recents.RecentsActivity;
 import com.android.systemui.recents.misc.Console;
 import com.android.systemui.recents.misc.SystemServicesProxy;
 
@@ -65,7 +66,6 @@ public class RecentsConfiguration {
 
     /** Search bar */
     int searchBarAppWidgetId = -1;
-    public static int searchBarSpaceHeightPx;
 
     /** Task stack */
     public int taskStackScrollDuration;
@@ -366,7 +366,7 @@ public class RecentsConfiguration {
     public void getSearchBarBounds(int windowWidth, int windowHeight, int topInset,
                                    Rect searchBarSpaceBounds) {
         // Return empty rects if search is not enabled
-        int searchBarSize = searchBarSpaceHeightPx;
+        int searchBarSize = RecentsActivity.mSearchBarSpaceHeightPx;
         if (!Constants.DebugFlags.App.EnableSearchLayout || !hasSearchBarAppWidget()) {
             searchBarSize = 0;
         }

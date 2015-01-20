@@ -66,6 +66,8 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
     boolean mVisible;
     long mLastTabKeyEventTime;
 
+    static int mSearchBarSpaceHeightPx;
+
     // Top level views
     RecentsView mRecentsView;
     SystemBarScrimViews mScrimViews;
@@ -199,6 +201,12 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
         mConfig.launchedWithAltTab = launchIntent.getBooleanExtra(
                 AlternateRecentsComponent.EXTRA_TRIGGERED_FROM_ALT_TAB, false);
 
+        boolean showSearchBar = Settings.System.getIntForUser(getContentResolver(),
+                            Settings.System.RECENTS_SHOW_HIDE_SEARCH_BAR,
+                                0, UserHandle.USER_CURRENT) == 1;
+
+        Resources res = getResources();
+
         // Load all the tasks
         RecentsTaskLoader loader = RecentsTaskLoader.getInstance();
         SpaceNode root = loader.reload(this,
@@ -253,34 +261,18 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
             }
             findViewById(R.id.clear_recents).setVisibility(View.VISIBLE);
             if (mRecentsView.hasSearchBar()) {
-                if (Settings.System.getInt(getContentResolver(),
-                    Settings.System.RECENTS_SHOW_HIDE_SEARCH_BAR, 0) == 1) {
-                    mRecentsView.setSearchBarVisibility(View.VISIBLE);
+                mRecentsView.setSearchBarVisibility(View.VISIBLE);
+                if (showSearchBar) {
+                    mSearchBarSpaceHeightPx =
+                            res.getDimensionPixelSize(R.dimen.recents_search_bar_space_height);
                 } else {
                     mRecentsView.setSearchBarVisibility(View.GONE);
-                   }
-                } else {
-                if (Settings.System.getInt(getContentResolver(),
-                    Settings.System.RECENTS_SHOW_HIDE_SEARCH_BAR, 0) == 1) {
-                    addSearchBarAppWidgetView();
-            } else {
+                    mSearchBarSpaceHeightPx = 0;
                 }
+            } else {
+                addSearchBarAppWidgetView();
             }
         }
-
-        // Update search bar space height
-        Resources reso = getResources();
-
-        if (Settings.System.getInt(getContentResolver(),
-                    Settings.System.RECENTS_SHOW_HIDE_SEARCH_BAR, 0) != 1) {
-        RecentsConfiguration.searchBarSpaceHeightPx = 0;
-	}
-
-        if (Settings.System.getInt(getContentResolver(),
-                    Settings.System.RECENTS_SHOW_HIDE_SEARCH_BAR, 1) != 0) {
-	RecentsConfiguration.searchBarSpaceHeightPx = reso.getDimensionPixelSize(R.dimen.recents_search_bar_space_height);
-	}
-
         // Animate the SystemUI scrims into view
         mScrimViews.prepareEnterRecentsAnimation();
     }
