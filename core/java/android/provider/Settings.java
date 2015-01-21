@@ -2247,6 +2247,7 @@ public final class Settings {
          * Deprecated Use {@link android.provider.Settings.Secure.QS_TILES}
          * @hide
          */
+        @Deprecated
         public static final String QS_TILES = "sysui_qs_tiles";
 
         /**
