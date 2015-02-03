@@ -23,7 +23,7 @@
     <dimen name="net_traffic_single_text_size">12dp</dimen>
 
     <!-- Network traffic monitor multi-line text size -->
-    <dimen name="net_traffic_multi_text_size">7dp</dimen>
+    <dimen name="net_traffic_multi_text_size">8dp</dimen>
 
     <!-- App circle sidebar -->
     <dimen name="app_sidebar_trigger_width">12dip</dimen>
