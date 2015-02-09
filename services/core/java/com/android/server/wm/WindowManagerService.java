@@ -5552,6 +5552,12 @@ public class WindowManagerService extends IWindowManager.Stub
         mLastStatusBarVisibility |= flags;
     }
 
+    /* @hide */
+    @Override
+    public void toggleGlobalMenu() {
+        mPolicy.toggleGlobalMenu();
+    }
+
     // Called by window manager policy. Not exposed externally.
     @Override
     public int getLidState() {
@@ -5602,6 +5608,12 @@ public class WindowManagerService extends IWindowManager.Stub
     @Override
     public void rebootSafeMode(boolean confirm) {
         ShutdownThread.rebootSafeMode(mContext, confirm);
+    }
+
+    // Called by window manager policy.  Not exposed externally.
+    @Override
+    public void rebootTile() {
+        ShutdownThread.reboot(mContext, null, true);
     }
 
     public void setCurrentProfileIds(final int[] currentProfileIds) {
