@@ -6280,6 +6280,13 @@ public final class Settings {
         };
 
         /**
+         * Whether to enable "advanced mode" for the current user.
+         * Boolean setting. 0 = no, 1 = yes.
+         * @hide
+         */
+        public static final String ADVANCED_MODE = "advanced_mode";
+
+        /**
          * Whether to show four tiles per row.
          * @hide
          */
