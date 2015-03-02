@@ -187,6 +187,9 @@ public class NotificationPanelView extends PanelView implements
     private int mStatusBarHeaderHeight;
     private GestureDetector mDoubleTapGesture;
 
+    private int mQsSmartPullDown;
+    private boolean mStatusBarLockedOnSecureKeyguard;
+
     public NotificationPanelView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mSettingsObserver = new SettingsObserver(mHandler);
