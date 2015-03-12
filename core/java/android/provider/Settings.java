@@ -2272,11 +2272,8 @@ public final class Settings {
         public static final String BATTERY_SAVER_MODE_COLOR = "battery_save_mode_color";
 
         /**
-         * Deprecated Use {@link android.provider.Settings.Secure.QS_TILES}
-=======
          * List of QS tile names
          * @deprecated Use {@link android.provider.Settings.Secure#QS_TILES} instead
->>>>>>> 29f04d6... Cleanup deprecated settings
          * @hide
          */
         @Deprecated
