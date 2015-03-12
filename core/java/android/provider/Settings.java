@@ -2265,13 +2265,6 @@ public final class Settings {
         public static final String DOZE_TRIGGER_MOTION = "doze_trigger_motion";
 
         /**
-         * Defines the status and navigation bar color is battery safe mode is enabled.
-         *
-         * @hide
-         */
-        public static final String BATTERY_SAVER_MODE_COLOR = "battery_save_mode_color";
-
-        /**
          * List of QS tile names
          * @deprecated Use {@link android.provider.Settings.Secure#QS_TILES} instead
          * @hide
