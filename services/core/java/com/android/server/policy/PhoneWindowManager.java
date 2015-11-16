@@ -2063,7 +2063,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         // Allow the navigation bar to move on non-square small devices (phones).
         mNavigationBarCanMove = width != height && shortSizeDp < 600;
 
-        mHasNavigationBar = res.getBoolean(com.android.internal.R.bool.config_showNavigationBar);
+        final int showByDefault = mContext.getResources().getBoolean(
+            com.android.internal.R.bool.config_showNavigationBar) ? 1 : 0;
+        mHasNavigationBar = CMSettings.Secure.getIntForUser(mContext.getContentResolver(),
+            CMSettings.Secure.DEV_FORCE_SHOW_NAVBAR, showByDefault, UserHandle.USER_CURRENT) == 1;
+
         // Allow a system property to override this. Used by the emulator.
         // See also hasNavigationBar().
         String navBarOverride = SystemProperties.get("qemu.hw.mainkeys");
@@ -2192,8 +2196,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 updateEdgeGestureListenerState();
             }
 
+            final int showByDefault = mContext.getResources().getBoolean(
+                    com.android.internal.R.bool.config_showNavigationBar) ? 1 : 0;
             boolean devForceNavbar = CMSettings.Secure.getIntForUser(resolver,
-                    CMSettings.Secure.DEV_FORCE_SHOW_NAVBAR, 0, UserHandle.USER_CURRENT) == 1;
+                    CMSettings.Secure.DEV_FORCE_SHOW_NAVBAR, showByDefault, UserHandle.USER_CURRENT) == 1;
             if (devForceNavbar != mDevForceNavbar) {
                 mDevForceNavbar = devForceNavbar;
             }
