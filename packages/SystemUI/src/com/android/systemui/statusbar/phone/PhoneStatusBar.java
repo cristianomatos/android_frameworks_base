@@ -825,15 +825,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         addNavigationBar(false);
 
         // Developer options - Force Navigation bar
-        try {
-            boolean needsNav = mWindowManagerService.needsNavigationBar();
-            if (!needsNav) {
-                mDevForceNavbarObserver = new DevForceNavbarObserver(mHandler);
-                mDevForceNavbarObserver.observe();
-            }
-        } catch (RemoteException ex) {
-            // no window manager? good luck with that
-        }
+        mDevForceNavbarObserver = new DevForceNavbarObserver(mHandler);
+        mDevForceNavbarObserver.observe();
 
         SettingsObserver observer = new SettingsObserver(mHandler);
         observer.observe();
@@ -946,35 +939,29 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mNotificationPanelDebugText.setVisibility(View.VISIBLE);
         }
 
-        try {
-            boolean showNav = mWindowManagerService.hasNavigationBar();
-            if (DEBUG) Log.v(TAG, "hasNavigationBar=" + showNav);
-            if (showNav && !mRecreating) {
-                mNavigationBarView =
-                    (NavigationBarView) View.inflate(context, R.layout.navigation_bar, null);
-                mNavigationBarView.updateResources(getNavbarThemedResources());
+        if (!mRecreating) {
+            mNavigationBarView =
+                (NavigationBarView) View.inflate(context, R.layout.navigation_bar, null);
+            mNavigationBarView.updateResources(getNavbarThemedResources());
 
-                mNavigationBarView.setDisabledFlags(mDisabled1);
-                mNavigationBarView.setBar(this);
-                mNavigationBarView.setOnVerticalChangedListener(
-                        new NavigationBarView.OnVerticalChangedListener() {
-                    @Override
-                    public void onVerticalChanged(boolean isVertical) {
-                        if (mAssistManager != null) {
-                            mAssistManager.onConfigurationChanged();
-                        }
-                        mNotificationPanel.setQsScrimEnabled(!isVertical);
+            mNavigationBarView.setDisabledFlags(mDisabled1);
+            mNavigationBarView.setBar(this);
+            mNavigationBarView.setOnVerticalChangedListener(
+                    new NavigationBarView.OnVerticalChangedListener() {
+                @Override
+                public void onVerticalChanged(boolean isVertical) {
+                    if (mAssistManager != null) {
+                        mAssistManager.onConfigurationChanged();
                     }
-                });
-                mNavigationBarView.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        checkUserAutohide(v, event);
-                        return false;
-                    }});
-            }
-        } catch (RemoteException ex) {
-            // no window manager? good luck with that
+                    mNotificationPanel.setQsScrimEnabled(!isVertical);
+                }
+            });
+            mNavigationBarView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    checkUserAutohide(v, event);
+                    return false;
+                }});
         }
 
         if (mAssistManager == null) {
